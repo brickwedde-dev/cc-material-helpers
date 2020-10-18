@@ -14,7 +14,7 @@ class CcMdcTopAppBar extends HTMLElement {
     this.innerHTML = `<header class="mdc-top-app-bar app-bar" id="app-bar">
       <div class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-          <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
+          <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu_open</button>
           <span class="mdc-top-app-bar__title"></span>
         </section>
       </div>

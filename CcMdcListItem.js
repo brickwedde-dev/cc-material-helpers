@@ -4,10 +4,11 @@ class CcMdcListItem extends HTMLAnchorElement {
     this.name = name;
     this.icon = icon;
     this.inactive = false;
+    this._activated = false;
   }
 
   connectedCallback() {
-    this.className = "mdc-list-item mdc-list-item--activated";
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
     this.href = "#";
     this.ariaCurrent = "page";
     this.innerHTML = (this.inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
@@ -16,6 +17,11 @@ class CcMdcListItem extends HTMLAnchorElement {
   }
 
   disconnectedCallback() {
+  }
+
+  set activated (activated) {
+    this._activated = activated;
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
   }
 }
 
