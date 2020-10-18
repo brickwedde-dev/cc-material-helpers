@@ -25,6 +25,17 @@ class CcMdcDrawer extends HTMLElement {
     this.querySelector(".mdc-list").appendChild(item);
   }
 
+  addHeader(html) {
+    var list = this.querySelector(".mdc-list");
+    var hr = document.createElement("hr");
+    hr.className = "mdc-list-divider";
+    list.appendChild(hr);
+    var h6 = document.createElement("h6");
+    h6.className = "mdc-list-group__subheader";
+    h6.innerHTML = html;
+    list.appendChild(h6);
+  }
+
   clear() {
     this.querySelector(".mdc-list").innerHTML = "";
   }
