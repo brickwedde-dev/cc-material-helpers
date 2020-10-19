@@ -1,14 +1,12 @@
 class CcMdcDrawer extends HTMLElement {
   constructor() {
     super();
+    this._drawerTitleHtml = "";
   }
 
   connectedCallback() {
     this.innerHTML = `<aside class="mdc-drawer mdc-drawer--dismissible">
-      <div class="mdc-drawer__header">
-        <h3 class="mdc-drawer__title">Cc-Sample</h3>
-        <h6 class="mdc-drawer__subtitle">alex@brickwedde.dev</h6>
-      </div>
+      <div class="mdc-drawer__header"></div>
       <div class="mdc-drawer__content">
       <div class="mdc-list"></div>
     </div>
@@ -19,6 +17,16 @@ class CcMdcDrawer extends HTMLElement {
     this.mdcComponent = mdc.drawer.MDCDrawer.attachTo(this.childNodes[0]);
     this.mdcComponent.open = true;
     this.contentElement = this.querySelector(".mdc-drawer-app-content");
+
+    this.header = this.querySelector(".mdc-drawer__header");
+    this.header.innerHTML = this._drawerTitleHtml;
+  }
+
+  set drawerTitleHtml (drawerTitleHtml) {
+    this._drawerTitleHtml = drawerTitleHtml;
+    if (this.header) {
+      this.header.innerHTML = this._drawerTitleHtml;
+    }
   }
 
   addItem(item) {
