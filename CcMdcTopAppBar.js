@@ -11,11 +11,13 @@ class CcMdcTopAppBar extends HTMLElement {
 //    var type = this.getAttribute("type") || "text";
 //    var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = `<header class="mdc-top-app-bar app-bar" id="app-bar">
+    this.innerHTML = `<header class="mdc-top-app-bar">
       <div class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
           <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu_open</button>
           <span class="mdc-top-app-bar__title"></span>
+        </section>
+        <section id="toolbar" class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" style="justify-content:flex-start;" role="toolbar">
         </section>
       </div>
     </header>
@@ -31,6 +33,7 @@ class CcMdcTopAppBar extends HTMLElement {
 
     this.contentElement = this.querySelector(".main-content");
     this.titleElement = this.querySelector(".mdc-top-app-bar__title");
+    this.contextButtons = this.querySelector("#toolbar");
   }
 
   set titleHTML (s) {
@@ -39,6 +42,14 @@ class CcMdcTopAppBar extends HTMLElement {
 
   set titleText (s) {
     this.titleElement.innerText = s;
+  }
+
+  addButton(button) {
+    this.contextButtons.appendChild (button);
+  }
+
+  clearButtons() {
+    this.contextButtons.innerHTML = "";
   }
 
   disconnectedCallback() {
