@@ -8,22 +8,23 @@ class CcMdcTopAppBar extends HTMLElement {
   connectedCallback() {
     globalLabelCount++;
 
+    this.style.display = "block";
+    this.style.height = "100%";
+
 //    var type = this.getAttribute("type") || "text";
 //    var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = `<header class="mdc-top-app-bar">
+    this.innerHTML = `<header class="mdc-top-app-bar" style="position:static;">
       <div class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
           <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu_open</button>
           <span class="mdc-top-app-bar__title"></span>
         </section>
-        <section id="toolbar" class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" style="justify-content:flex-start;" role="toolbar">
+        <section id="toolbar" class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
         </section>
       </div>
     </header>
-    <main class="main-content" id="main-content" style="position:relative;height:100%;">
-      <div class="mdc-top-app-bar--fixed-adjust"></div>
-      <div id="content" style="overflow: auto; top: 63px; bottom: 0px; left: 0px; right: 0px; position: absolute;"></div>
+    <main class="main-content" id="main-content" style="top: 63px; bottom: 0px; left: 0px; right: 0px; position: absolute;">
     </main>`;
 
     this.mdcComponent = mdc.topAppBar.MDCTopAppBar.attachTo(this.childNodes[0]);
@@ -32,7 +33,7 @@ class CcMdcTopAppBar extends HTMLElement {
       this.drawer.mdcComponent.open = !this.drawer.mdcComponent.open;
     });
 
-    this.contentElement = this.querySelector("#content");
+    this.contentElement = this.querySelector(".main-content");
     this.titleElement = this.querySelector(".mdc-top-app-bar__title");
     this.contextButtons = this.querySelector("#toolbar");
   }
