@@ -21,8 +21,9 @@ class CcMdcTopAppBar extends HTMLElement {
         </section>
       </div>
     </header>
-    <main class="main-content" id="main-content">
+    <main class="main-content" id="main-content" style="position:relative;height:100%;">
       <div class="mdc-top-app-bar--fixed-adjust"></div>
+      <div id="content" style="overflow: auto; top: 63px; bottom: 0px; left: 0px; right: 0px; position: absolute;"></div>
     </main>`;
 
     this.mdcComponent = mdc.topAppBar.MDCTopAppBar.attachTo(this.childNodes[0]);
@@ -31,7 +32,7 @@ class CcMdcTopAppBar extends HTMLElement {
       this.drawer.mdcComponent.open = !this.drawer.mdcComponent.open;
     });
 
-    this.contentElement = this.querySelector(".main-content");
+    this.contentElement = this.querySelector("#content");
     this.titleElement = this.querySelector(".mdc-top-app-bar__title");
     this.contextButtons = this.querySelector("#toolbar");
   }

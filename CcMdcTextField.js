@@ -20,6 +20,25 @@ class CcMdcTextField extends HTMLElement {
 
     this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
     this.input = this.querySelector("input");
+    this.applyValue();
+  }
+
+  set value (value) {
+    this._value = value;
+    this.applyValue();
+  }
+
+  get value () {
+    if (this.mdcComponent) {
+      return this.mdcComponent.value;
+    }
+    return this._value;
+  }
+
+  applyValue() {
+    if (this.mdcComponent && isDefined(this._value)) {
+      this.mdcComponent.value = this._value;
+    }
   }
 
   disconnectedCallback() {

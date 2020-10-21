@@ -1,6 +1,7 @@
 class CcMdcButton extends HTMLElement {
   constructor() {
     super();
+    this._disabled = false;
   }
 
   setIcon(icon) {
@@ -16,6 +17,21 @@ class CcMdcButton extends HTMLElement {
   setActionbar(actionbar) {
     this.actionbar = actionbar;
     return this;
+  }
+
+  set disabled (value) {
+    this._disabled = value;
+    this.applyDisabled();
+  }
+
+  applyDisabled() {
+    if (this.button) {
+      if (this._disabled) {
+        this.button.setAttribute("disabled", true);
+      } else {
+        this.button.removeAttribute("disabled");
+      }
+    }
   }
   
   connectedCallback() {
@@ -37,9 +53,7 @@ class CcMdcButton extends HTMLElement {
     }
 
     this.button = this.childNodes[0];
-    this.button.addEventListener("click", (e) => {
-      this.dispatchEvent(new CustomEvent("click", {detail: e}));
-    });
+    this.applyDisabled();
     if (!actionbar) {
       this.mdcComponent = mdc.ripple.MDCRipple.attachTo(this.button);
     }
