@@ -1,0 +1,138 @@
+class CcMdcSelect extends HTMLElement {
+  constructor(label) {
+    super();
+    this.label = label;
+    this._value = undefined;
+    this._disabled = false;
+    this._items = [];
+  }
+
+  set disabled (value) {
+    this._disabled = value;
+    this.applyDisabled();
+  }
+
+  applyDisabled() {
+    if (this.mdcComponent) {
+      if (this._disabled) {
+        this.mdcComponent.disabled = true;
+      } else {
+        this.mdcComponent.disabled = false;
+      }
+    }
+  }
+  
+  addItem (html, value) {
+    if (this.mdcList) {
+      var li = document.createElement("li");
+      if (this._value === value) {
+        li.className = "mdc-list-item mdc-list-item--selected";
+        li.setAttribute("aria-selected", true);
+      } else {
+        li.className = "mdc-list-item";
+      }
+      li.setAttribute("data-value", JSON.stringify(value));
+      li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${html}</span>`
+      this.mdcList.appendChild(li);
+      this.mdcComponent.layout();
+      this.mdcComponent.layoutOptions();
+    } else {
+      this._items.push({html, value});
+    }
+  }
+
+  set value (value) {
+    this._value = value;
+    // if (this.mdcList) {
+    //   for(var i = 0; i < this.mdcList.childNodes.length; i++) {
+    //     var li = this.mdcList.childNodes[i];
+    //     var v;
+    //     try {
+    //       v = JSON.parse(li.getAttribute("data-value"));
+    //     } catch (e) {}
+    //     if (v === value) {
+    //       li.setAttribute("aria-selected", true);
+    //       li.className = "mdc-list-item mdc-list-item--selected";
+    //     } else {
+    //       li.setAttribute("aria-selected", false);
+    //       li.className = "mdc-list-item";
+    //     }
+    //   }
+    // }
+    this.applyValue();
+  }
+
+  get value () {
+    if (this.mdcComponent) {
+      try {
+        return JSON.parse(this.mdcComponent.value);
+      } catch (e) {}
+    }
+    return this._value;
+  }
+
+  applyValue() {
+    if (this.mdcComponent && isDefined(this._value)) {
+      this.mdcComponent.value = this._value;
+    }
+  }
+
+  connectedCallback() {
+    var label = this.label || this.getAttribute("label") || null;
+
+    this.innerHTML = `<div class="mdc-select mdc-select--filled">
+  <div class="mdc-select__anchor">
+    <span class="mdc-select__ripple"></span>
+    <span class="mdc-select__selected-text"></span>
+    <span class="mdc-select__dropdown-icon">
+      <svg
+          class="mdc-select__dropdown-icon-graphic"
+          viewBox="7 10 10 5">
+        <polygon
+            class="mdc-select__dropdown-icon-inactive"
+            stroke="none"
+            fill-rule="evenodd"
+            points="7 10 12 15 17 10">
+        </polygon>
+        <polygon
+            class="mdc-select__dropdown-icon-active"
+            stroke="none"
+            fill-rule="evenodd"
+            points="7 15 12 10 17 15">
+        </polygon>
+      </svg>
+    </span>
+    <span class="mdc-floating-label">${label}</span>
+    <span class="mdc-line-ripple"></span>
+  </div>
+
+  <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+    <ul class="mdc-list">
+    </ul>
+  </div>
+</div>`;
+
+    var elem = this.childNodes[0];
+    this.mdcComponent = mdc.select.MDCSelect.attachTo(elem);
+    elem.addEventListener("MDCSelect:change", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      this.dispatchEvent(new CustomEvent("change", {detail: {value : JSON.parse(e.detail.value)}}));
+    });
+    
+    this.mdcList = this.querySelector(".mdc-list");
+    this.applyDisabled();
+    for(var item of this._items) {
+      this.addItem(item.html, item.value);
+    }
+    this._items = [];
+  }
+
+  disconnectedCallback() {
+    if (this.mdcComponent) {
+      this.mdcComponent.destroy();
+    }
+  }
+}
+
+window.customElements.define("cc-mdc-select", CcMdcSelect);
