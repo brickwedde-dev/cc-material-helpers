@@ -80,7 +80,7 @@ class CcMdcSelect extends HTMLElement {
   connectedCallback() {
     var label = this.label || this.getAttribute("label") || null;
 
-    this.innerHTML = `<div class="mdc-select mdc-select--filled">
+    this.innerHTML = `<div class="mdc-select mdc-select--filled" style="max-width:200px;">
   <div class="mdc-select__anchor">
     <span class="mdc-select__ripple"></span>
     <span class="mdc-select__selected-text"></span>
