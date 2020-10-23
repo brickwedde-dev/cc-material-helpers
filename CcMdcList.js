@@ -1,23 +1,36 @@
 class CcMdcList extends HTMLElement {
   constructor() {
     super();
+    this.items = [];
   }
 
   connectedCallback() {
-    globalLabelCount++;
+    this.innerHTML = `<ul class="mdc-list mdc-list--two-line"></ul>`;
 
-    var type = this.getAttribute("type") || "text";
-    var label = this.getAttribute("label") || "Label";
+    this.ulElem = this.childNodes[0];
+    this.mdcComponent = mdc.list.MDCList.attachTo(this.childNodes[0]);
 
-    this.innerHTML = `<label class="mdc-text-field mdc-text-field--filled">
-  <span class="mdc-text-field__ripple"></span>
-  <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
-  <input type="${type}" class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
-  <span class="mdc-line-ripple"></span>
-</label>`;
+    for (var li of this.items) {
+      this.ulElem.appendChild (li);
+    }
+    this.items = [];
+  }
 
-    this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
-    this.input = this.querySelector("input");
+  clearItems() {
+    this.items = [];
+    if (this.ulElem) {
+      this.ulElem.innerHTML = ``;
+    }
+  }
+  
+  addItem(html1, html2) {
+    var li = new CcMdcListItem2(html1, html2);
+    if (this.ulElem) {
+      this.ulElem.appendChild (li);
+    } else {
+      this.items.push(li);
+    }
+    return li;
   }
 
   disconnectedCallback() {
@@ -25,4 +38,4 @@ class CcMdcList extends HTMLElement {
   }
 }
 
-window.customElements.define("cc-mdc-text-field", CcMdcTextField);
+window.customElements.define("cc-mdc-list", CcMdcList);
