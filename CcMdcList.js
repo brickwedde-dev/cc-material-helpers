@@ -2,6 +2,7 @@ class CcMdcList extends HTMLElement {
   constructor() {
     super();
     this.items = [];
+    this._singleSelection = false;
   }
 
   connectedCallback() {
@@ -10,10 +11,17 @@ class CcMdcList extends HTMLElement {
     this.ulElem = this.childNodes[0];
     this.mdcComponent = mdc.list.MDCList.attachTo(this.childNodes[0]);
 
+    this.mdcComponent.singleSelection = this._singleSelection;
     for (var li of this.items) {
       this.ulElem.appendChild (li);
     }
-    this.items = [];
+  }
+
+  set singleSelection (value) {
+    this._singleSelection = value;
+    if (this.mdcComponent) {
+      this.mdcComponent.singleSelection = this._singleSelection;
+    }
   }
 
   clearItems() {
@@ -27,9 +35,8 @@ class CcMdcList extends HTMLElement {
     var li = new CcMdcListItem2(html1, html2);
     if (this.ulElem) {
       this.ulElem.appendChild (li);
-    } else {
-      this.items.push(li);
     }
+    this.items.push(li);
     return li;
   }
 
