@@ -23,15 +23,16 @@ class CcMdcSelect extends HTMLElement {
   }
   
   addItem (html, value) {
+    var stringifiedvalue = JSON.stringify(value);
     if (this.mdcList) {
       var li = document.createElement("li");
-      if (this._value === value) {
+      if (this._value === stringifiedvalue) {
         li.className = "mdc-list-item mdc-list-item--selected";
         li.setAttribute("aria-selected", true);
       } else {
         li.className = "mdc-list-item";
       }
-      li.setAttribute("data-value", JSON.stringify(value));
+      li.setAttribute("data-value", stringifiedvalue);
       li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${html}</span>`
       this.mdcList.appendChild(li);
       this.mdcComponent.layout();
@@ -42,23 +43,7 @@ class CcMdcSelect extends HTMLElement {
   }
 
   set value (value) {
-    this._value = value;
-    // if (this.mdcList) {
-    //   for(var i = 0; i < this.mdcList.childNodes.length; i++) {
-    //     var li = this.mdcList.childNodes[i];
-    //     var v;
-    //     try {
-    //       v = JSON.parse(li.getAttribute("data-value"));
-    //     } catch (e) {}
-    //     if (v === value) {
-    //       li.setAttribute("aria-selected", true);
-    //       li.className = "mdc-list-item mdc-list-item--selected";
-    //     } else {
-    //       li.setAttribute("aria-selected", false);
-    //       li.className = "mdc-list-item";
-    //     }
-    //   }
-    // }
+    this._value = JSON.stringify(value);
     this.applyValue();
   }
 
