@@ -31,7 +31,7 @@ class CcMdcDialog extends HTMLElement {
     switch (type) {
       default:
       case "alert":
-        this.innerHTML = `<div class="mdc-dialog">
+        this.innerHTML = `<div class="mdc-dialog" style="z-index:999999;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
@@ -51,7 +51,7 @@ class CcMdcDialog extends HTMLElement {
         </div>`;
         break;
       case "okcancel":
-        this.innerHTML = `<div class="mdc-dialog">
+        this.innerHTML = `<div class="mdc-dialog" style="z-index:999999;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
