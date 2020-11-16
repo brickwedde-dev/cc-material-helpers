@@ -5,6 +5,7 @@ class CcMdcSelect extends HTMLElement {
     this._value = undefined;
     this._disabled = false;
     this._items = [];
+    this.width = 200;
   }
 
   set disabled (value) {
@@ -64,8 +65,9 @@ class CcMdcSelect extends HTMLElement {
 
   connectedCallback() {
     var label = this.label || this.getAttribute("label") || null;
+    var width = this.getAttribute("width") || this.width || 200;
 
-    this.innerHTML = `<div class="mdc-select mdc-select--filled" style="max-width:200px;">
+    this.innerHTML = `<div class="mdc-select mdc-select--filled" style="min-width:${width}px;max-width:${width}px;width:${width}px;">
   <div class="mdc-select__anchor">
     <span class="mdc-select__ripple"></span>
     <span class="mdc-select__selected-text"></span>
