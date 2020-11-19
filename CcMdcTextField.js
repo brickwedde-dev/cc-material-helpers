@@ -3,6 +3,7 @@ var globalLabelCount = 0;
 class CcMdcTextField extends HTMLElement {
   constructor() {
     super();
+    this._disabled = false;
   }
 
   connectedCallback() {
@@ -21,6 +22,22 @@ class CcMdcTextField extends HTMLElement {
     this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
     this.input = this.querySelector("input");
     this.applyValue();
+    this.applyDisabled();
+  }
+
+  set disabled (value) {
+    this._disabled = value;
+    this.applyDisabled();
+  }
+
+  applyDisabled() {
+    if (this.input) {
+      if (this._disabled) {
+        this.input.setAttribute("disabled", true);
+      } else {
+        this.input.removeAttribute("disabled");
+      }
+    }
   }
 
   set value (value) {
