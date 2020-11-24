@@ -8,6 +8,11 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
 
+  setContentElement(contentElement) {
+    this.contentElement = contentElement;
+    return this;
+  }
+
   setType(type) {
     this.type = type;
     return this;
@@ -38,7 +43,7 @@ class CcMdcDialog extends HTMLElement {
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" id="my-dialog-content">${html}</div>
+              <div class="mdc-dialog__content" id="my-dialog-content"></div>
               <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
                   <div class="mdc-button__ripple"></div>
@@ -58,7 +63,7 @@ class CcMdcDialog extends HTMLElement {
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" id="my-dialog-content">${html}</div>
+              <div class="mdc-dialog__content" id="my-dialog-content"></div>
               <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
                   <div class="mdc-button__ripple"></div>
@@ -75,6 +80,15 @@ class CcMdcDialog extends HTMLElement {
         </div>`;
         break;
     }
+    var dlgContent = this.querySelector("#my-dialog-content");
+    if (this.contentElement) {
+      if (this.contentElement.setDialogContainer) {
+        this.contentElement.setDialogContainer(this);
+      }
+      dlgContent.appendChild(this.contentElement);
+    } else if (html) {
+      dlgContent.innerHTML = html;
+    }
 
     this.dialog = this.childNodes[0];
     this.mdcComponent = mdc.dialog.MDCDialog.attachTo(this.dialog);
@@ -89,6 +103,11 @@ class CcMdcDialog extends HTMLElement {
         this.dlgClosed = e.detail.action;
       }
     });
+  }
+
+  setMaxWidth(width) {
+    var surface = this.querySelector(".mdc-dialog__surface");
+    surface.style.maxWidth = width;
   }
 
   disconnectedCallback() {
