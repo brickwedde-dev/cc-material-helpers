@@ -29,6 +29,10 @@ class CcTinyMCEEditor extends HTMLElement {
         help: { title: 'Help', items: 'help' }
       },
       menubar: 'file edit insert view format table tools help',
+      theme: 'silver',
+      mobile: {
+        theme: 'silver',
+      },
       image_list: this.imagelist,
       automatic_uploads: true,
       file_picker_types: 'image',
