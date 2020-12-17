@@ -11,7 +11,7 @@ class CcTinyMCEEditor extends HTMLElement {
 
     tinymce.init( {
       target: this.childNodes[0], 
-      plugins: 'autoresize image',
+      plugins: 'autoresize image emoticons',
       setup:(ed) => {
         this.editor = ed;
         ed.on('change', (e) => {
