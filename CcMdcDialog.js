@@ -59,11 +59,12 @@ class CcMdcDialog extends HTMLElement {
         this.innerHTML = `<div class="mdc-dialog" style="z-index:999999;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
+              style="display:table;";
               role="alertdialog"
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" id="my-dialog-content"></div>
+              <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;"></div>
               <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
                   <div class="mdc-button__ripple"></div>
@@ -92,6 +93,9 @@ class CcMdcDialog extends HTMLElement {
 
     this.dialog = this.childNodes[0];
     this.mdcComponent = mdc.dialog.MDCDialog.attachTo(this.dialog);
+    this.mdcComponent.escapeKeyAction = "";
+    this.mdcComponent.scrimClickAction = "";
+    
     if (this._open) {
       this.mdcComponent.open();
     }

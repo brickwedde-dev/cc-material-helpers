@@ -11,7 +11,7 @@ class CcMdcDrawer extends HTMLElement {
       <div class="mdc-list"></div>
     </div>
   </aside>
-  <div class="mdc-drawer-app-content">
+  <div class="mdc-drawer-app-content" style="height:100%;">
   </div>`;
 
     this.mdcComponent = mdc.drawer.MDCDrawer.attachTo(this.childNodes[0]);
