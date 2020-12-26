@@ -99,7 +99,9 @@ class CcTinyMCEEditor extends HTMLElement {
 
   applyValue() {
     if (this.editor) {
-      this.editor.setContent(this._value);
+      if (this._value && this._value.length > 0) {
+        this.editor.setContent(this._value);
+      }
     }
   }
 
