@@ -11,7 +11,7 @@ class CcTinyMCEEditor extends HTMLElement {
 
     tinymce.init( {
       target: this.childNodes[0], 
-      plugins: 'image emoticons code spellchecker link',
+      plugins: 'image emoticons code link',
       setup:(ed) => {
         this.editor = ed;
         ed.on('change', (e) => {
@@ -21,6 +21,7 @@ class CcTinyMCEEditor extends HTMLElement {
       mobile: {
         menubar: true,
       },
+      browser_spellcheck: true,
       image_list: this.imagelist,
       automatic_uploads: true,
       file_picker_types: 'image',
