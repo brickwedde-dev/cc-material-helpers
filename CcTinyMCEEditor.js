@@ -10,7 +10,7 @@ class CcTinyMCEEditor extends HTMLElement {
 
     tinymce.init( {
       target: this.childNodes[0], 
-      plugins: 'image emoticons code link',
+      plugins: 'image emoticons media searchreplace table code link',
       setup:(ed) => {
         this.editor = ed;
         ed.on('change', (e) => {
