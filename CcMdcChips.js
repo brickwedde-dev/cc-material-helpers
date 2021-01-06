@@ -71,6 +71,13 @@ class CcMdcChips extends HTMLElement {
     }
   }
 
+  clearChips() {
+    var chips = this.mdcComponent.chips_;
+    for(var chip of chips) {
+      chip.beginExit();
+    }
+  }
+
   connectedCallback() {
     var label = this.label || this.getAttribute("label") || null;
     var width = this.getAttribute("width") || this.width || 200;
@@ -84,7 +91,7 @@ class CcMdcChips extends HTMLElement {
       e.stopPropagation();
       e.preventDefault();
       this._value[e.detail.chipId] = e.detail.selected;
-      this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value}}));
+      this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
     });
 
     this.applyValue();
