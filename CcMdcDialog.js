@@ -139,6 +139,10 @@ class CcMdcDialog extends HTMLElement {
       }
     });
   }
+
+  close() {
+    this.mdcComponent.close();
+  }
 }
 
 window.customElements.define("cc-mdc-dialog", CcMdcDialog);
