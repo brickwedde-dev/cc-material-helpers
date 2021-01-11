@@ -2,6 +2,15 @@ class CcMdcButton extends HTMLElement {
   constructor() {
     super();
     this._disabled = false;
+    this.addEventListener("click", (e) => {
+      if (this._disabled) {
+        e.cancelBubble = true;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    });
   }
 
   setIcon(icon) {
