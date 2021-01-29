@@ -54,7 +54,10 @@ class CcMdcSelect extends HTMLElement {
         return JSON.parse(this.mdcComponent.value);
       } catch (e) {}
     }
-    return this._value;
+    try {
+      return JSON.parse(this._value);
+    } catch (e) {}
+    return null;
   }
 
   applyValue() {
@@ -93,7 +96,7 @@ class CcMdcSelect extends HTMLElement {
     <span class="mdc-line-ripple"></span>
   </div>
 
-  <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+  <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fixed">
     <ul class="mdc-list">
     </ul>
   </div>
@@ -101,6 +104,7 @@ class CcMdcSelect extends HTMLElement {
 
     var elem = this.childNodes[0];
     this.mdcComponent = mdc.select.MDCSelect.attachTo(elem);
+//    this.mdcComponent.setFixedPosition(true)
     elem.addEventListener("MDCSelect:change", (e) => {
       e.stopPropagation();
       e.preventDefault();
