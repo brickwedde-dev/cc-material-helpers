@@ -78,6 +78,12 @@ class CcMdcTextField extends HTMLElement {
     }
   }
 
+  focus() {
+    if (this.mdcComponent) {
+      this.mdcComponent.focus();
+    }
+  }
+
   disconnectedCallback() {
     this.mdcComponent.destroy();
   }
