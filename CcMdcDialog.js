@@ -66,13 +66,13 @@ class CcMdcDialog extends HTMLElement {
               aria-describedby="my-dialog-content">
               <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;"></div>
               <div class="mdc-dialog__actions">
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
-                  <div class="mdc-button__ripple"></div>
-                  <span class="mdc-button__label">${cancel}</span>
-                </button>
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="ok">
                   <div class="mdc-button__ripple"></div>
                   <span class="mdc-button__label">${ok}</span>
+                </button>
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                  <div class="mdc-button__ripple"></div>
+                  <span class="mdc-button__label">${cancel}</span>
                 </button>
               </div>
             </div>
