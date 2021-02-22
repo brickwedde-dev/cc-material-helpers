@@ -23,6 +23,15 @@ class CcMdcSelect extends HTMLElement {
     }
   }
   
+  removeItems() {
+    this._items = [];
+    if (this.mdcList) {
+      while (this.mdcList.childNodes.length > 0) {
+        this.mdcList.removeChild(this.mdcList.childNodes[0]);
+      }
+    }
+  }
+
   addItem (html, value) {
     var stringifiedvalue = JSON.stringify(value);
     if (this.mdcList) {
