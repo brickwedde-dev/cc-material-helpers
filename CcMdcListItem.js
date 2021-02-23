@@ -5,10 +5,11 @@ class CcMdcListItem extends HTMLAnchorElement {
     this.icon = icon;
     this._inactive = false;
     this._activated = false;
+    this._selected = false;
   }
 
   connectedCallback() {
-    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
     this.style.cursor = this._inactive ? "default" : "pointer";
     this.href = "#";
     this.ariaCurrent = "page";
@@ -35,13 +36,19 @@ class CcMdcListItem extends HTMLAnchorElement {
   set activated (activated) {
     this._activated = activated;
     this.style.cursor = this._inactive ? "default" : "pointer";
-    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
+  }
+
+  set selected (selected) {
+    this._selected = selected;
+    this.style.cursor = this._inactive ? "default" : "pointer";
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
   }
 
   set inactive (inactive) {
     this._inactive = inactive;
     this.style.cursor = this._inactive ? "default" : "pointer";
-    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
   }
 }
 
