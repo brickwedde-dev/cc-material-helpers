@@ -16,6 +16,7 @@ class CcMdcTextField extends HTMLElement {
 
     this.type = this.getAttribute("type") || "text";
     var label = this.getAttribute("label") || "Label";
+    this._value = this.getAttribute("value") || "";
 
     var type = this.type;
     switch (this.type) {
