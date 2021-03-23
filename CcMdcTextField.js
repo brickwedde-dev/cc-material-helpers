@@ -18,6 +18,8 @@ class CcMdcTextField extends HTMLElement {
     var label = this.getAttribute("label") || "Label";
     this._value = this.getAttribute("value") || "";
 
+    var hasWidth = ("" + this.style.width).indexOf("px") > 0;
+
     var type = this.type;
     switch (this.type) {
       case "minutes":
@@ -25,7 +27,7 @@ class CcMdcTextField extends HTMLElement {
         break;
     }
 
-    this.innerHTML = `<label class="mdc-text-field mdc-text-field--filled">
+    this.innerHTML = `<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
   <input type="${type}" class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
