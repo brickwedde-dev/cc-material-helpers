@@ -40,6 +40,15 @@ class CcMdcList extends HTMLElement {
     return li;
   }
 
+  addItemCallback(fillcb) {
+    var li = new CcMdcListItemCb(fillcb);
+    if (this.ulElem) {
+      this.ulElem.appendChild (li);
+    }
+    this.items.push(li);
+    return li;
+  }
+
   disconnectedCallback() {
     this.mdcComponent.destroy();
   }

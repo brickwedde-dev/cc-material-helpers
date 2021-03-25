@@ -62,6 +62,7 @@ class CcMdcListItem2 extends HTMLLIElement {
     this._inactive = false;
     this._activated = false;
     this._connected = false;
+    this.fillcb = null;
   }
 
   connectedCallback() {
@@ -73,10 +74,18 @@ class CcMdcListItem2 extends HTMLLIElement {
     this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
     this.style.cursor = this._inactive ? "default" : "pointer";
     if (this._connected) {
-      this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
-        `<span class="mdc-list-item__text"><span class="mdc-list-item__primary-text">${this._html1}</span>
-        <span class="mdc-list-item__secondary-text">${this._html2}</span></span>`;
+      if (this.fillcb) {
+        this.fillcb(this);
+      } else {
+        this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
+          `<span class="mdc-list-item__text"><span class="mdc-list-item__primary-text">${this._html1}</span>
+          <span class="mdc-list-item__secondary-text">${this._html2}</span></span>`;
+      }
     }
+  }
+
+  setFillCallback (fillcb) {
+    this.fillcb = fillcb;
   }
 
   set html1 (html1) {
@@ -107,3 +116,46 @@ class CcMdcListItem2 extends HTMLLIElement {
 }
 
 window.customElements.define("cc-mdc-list-item2", CcMdcListItem2, { extends: "li" });
+
+
+
+class CcMdcListItemCb extends HTMLLIElement {
+  constructor(fillcb) {
+    super();
+    this._inactive = false;
+    this._activated = false;
+    this._connected = false;
+    this.fillcb = fillcb;
+  }
+
+  connectedCallback() {
+    this._connected = true;
+    this.redraw();
+  }
+
+  redraw ()  {
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
+    this.style.cursor = this._inactive ? "default" : "pointer";
+    if (this._connected) {
+      this.fillcb(this);
+    }
+  }
+
+  disconnectedCallback() {
+    this.fillcb = null;
+  }
+
+  set activated (activated) {
+    this._activated = activated;
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
+    this.style.cursor = this._inactive ? "default" : "pointer";
+  }
+
+  set inactive (inactive) {
+    this._inactive = inactive;
+    this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
+    this.style.cursor = this._inactive ? "default" : "pointer";
+  }
+}
+
+window.customElements.define("cc-mdc-list-item-cb", CcMdcListItemCb, { extends: "li" });
