@@ -93,7 +93,7 @@ class CcMdcDialog extends HTMLElement {
 
     this.dialog = this.childNodes[0];
     this.mdcComponent = mdc.dialog.MDCDialog.attachTo(this.dialog);
-    this.mdcComponent.escapeKeyAction = "";
+    this.mdcComponent.escapeKeyAction = "close";
     this.mdcComponent.scrimClickAction = "";
     
     if (this._open) {
