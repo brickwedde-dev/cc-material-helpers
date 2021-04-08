@@ -136,7 +136,7 @@ class CcMdcListItemCb extends HTMLLIElement {
   redraw ()  {
     this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "");
     this.style.cursor = this._inactive ? "default" : "pointer";
-    if (this._connected) {
+    if (this._connected && this.fillcb) {
       this.fillcb(this);
     }
   }
