@@ -39,7 +39,12 @@ class CcMdcTopAppBar extends HTMLElement {
   }
 
   set titleHTML (s) {
-    this.titleElement.innerHTML = s;
+    if (typeof s == "string") {
+      this.titleElement.innerHTML = s;
+    } else if (s instanceof HTMLElement) {
+      this.titleElement.innerHTML = "";
+      this.titleElement.appendChild(s);
+    }
   }
 
   set titleText (s) {
