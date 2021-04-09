@@ -78,13 +78,13 @@ class CcMdcList extends HTMLElement {
     this.dndarrow.style.top = parseInt(top) + "px";
 
     if (!this.dndarrowani) {
-      this.dndarrowani = setInterval(() => {
+/*      this.dndarrowani = setInterval(() => {
         this.dndarrowleft += 3;
         if (this.dndarrowleft > this.dndarrow.offsetWidth / 3) {
           this.dndarrowleft = 0;
         }
         this.dndarrow.style.left = this.dndarrowleft + "px";
-      }, 100);
+      }, 100);*/
     }
   }
 
