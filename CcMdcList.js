@@ -24,10 +24,50 @@ class CcMdcList extends HTMLElement {
     this.mdcComponent = mdc.list.MDCList.attachTo(this.childNodes[0]);
 
     if (this.dndarrowconfig) {
-      this.dndarrow = document.createElement("img");
-      this.dndarrow.src = this.dndarrowconfig.src;
-      this.dndarrow.style = "display:none;position:absolute;left:0px;top:0px;height:30;width:60px;";
-      this.insertBefore(this.dndarrow, this.ulElem);
+      if (this.dndarrowconfig.src) {
+        this.dndarrow = document.createElement("img");
+        this.dndarrow.src = this.dndarrowconfig.src;
+        this.dndarrow.style = "display:none;position:absolute;left:0px;top:0px;height:30;width:60px;";
+        this.insertBefore(this.dndarrow, this.ulElem);
+      } else if (this.dndarrowconfig.leftsrc || this.dndarrowconfig.middlesrc || this.dndarrowconfig.rightsrc) {
+        this.dndarrow = document.createElement("div");
+        this.dndarrow.style = "display:none;position:absolute;left:0px;top:0px;height:" + (this.dndarrowconfig.height || "30px") + ";width:" + (this.dndarrowconfig.width || "100%") + ";";
+        this.insertBefore(this.dndarrow, this.ulElem);
+        var leftoffset = 0;
+        if (this.dndarrowconfig.leftsrc) {
+          var left = document.createElement("img");
+          left.src = this.dndarrowconfig.leftsrc;
+          left.style.position = "absolute";
+          left.style.top = "0px";
+          left.style.left = "0px";
+          left.style.height = "100%";
+          left.style.width = this.dndarrowconfig.leftwidth + "px";
+          this.dndarrow.appendChild(left);
+          leftoffset = this.dndarrowconfig.leftwidth;
+        }
+        var rightoffset = 0;
+        if (this.dndarrowconfig.rightsrc) {
+          var right = document.createElement("img");
+          right.src = this.dndarrowconfig.rightsrc;
+          right.style.position = "absolute";
+          right.style.top = "0px";
+          right.style.right = "0px";
+          right.style.height = "100%";
+          right.style.width = this.dndarrowconfig.rightwidth + "px";
+          this.dndarrow.appendChild(right);
+          rightoffset = this.dndarrowconfig.rightwidth;
+        }
+        if (this.dndarrowconfig.middlesrc) {
+          var middle = document.createElement("img");
+          middle.src = this.dndarrowconfig.middlesrc;
+          middle.style.position = "absolute";
+          middle.style.top = "0px";
+          middle.style.height = "100%";
+          middle.style.left = leftoffset + "px";
+          middle.style.width = "calc(100% - " + (leftoffset + rightoffset) + "px)";
+          this.dndarrow.appendChild(middle);
+        }
+      }
     }
 
     this.mdcComponent.singleSelection = this._singleSelection;
