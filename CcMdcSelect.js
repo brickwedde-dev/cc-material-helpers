@@ -2,7 +2,7 @@ class CcMdcSelect extends HTMLElement {
   constructor(label) {
     super();
     this.label = label;
-    this._value = undefined;
+    this._value = JSON.stringify(undefined);
     this._disabled = false;
     this._items = [];
     this.width = 200;
@@ -54,11 +54,13 @@ class CcMdcSelect extends HTMLElement {
   }
 
   set selectedIndex (i) {
-    this.mdcComponent.selectedIndex = i;
+    if (this.mdcComponent) {
+      this.mdcComponent.selectedIndex = i;
+    }
   }
 
   get selectedIndex () {
-    return this.mdcComponent.selectedIndex;
+    return this.mdcComponent ? this.mdcComponent.selectedIndex : -1;
   }
 
   set value (value) {

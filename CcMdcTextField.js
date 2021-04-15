@@ -16,7 +16,9 @@ class CcMdcTextField extends HTMLElement {
 
     this.type = this.getAttribute("type") || "text";
     var label = this.getAttribute("label") || "Label";
-    this._value = this.getAttribute("value") || "";
+    if (this.hasAttribute("value")) {
+      this._value = this.getAttribute("value");
+    }
     this._disabled = this.getAttribute("disabled") ? true : false;
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
