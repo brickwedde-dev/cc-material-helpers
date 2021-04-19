@@ -48,6 +48,10 @@ class CcMdcButton extends HTMLElement {
     var icon = this.icon || this.getAttribute("icon") || null;
     var actionbar = this.actionbar || this.getAttribute("actionbar") || false;
 
+    if (icon && icon.charAt && icon.charAt(0) == "/") {
+      icon = `<img src="${icon}" style="width:16px;height:16px;">`;
+    }
+
     if (icon && label) {
       this.innerHTML = `<button class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">${icon}</i>
