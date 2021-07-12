@@ -71,11 +71,15 @@ class CcMdcSelect extends HTMLElement {
   get value () {
     if (this.mdcComponent) {
       try {
-        return JSON.parse(this.mdcComponent.value);
+        if (this.mdcComponent.value) {
+          return JSON.parse(this.mdcComponent.value);
+        }
       } catch (e) {}
     }
     try {
-      return JSON.parse(this._value);
+      if (this._value) {
+        return JSON.parse(this._value);
+      }
     } catch (e) {}
     return null;
   }
@@ -128,7 +132,7 @@ class CcMdcSelect extends HTMLElement {
     elem.addEventListener("MDCSelect:change", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      this.dispatchEvent(new CustomEvent("change", {detail: {value : JSON.parse(e.detail.value)}}));
+      this.dispatchEvent(new CustomEvent("change", {detail: {value : e.detail.value ? JSON.parse(e.detail.value) : undefined }}));
     });
     
     this.mdcList = this.querySelector(".mdc-list");

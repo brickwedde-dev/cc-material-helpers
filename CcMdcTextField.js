@@ -14,6 +14,8 @@ class CcMdcTextField extends HTMLElement {
   connectedCallback() {
     globalLabelCount++;
 
+    var step = this.getAttribute("step") || "";
+
     this.type = this.getAttribute("type") || "text";
     var label = this.getAttribute("label") || "Label";
     if (this.hasAttribute("value")) {
@@ -33,11 +35,12 @@ class CcMdcTextField extends HTMLElement {
     this.innerHTML = `<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
-  <input type="${type}" class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
+  <input type="${type}" step="${step}" class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
   <span class="mdc-line-ripple"></span>
 </label>`;
 
     this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
+    this.label = this.querySelector("label");
     this.input = this.querySelector("input");
     this.applyValue();
     this.applyDisabled();
@@ -54,6 +57,13 @@ class CcMdcTextField extends HTMLElement {
         this.input.setAttribute("disabled", true);
       } else {
         this.input.removeAttribute("disabled");
+      }
+    }
+    if (this.label) {
+      if (this._disabled) {
+        this.label.className = "mdc-text-field mdc-text-field--filled mdc-text-field--disabled";
+      } else {
+        this.label.className = "mdc-text-field mdc-text-field--filled";
       }
     }
   }
