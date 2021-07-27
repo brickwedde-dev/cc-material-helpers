@@ -29,8 +29,12 @@ class CcMdcCheckbox extends HTMLElement {
     </div>
     `;
 
-    this.mdcComponent = mdc.checkbox.MDCCheckbox.attachTo(this.childNodes[0]);
+    this.mdcCheckboxDiv = this.querySelector(".mdc-checkbox");
+    this.mdcComponent = mdc.checkbox.MDCCheckbox.attachTo(this.mdcCheckboxDiv);
+    this.mdcFormField = mdc.formField.MDCFormField.attachTo(this.querySelector('.mdc-form-field'));
+    this.mdcFormField.input = this.mdcComponent;
     this.input = this.querySelector("input");
+    this.label = this.querySelector("label");
     this.applyValue();
     this.applyDisabled();
   }
@@ -41,11 +45,18 @@ class CcMdcCheckbox extends HTMLElement {
   }
 
   applyDisabled() {
-    if (this.input) {
+    if (this.mdcComponent) {
       if (this._disabled) {
-        this.input.setAttribute("disabled", true);
+        this.mdcComponent.disabled = true;
       } else {
-        this.input.removeAttribute("disabled");
+        this.mdcComponent.disabled = false;
+      }
+    }
+    if (this.label) {
+      if (this._disabled) {
+        this.label.style.color = "rgba(0, 0, 0, 0.38)";
+      } else {
+        this.label.style.color = "inherit";
       }
     }
   }
@@ -82,6 +93,7 @@ class CcMdcCheckbox extends HTMLElement {
 
   disconnectedCallback() {
     this.mdcComponent.destroy();
+    this.mdcFormField.destroy();
   }
 }
 
