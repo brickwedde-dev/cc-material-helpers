@@ -15,6 +15,8 @@ class CcMdcTextField extends HTMLElement {
     globalLabelCount++;
 
     var step = this.getAttribute("step") || "";
+    var min = this.getAttribute("min") || "";
+    var max = this.getAttribute("max") || "";
 
     this.type = this.getAttribute("type") || "text";
     var label = this.getAttribute("label") || "Label";
@@ -35,7 +37,7 @@ class CcMdcTextField extends HTMLElement {
     this.innerHTML = `<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
-  <input type="${type}" step="${step}" class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
+  <input type="${type}" step="${step}" ${min ? `min="${min}"` : ``} ${max ? `max="${max}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
   <span class="mdc-line-ripple"></span>
 </label>`;
 
