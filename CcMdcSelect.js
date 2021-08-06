@@ -31,6 +31,10 @@ class CcMdcSelect extends HTMLElement {
         this.mdcList.removeChild(this.mdcList.childNodes[0]);
       }
     }
+    if (this.mdcComponent) {
+      this.mdcComponent.layout();
+      this.mdcComponent.layoutOptions();
+    }
   }
 
   addItem (html, value) {
