@@ -86,7 +86,10 @@ class CcMdcSelect extends HTMLElement {
 
   applyValue() {
     if (this.mdcComponent && isDefined(this._value)) {
-      this.mdcComponent.value = this._value;
+      try {
+        this.mdcComponent.value = this._value;
+      } catch (e) {
+      }
     }
   }
 
