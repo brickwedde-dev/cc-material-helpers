@@ -59,7 +59,10 @@ class CcMdcSelect extends HTMLElement {
 
   set selectedIndex (i) {
     if (this.mdcComponent) {
-      this.mdcComponent.selectedIndex = i;
+      try {
+        this.mdcComponent.selectedIndex = i;
+      } catch(e) {
+      }
     }
   }
 
