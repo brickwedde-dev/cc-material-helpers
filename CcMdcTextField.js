@@ -73,7 +73,8 @@ class CcMdcTextField extends HTMLElement {
   set value (value) {
     switch (this.type) {
       case "datetime-local":
-        this._value = new Date(value).toISOString().slice(0,-5);
+        var tzoffset = (new Date()).getTimezoneOffset() * 60000;
+        this._value = new Date(value - tzoffset).toISOString().slice(0,-5);
         break;
       case "minutes":
         this._value = CcMdcTextField_minutesToString(value);
