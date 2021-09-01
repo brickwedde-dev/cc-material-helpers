@@ -31,6 +31,10 @@ class CcMdcSelect extends HTMLElement {
         this.mdcList.removeChild(this.mdcList.childNodes[0]);
       }
     }
+    if (this.mdcComponent) {
+      this.mdcComponent.layout();
+      this.mdcComponent.layoutOptions();
+    }
   }
 
   addItem (html, value) {
@@ -55,7 +59,10 @@ class CcMdcSelect extends HTMLElement {
 
   set selectedIndex (i) {
     if (this.mdcComponent) {
-      this.mdcComponent.selectedIndex = i;
+      try {
+        this.mdcComponent.selectedIndex = i;
+      } catch(e) {
+      }
     }
   }
 
@@ -86,7 +93,10 @@ class CcMdcSelect extends HTMLElement {
 
   applyValue() {
     if (this.mdcComponent && isDefined(this._value)) {
-      this.mdcComponent.value = this._value;
+      try {
+        this.mdcComponent.value = this._value;
+      } catch (e) {
+      }
     }
   }
 

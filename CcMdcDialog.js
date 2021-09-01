@@ -18,6 +18,11 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
   
+  setNoButtons() {
+    this.type = "nobuttons";
+    return this;
+  }
+
   setOkCancel(ok, cancel) {
     this.type = "okcancel";
     this.ok = ok;
@@ -34,6 +39,20 @@ class CcMdcDialog extends HTMLElement {
     var cancel = this.cancel || this.getAttribute("cancel") || "Abbruch";
 
     switch (type) {
+      case "nobuttons":
+        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
+          <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="my-dialog-title"
+              aria-describedby="my-dialog-content">
+              <div class="mdc-dialog__content" id="my-dialog-content"></div>
+            </div>
+          </div>
+          <div class="mdc-dialog__scrim"></div>
+        </div>`;
+        break;
       default:
       case "alert":
         this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
@@ -93,8 +112,16 @@ class CcMdcDialog extends HTMLElement {
 
     this.dialog = this.childNodes[0];
     this.mdcComponent = mdc.dialog.MDCDialog.attachTo(this.dialog);
-    this.mdcComponent.escapeKeyAction = "close";
-    this.mdcComponent.scrimClickAction = "";
+    switch (type) {
+      case "nobuttons":
+        this.mdcComponent.escapeKeyAction = "";
+        this.mdcComponent.scrimClickAction = "";
+        break;
+      default:
+        this.mdcComponent.escapeKeyAction = "close";
+        this.mdcComponent.scrimClickAction = "";
+        break;
+    }
     
     if (this._open) {
       this.mdcComponent.open();

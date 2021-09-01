@@ -19,7 +19,7 @@ class CcMdcListItem extends HTMLLIElement {
         <span class="mdc-list-item__text">${this.name}</span>`;
       } else if (this.icon.icon) {
         this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
-        `<i style="max-width:${this.icon.maxwidth}px;width:${this.icon.width}px;max-height:${this.icon.maxheight}px;height:${this.icon.height}px;margin-right:${this.icon.marginright}px;filter: invert(${this.icon.invert});" class="material-icons mdc-list-item__graphic" aria-hidden="true">${this.icon.icon}</i>
+        `<i style="max-width:${this.icon.maxwidth}px;width:${this.icon.width}px;max-height:${this.icon.maxheight}px;height:${this.icon.height}px;margin-right:${this.icon.marginright}px;filter: invert(${this.icon.invert});${this.icon.color ? "color:" + this.icon.color + ";" : ""}" class="material-icons mdc-list-item__graphic" aria-hidden="true">${this.icon.icon}</i>
         <span class="mdc-list-item__text">${this.name}</span>`;
       }
     } else {
