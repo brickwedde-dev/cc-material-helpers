@@ -72,6 +72,9 @@ class CcMdcTextField extends HTMLElement {
 
   set value (value) {
     switch (this.type) {
+      case "datetime-local":
+        this._value = new Date(value).toISOString().slice(0,-5);
+        break;
       case "minutes":
         this._value = CcMdcTextField_minutesToString(value);
         break;
@@ -85,12 +88,22 @@ class CcMdcTextField extends HTMLElement {
   get value () {
     if (this.mdcComponent) {
       switch (this.type) {
+        case "datetime-local":
+          return new Date(this.mdcComponent.value).getTime();
         case "minutes":
           var x = this.mdcComponent.value.split(":");
           return parseInt(x[0]) * 60 + parseInt(x[1]);
       }
   
       return this.mdcComponent.value;
+    }
+    
+    switch (this.type) {
+      case "datetime-local":
+        return new Date(this._value).getTime();
+      case "minutes":
+        var x = this._value.split(":");
+        return parseInt(x[0]) * 60 + parseInt(x[1]);
     }
     return this._value;
   }
