@@ -104,6 +104,7 @@ class CcTinyMCEEditor extends HTMLElement {
   }
 
   disconnectedCallback() {
+    tinymce.remove();
   }
 }
 

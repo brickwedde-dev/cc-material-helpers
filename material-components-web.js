@@ -5271,6 +5271,7 @@ var __assign = this && this.__assign || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var foundation_1 = __webpack_require__(/*! @material/base/foundation */ "./packages/mdc-base/foundation.ts");
 var constants_1 = __webpack_require__(/*! ./constants */ "./packages/mdc-dialog/constants.ts");
+var g_MdcDialogFoundations = [];
 var MDCDialogFoundation = /** @class */function (_super) {
     __extends(MDCDialogFoundation, _super);
     function MDCDialogFoundation(adapter) {
@@ -5389,6 +5390,7 @@ var MDCDialogFoundation = /** @class */function (_super) {
     MDCDialogFoundation.prototype.open = function () {
         var _this = this;
         this.isOpen_ = true;
+        g_MdcDialogFoundations.push(_this);
         this.adapter.notifyOpening();
         this.adapter.addClass(constants_1.cssClasses.OPENING);
         // Wait a frame once display is no longer "none", to establish basis for animation
@@ -5408,6 +5410,11 @@ var MDCDialogFoundation = /** @class */function (_super) {
         if (action === void 0) {
             action = '';
         }
+        var i = g_MdcDialogFoundations.indexOf(_this);
+        if (i >= 0) {
+            g_MdcDialogFoundations.slice(i, 1);
+        }
+
         if (!this.isOpen_) {
             // Avoid redundant close calls (and events), e.g. from keydown on elements that inherently emit click
             return;
@@ -5489,8 +5496,29 @@ var MDCDialogFoundation = /** @class */function (_super) {
     };
     /** Handles keydown on the document. */
     MDCDialogFoundation.prototype.handleDocumentKeydown = function (evt) {
+        var _this = this;
         var isEscape = evt.key === 'Escape' || evt.keyCode === 27;
         if (isEscape && this.escapeKeyAction_ !== '') {
+            var i = g_MdcDialogFoundations.indexOf(_this);
+            if (i >= 0) {
+                var hasMoreRecent = false;
+                i++;
+                for(; i < g_MdcDialogFoundations.length; i++) {
+                    if (g_MdcDialogFoundations[i].isOpen_) {
+                        hasMoreRecent = true;
+                        break;
+                    }
+                }
+            }
+            if (hasMoreRecent) {
+                return;
+            }
+
+            if (this.isOpen_) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                evt.stopImmediatePropagation();
+            }
             this.close(this.escapeKeyAction_);
         }
     };

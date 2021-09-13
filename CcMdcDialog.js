@@ -133,6 +133,9 @@ class CcMdcDialog extends HTMLElement {
       } else {
         this.dlgClosed = e.detail.action;
       }
+      setTimeout(() => {
+        this.parentNode.removeChild(this);
+      }, 100);
     });
   }
 
