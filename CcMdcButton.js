@@ -2,6 +2,15 @@ class CcMdcButton extends HTMLElement {
   constructor() {
     super();
     this._disabled = false;
+    this.addEventListener("click", (e) => {
+      if (this._disabled) {
+        e.cancelBubble = true;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    });
   }
 
   setIcon(icon) {
@@ -38,6 +47,10 @@ class CcMdcButton extends HTMLElement {
     var label = this.label || this.getAttribute("label") || null;
     var icon = this.icon || this.getAttribute("icon") || null;
     var actionbar = this.actionbar || this.getAttribute("actionbar") || false;
+
+    if (icon && icon.charAt && icon.charAt(0) == "/") {
+      icon = `<img src="${icon}" style="width:16px;height:16px;">`;
+    }
 
     if (icon && label) {
       this.innerHTML = `<button class="mdc-button mdc-button--raised">

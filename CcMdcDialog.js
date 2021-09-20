@@ -18,6 +18,11 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
   
+  setNoButtons() {
+    this.type = "nobuttons";
+    return this;
+  }
+
   setOkCancel(ok, cancel) {
     this.type = "okcancel";
     this.ok = ok;
@@ -34,9 +39,23 @@ class CcMdcDialog extends HTMLElement {
     var cancel = this.cancel || this.getAttribute("cancel") || "Abbruch";
 
     switch (type) {
+      case "nobuttons":
+        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
+          <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="my-dialog-title"
+              aria-describedby="my-dialog-content">
+              <div class="mdc-dialog__content" id="my-dialog-content"></div>
+            </div>
+          </div>
+          <div class="mdc-dialog__scrim"></div>
+        </div>`;
+        break;
       default:
       case "alert":
-        this.innerHTML = `<div class="mdc-dialog" style="z-index:999999;">
+        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
@@ -56,7 +75,7 @@ class CcMdcDialog extends HTMLElement {
         </div>`;
         break;
       case "okcancel":
-        this.innerHTML = `<div class="mdc-dialog" style="z-index:999999;">
+        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               style="display:table;";
@@ -66,13 +85,13 @@ class CcMdcDialog extends HTMLElement {
               aria-describedby="my-dialog-content">
               <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;"></div>
               <div class="mdc-dialog__actions">
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
-                  <div class="mdc-button__ripple"></div>
-                  <span class="mdc-button__label">${cancel}</span>
-                </button>
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="ok">
                   <div class="mdc-button__ripple"></div>
                   <span class="mdc-button__label">${ok}</span>
+                </button>
+                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                  <div class="mdc-button__ripple"></div>
+                  <span class="mdc-button__label">${cancel}</span>
                 </button>
               </div>
             </div>
@@ -93,8 +112,16 @@ class CcMdcDialog extends HTMLElement {
 
     this.dialog = this.childNodes[0];
     this.mdcComponent = mdc.dialog.MDCDialog.attachTo(this.dialog);
-    this.mdcComponent.escapeKeyAction = "";
-    this.mdcComponent.scrimClickAction = "";
+    switch (type) {
+      case "nobuttons":
+        this.mdcComponent.escapeKeyAction = "";
+        this.mdcComponent.scrimClickAction = "";
+        break;
+      default:
+        this.mdcComponent.escapeKeyAction = "close";
+        this.mdcComponent.scrimClickAction = "";
+        break;
+    }
     
     if (this._open) {
       this.mdcComponent.open();
@@ -106,6 +133,9 @@ class CcMdcDialog extends HTMLElement {
       } else {
         this.dlgClosed = e.detail.action;
       }
+      setTimeout(() => {
+        this.parentNode.removeChild(this);
+      }, 100);
     });
   }
 

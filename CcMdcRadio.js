@@ -1,4 +1,4 @@
-class CcMdcCheckbox extends HTMLElement {
+class CcMdcRadio extends HTMLElement {
   constructor() {
     super();
     this._disabled = false;
@@ -8,29 +8,25 @@ class CcMdcCheckbox extends HTMLElement {
     globalLabelCount++;
 
     var label = this.getAttribute("label") || "Label";
+    var name = this.getAttribute("name") || `cc-mdc-label-${globalLabelCount}`;
 
     this.innerHTML = `<div class="mdc-form-field">
-      <div class="mdc-checkbox">
-        <input type="checkbox"
-              class="mdc-checkbox__native-control"
-              id="cc-mdc-label-${globalLabelCount}"/>
-        <div class="mdc-checkbox__background">
-          <svg class="mdc-checkbox__checkmark"
-              viewBox="0 0 24 24">
-            <path class="mdc-checkbox__checkmark-path"
-                  fill="none"
-                  d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-          </svg>
-          <div class="mdc-checkbox__mixedmark"></div>
+      <div class="mdc-form-field">
+        <div class="mdc-radio">
+          <input class="mdc-radio__native-control" type="radio" id="cc-mdc-label-${globalLabelCount}" name="${name}">
+          <div class="mdc-radio__background">
+            <div class="mdc-radio__outer-circle"></div>
+            <div class="mdc-radio__inner-circle"></div>
+          </div>
+          <div class="mdc-radio__ripple"></div>
         </div>
-        <div class="mdc-checkbox__ripple"></div>
+        <label for="cc-mdc-label-${globalLabelCount}">${label}</label>
       </div>
-      <label for="cc-mdc-label-${globalLabelCount}">${label}</label>
     </div>
     `;
 
-    this.mdcCheckboxDiv = this.querySelector(".mdc-checkbox");
-    this.mdcComponent = mdc.checkbox.MDCCheckbox.attachTo(this.mdcCheckboxDiv);
+    this.mdcRadioDiv = this.querySelector(".mdc-radio");
+    this.mdcComponent = mdc.radio.MDCRadio.attachTo(this.mdcRadioDiv);
     this.mdcFormField = mdc.formField.MDCFormField.attachTo(this.querySelector('.mdc-form-field'));
     this.mdcFormField.input = this.mdcComponent;
     this.input = this.querySelector("input");
@@ -97,4 +93,4 @@ class CcMdcCheckbox extends HTMLElement {
   }
 }
 
-window.customElements.define("cc-mdc-checkbox", CcMdcCheckbox);
+window.customElements.define("cc-mdc-radio", CcMdcRadio);

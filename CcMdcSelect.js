@@ -2,10 +2,11 @@ class CcMdcSelect extends HTMLElement {
   constructor(label) {
     super();
     this.label = label;
-    this._value = undefined;
+    this._value = JSON.stringify(undefined);
     this._disabled = false;
     this._items = [];
     this.width = 200;
+    this.customheight = 0;
   }
 
   set disabled (value) {
@@ -23,6 +24,19 @@ class CcMdcSelect extends HTMLElement {
     }
   }
   
+  removeItems() {
+    this._items = [];
+    if (this.mdcList) {
+      while (this.mdcList.childNodes.length > 0) {
+        this.mdcList.removeChild(this.mdcList.childNodes[0]);
+      }
+    }
+    if (this.mdcComponent) {
+      this.mdcComponent.layout();
+      this.mdcComponent.layoutOptions();
+    }
+  }
+
   addItem (html, value) {
     var stringifiedvalue = JSON.stringify(value);
     if (this.mdcList) {
@@ -43,6 +57,19 @@ class CcMdcSelect extends HTMLElement {
     }
   }
 
+  set selectedIndex (i) {
+    if (this.mdcComponent) {
+      try {
+        this.mdcComponent.selectedIndex = i;
+      } catch(e) {
+      }
+    }
+  }
+
+  get selectedIndex () {
+    return this.mdcComponent ? this.mdcComponent.selectedIndex : -1;
+  }
+
   set value (value) {
     this._value = JSON.stringify(value);
     this.applyValue();
@@ -51,27 +78,37 @@ class CcMdcSelect extends HTMLElement {
   get value () {
     if (this.mdcComponent) {
       try {
-        return JSON.parse(this.mdcComponent.value);
+        if (this.mdcComponent.value) {
+          return JSON.parse(this.mdcComponent.value);
+        }
       } catch (e) {}
     }
-    return this._value;
+    try {
+      if (this._value) {
+        return JSON.parse(this._value);
+      }
+    } catch (e) {}
+    return null;
   }
 
   applyValue() {
     if (this.mdcComponent && isDefined(this._value)) {
-      this.mdcComponent.value = this._value;
+      try {
+        this.mdcComponent.value = this._value;
+      } catch (e) {
+      }
     }
   }
 
   connectedCallback() {
-    var label = this.label || this.getAttribute("label") || null;
+    var label = this.label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
 
     this.innerHTML = `<div class="mdc-select mdc-select--filled" style="min-width:${width}px;max-width:${width}px;width:${width}px;">
-  <div class="mdc-select__anchor">
+  <div class="mdc-select__anchor" style="${this.customheight > 0 ? "height:" + this.customheight + "px;align-items:inherit;padding-left:0px;" : ""}">
     <span class="mdc-select__ripple"></span>
-    <span class="mdc-select__selected-text"></span>
-    <span class="mdc-select__dropdown-icon">
+    <span class="mdc-select__selected-text" style="${this.customheight > 0 ? "font-size:" + parseInt(this.customheight * 0.6) + "px;line-height:" + this.customheight + "px;height:" + this.customheight + "px;" : ""}"></span>
+    <span class="mdc-select__dropdown-icon" style="${this.customheight > 0 ? "margin-left:0px;margin-right:0px;" : ""}">
       <svg
           class="mdc-select__dropdown-icon-graphic"
           viewBox="7 10 10 5">
@@ -90,10 +127,10 @@ class CcMdcSelect extends HTMLElement {
       </svg>
     </span>
     <span class="mdc-floating-label">${label}</span>
-    <span class="mdc-line-ripple"></span>
+    ${this.customheight > 0 ? "" : '<span class="mdc-line-ripple"></span>'}
   </div>
 
-  <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+  <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fixed">
     <ul class="mdc-list">
     </ul>
   </div>
@@ -101,10 +138,11 @@ class CcMdcSelect extends HTMLElement {
 
     var elem = this.childNodes[0];
     this.mdcComponent = mdc.select.MDCSelect.attachTo(elem);
+//    this.mdcComponent.setFixedPosition(true)
     elem.addEventListener("MDCSelect:change", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      this.dispatchEvent(new CustomEvent("change", {detail: {value : JSON.parse(e.detail.value)}}));
+      this.dispatchEvent(new CustomEvent("change", {detail: {value : e.detail.value ? JSON.parse(e.detail.value) : undefined }}));
     });
     
     this.mdcList = this.querySelector(".mdc-list");
