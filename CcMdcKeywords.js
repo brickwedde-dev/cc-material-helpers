@@ -24,8 +24,8 @@ class CcMdcKeywords extends HTMLElement {
   
   set value (value) {
     try {
-      if (value) {
-        this._items = JSON.parse(value);
+      if (value && value.push && value.unshift) {
+        this._items = JSON.parse(JSON.stringify(value));
       }
     } catch (e) {
     }
@@ -33,7 +33,7 @@ class CcMdcKeywords extends HTMLElement {
   }
 
   get value () {
-    return JSON.stringify(this._items);
+    return this._items;
   }
 
   applyValue() {
@@ -44,6 +44,23 @@ class CcMdcKeywords extends HTMLElement {
     for( var i = this.mdcComponent.chips.length - 1; i >= 0; i--) {
       this.mdcComponent.getDefaultFoundation().adapter.removeChipAtIndex(i);
     }
+
+    var div = document.createElement("div");
+    div.id = "@@add@@";
+    div.className = "mdc-chip";
+    div.innerHTML = `<div class="mdc-chip__ripple"></div>
+      <i class="material-icons mdc-chip__icon mdc-chip__icon--leading mdc-chip__icon--leading-hidden"></i>
+      <span role="gridcell">
+        <span role="checkbox" tabindex="0" aria-checked="false" class="mdc-chip__primary-action">
+          <span class="mdc-chip__text">${this._label}</span>
+        </span>
+      </span>
+      <span role="gridcell">
+        <i class="material-icons mdc-chip__icon mdc-chip__icon--trailing" tabindex="-1" role="button">add</i>
+      </span>
+      `;
+    this.mdcElement.appendChild(div);
+    this.mdcComponent.addChip(div);
 
     for(let i = 0; i < this._items.length; i++) {
       let item = this._items[i];
@@ -70,26 +87,11 @@ class CcMdcKeywords extends HTMLElement {
 
       this.mdcComponent.addChip(div);
     }
-
-    var div = document.createElement("div");
-    div.id = "@@add@@";
-    div.className = "mdc-chip";
-    div.innerHTML = `<div class="mdc-chip__ripple"></div>
-      <i class="material-icons mdc-chip__icon mdc-chip__icon--leading mdc-chip__icon--leading-hidden"></i>
-      <span role="gridcell">
-        <span role="checkbox" tabindex="0" aria-checked="false" class="mdc-chip__primary-action">
-          <span class="mdc-chip__text">${this._label}</span>
-        </span>
-      </span>
-      <span role="gridcell">
-        <i class="material-icons mdc-chip__icon mdc-chip__icon--trailing" tabindex="-1" role="button">add</i>
-      </span>
-      `;
-    this.mdcElement.appendChild(div);
-    this.mdcComponent.addChip(div);
   }
 
   connectedCallback() {
+    this.style.display = "inline-block";
+
     this._label = this.label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
 

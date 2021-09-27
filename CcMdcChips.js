@@ -29,7 +29,7 @@ class CcMdcChips extends HTMLElement {
   }
 
   set value (value) {
-    this._value = value;
+    this._value = value ? value : {};
     this.applyValue();
   }
 
@@ -67,7 +67,7 @@ class CcMdcChips extends HTMLElement {
     }
     this._items = [];
     for(var chip of this.mdcComponent.chips) {
-      chip.selected = this._value[chip.id];
+      chip.selected = this._value && this._value[chip.id];
     }
   }
 
@@ -79,6 +79,8 @@ class CcMdcChips extends HTMLElement {
   }
 
   connectedCallback() {
+    this.style.display = "inline-block";
+    
     var label = this.label || this.getAttribute("label") || null;
     var width = this.getAttribute("width") || this.width || 200;
 

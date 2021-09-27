@@ -47,7 +47,7 @@ class CcMdcDialog extends HTMLElement {
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" id="my-dialog-content"></div>
+              <div class="mdc-dialog__content" tabindex="0" id="my-dialog-content"></div>
             </div>
           </div>
           <div class="mdc-dialog__scrim"></div>
@@ -176,3 +176,8 @@ class CcMdcDialog extends HTMLElement {
 }
 
 window.customElements.define("cc-mdc-dialog", CcMdcDialog);
+
+function CcAlert(title, htmlcontent) {
+  var dlg = new CcMdcDialog().setHtml(htmlcontent);
+  return dlg.open();
+}
