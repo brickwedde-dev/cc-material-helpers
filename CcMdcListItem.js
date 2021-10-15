@@ -1,9 +1,6 @@
 class CcMdcListItem extends HTMLLIElement {
   constructor(name, icon) {
-    try {
-      super();
-    } catch (e) {
-    }
+    super();
     this.name = name;
     this.icon = icon;
     this._inactive = false;
@@ -122,7 +119,7 @@ window.customElements.define("cc-mdc-list-item2", CcMdcListItem2, { extends: "li
 
 
 class CcMdcListItemCb extends HTMLLIElement {
-  constructor(fillcb) {
+  constructor() {
     super();
     this._inactive = false;
     this._activated = false;

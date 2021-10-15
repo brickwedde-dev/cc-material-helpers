@@ -148,7 +148,9 @@ class CcMdcList extends HTMLElement {
   }
 
   addItem(html1, html2) {
-    var li = new CcMdcListItem2(html1, html2);
+    var li = document.createElement('li', { is: "cc-mdc-list-item2" });
+    li._html1 = html1;
+    li._html2 = html2;
     if (this.ulElem) {
       this.ulElem.appendChild (li);
     }
@@ -157,7 +159,8 @@ class CcMdcList extends HTMLElement {
   }
 
   addItemCallback(fillcb) {
-    var li = new CcMdcListItemCb(fillcb);
+    var li = document.createElement('li', { is: "cc-mdc-list-item-cb" });
+    li.fillcb = fillcb;
     if (this.ulElem) {
       this.ulElem.appendChild (li);
     }
