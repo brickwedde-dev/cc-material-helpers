@@ -1,5 +1,8 @@
 function createCcMdcListItem(name, icon) {
   var li = document.createElement('li', { is: "cc-mdc-list-item" });
+  li._inactive = false;
+  li._activated = false;
+  li._selected = false;
   li.name = name;
   li.icon = icon;
   return li;
