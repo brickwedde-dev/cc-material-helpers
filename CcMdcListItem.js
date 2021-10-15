@@ -1,3 +1,10 @@
+function createCcMdcListItem(name, icon) {
+  var li = document.createElement('li', { is: "cc-mdc-list-item" });
+  li.name = name;
+  li.icon = icon;
+  return li;
+}
+
 class CcMdcListItem extends HTMLLIElement {
   constructor(name, icon) {
     super();
@@ -119,7 +126,7 @@ window.customElements.define("cc-mdc-list-item2", CcMdcListItem2, { extends: "li
 
 
 class CcMdcListItemCb extends HTMLLIElement {
-  constructor() {
+  constructor(fillcb) {
     super();
     this._inactive = false;
     this._activated = false;
