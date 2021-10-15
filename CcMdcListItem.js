@@ -1,6 +1,9 @@
 class CcMdcListItem extends HTMLLIElement {
   constructor(name, icon) {
-    super();
+    try {
+      super();
+    } catch (e) {
+    }
     this.name = name;
     this.icon = icon;
     this._inactive = false;
