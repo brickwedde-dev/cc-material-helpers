@@ -52,7 +52,7 @@ class CcMdcDialog extends HTMLElement {
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" tabindex="0" id="my-dialog-content"></div>
+              <div class="mdc-dialog__content" tabindex="0" id="my-dialog-content" style="max-height:calc(100vh - 70px);"></div>
             </div>
           </div>
           <div class="mdc-dialog__scrim"></div>
@@ -67,7 +67,7 @@ class CcMdcDialog extends HTMLElement {
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" id="my-dialog-content"></div>
+              <div class="mdc-dialog__content" id="my-dialog-content" style="max-height:calc(100vh - 70px);"></div>
               <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
                   <div class="mdc-button__ripple"></div>
@@ -88,7 +88,7 @@ class CcMdcDialog extends HTMLElement {
               aria-modal="true"
               aria-labelledby="my-dialog-title"
               aria-describedby="my-dialog-content">
-              <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;"></div>
+              <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;max-height:calc(100vh - 70px);"></div>
               <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="ok">
                   <div class="mdc-button__ripple"></div>
