@@ -196,6 +196,9 @@ class CcMdcDialog extends HTMLElement {
       if (this.evtSource) {
         this.evtSource.removeEventListener(this.evtName, this.evtHandler);
       }
+      this.evtSource = null;
+      this.evtName = null;
+      this.evtHandler = null;
     } catch (e) {
       console.error("CcMdcDialog evtSource error");
       console.error(e);
