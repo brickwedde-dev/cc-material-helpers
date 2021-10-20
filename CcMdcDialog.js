@@ -5,6 +5,11 @@ class CcMdcDialog extends HTMLElement {
 
   setHtml(html) {
     this.html = html;
+
+    var dlgContent = this.querySelector("#my-dialog-content");
+    if (dlgContent) {
+      dlgContent.innerHTML = html;
+    }
     return this;
   }
 
@@ -152,12 +157,27 @@ class CcMdcDialog extends HTMLElement {
     }
   }
 
+  registerUpdateEvent(evtSource, evtName, evtHandler) {
+    this.evtSource = evtSource;
+    this.evtName = evtName;
+    this.evtHandler = evtHandler;
+  }
+
   open() {
     this._open = true;
     if (this.mdcComponent) {
       this.mdcComponent.open();
     } else {
       document.body.appendChild(this);
+    }
+
+    try {
+      if (this.evtSource) {
+        this.evtSource.addEventListener(this.evtName, this.evtHandler);
+      }
+    } catch (e) {
+      console.error("CcMdcDialog evtSource error");
+      console.error(e);
     }
 
     return new Promise((resolve, reject) => {
@@ -172,6 +192,14 @@ class CcMdcDialog extends HTMLElement {
 
   close() {
     this.mdcComponent.close();
+    try {
+      if (this.evtSource) {
+        this.evtSource.removeEventListener(this.evtName, this.evtHandler);
+      }
+    } catch (e) {
+      console.error("CcMdcDialog evtSource error");
+      console.error(e);
+    }
   }
 }
 
