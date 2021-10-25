@@ -34,7 +34,7 @@ class CcMdcDialog extends HTMLElement {
     this.cancel = cancel;
     return this;
   }
-  
+
   connectedCallback() {
     var html = this.html || this.getAttribute("html") || null;
     var type = this.type || this.getAttribute("type") || null;
@@ -71,7 +71,7 @@ class CcMdcDialog extends HTMLElement {
               <div class="mdc-dialog__actions">
                 <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
                   <div class="mdc-button__ripple"></div>
-                  <span class="mdc-button__label">Ok</span>
+                  <span class="mdc-button__label">${ok}</span>
                 </button>
               </div>
             </div>
