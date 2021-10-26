@@ -5,7 +5,7 @@ class CcMdcDrawer extends HTMLElement {
   }
 
   connectedCallback() {
-    this.innerHTML = `<aside class="mdc-drawer mdc-drawer--dismissible">
+    this.innerHTML = html`<aside class="mdc-drawer mdc-drawer--dismissible">
       <div class="mdc-drawer__header"></div>
       <div class="mdc-drawer__content"></div>
     </aside>

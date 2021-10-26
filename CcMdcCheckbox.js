@@ -9,7 +9,7 @@ class CcMdcCheckbox extends HTMLElement {
 
     var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = `<div class="mdc-form-field">
+    this.innerHTML = html`<div class="mdc-form-field">
       <div class="mdc-checkbox">
         <input type="checkbox"
               class="mdc-checkbox__native-control"

@@ -15,7 +15,7 @@ class CcMdcSlider extends HTMLElement {
     }
     this._disabled = this.getAttribute("disabled") ? true : false;
 
-    this.innerHTML = `<div class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="${this._min}" aria-valuemax="${this._max}" aria-valuestep="${this._step}" aria-valuenow="${this._value}" aria-label="${label}">
+    this.innerHTML = html`<div class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="${this._min}" aria-valuemax="${this._max}" aria-valuestep="${this._step}" aria-valuenow="${this._value}" aria-label="${label}">
   <div class="mdc-slider__track-container">
     <div class="mdc-slider__track" style="transform: scaleX(0.1);"></div>
   </div>

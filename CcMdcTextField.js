@@ -34,7 +34,7 @@ class CcMdcTextField extends HTMLElement {
         break;
     }
 
-    this.innerHTML = `<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
+    this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
   <input type="${type}" step="${step}" ${min ? `min="${min}"` : ``} ${max ? `max="${max}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">

@@ -36,7 +36,7 @@ class CcMdcDialog extends HTMLElement {
   }
 
   connectedCallback() {
-    var html = this.html || this.getAttribute("html") || null;
+    var html1 = this.html || this.getAttribute("html") || null;
     var type = this.type || this.getAttribute("type") || null;
     this._open = this._open || this.getAttribute("open") || false;
 
@@ -45,7 +45,7 @@ class CcMdcDialog extends HTMLElement {
 
     switch (type) {
       case "nobuttons":
-        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:1000;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
@@ -60,7 +60,7 @@ class CcMdcDialog extends HTMLElement {
         break;
       default:
       case "alert":
-        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:1000;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
@@ -80,7 +80,7 @@ class CcMdcDialog extends HTMLElement {
         </div>`;
         break;
       case "okcancel":
-        this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:1000;">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               style="display:table;";
@@ -111,8 +111,8 @@ class CcMdcDialog extends HTMLElement {
         this.contentElement.setDialogContainer(this);
       }
       dlgContent.appendChild(this.contentElement);
-    } else if (html) {
-      dlgContent.innerHTML = html;
+    } else if (html1) {
+      dlgContent.innerHTML = html1;
     }
 
     this.dialog = this.childNodes[0];

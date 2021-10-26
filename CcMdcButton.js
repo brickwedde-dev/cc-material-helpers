@@ -49,20 +49,20 @@ class CcMdcButton extends HTMLElement {
     var actionbar = this.actionbar || this.getAttribute("actionbar") || false;
 
     if (icon && icon.charAt && icon.charAt(0) == "/") {
-      icon = `<img src="${icon}" style="width:16px;height:16px;">`;
+      icon = html`<img src="${icon}" style="width:16px;height:16px;">`;
     }
 
     if (icon && label) {
-      this.innerHTML = `<button class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">${icon}</i>
       <span class="mdc-button__label">${label}</span>
     </button>`;
     } else if (label) {
-      this.innerHTML = `<button class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button class="mdc-button mdc-button--raised">
       <span class="mdc-button__label">${label}</span>
     </button>`;
     } else if (icon) {
-      this.innerHTML = `<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Share">${icon}</button>`;
+      this.innerHTML = html`<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Share">${icon}</button>`;
     }
 
     this.button = this.childNodes[0];

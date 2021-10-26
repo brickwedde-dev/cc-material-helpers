@@ -6,7 +6,7 @@ class CcTinyMCEEditor extends HTMLElement {
 
   connectedCallback() {
     this.imagelist = [];
-    this.innerHTML = `<textarea style="height:100%;width:100%;"></textarea>`;
+    this.innerHTML = html`<textarea style="height:100%;width:100%;"></textarea>`;
 
     tinymce.init( {
       target: this.childNodes[0], 

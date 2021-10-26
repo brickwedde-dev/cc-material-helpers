@@ -18,7 +18,7 @@ class CcMdcList extends HTMLElement {
       case 2:
         lineclass = "mdc-list--two-line";
     }
-    this.innerHTML = `<ul class="mdc-list ${lineclass}"></ul>`;
+    this.innerHTML = html`<ul class="mdc-list ${lineclass}"></ul>`;
 
     this.ulElem = this.childNodes[0];
     this.mdcComponent = mdc.list.MDCList.attachTo(this.childNodes[0]);

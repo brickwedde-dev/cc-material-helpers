@@ -104,7 +104,7 @@ class CcMdcSelect extends HTMLElement {
     var label = this.label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
 
-    this.innerHTML = `<div class="mdc-select mdc-select--filled" style="min-width:${width}px;max-width:${width}px;width:${width}px;">
+    this.innerHTML = html`<div class="mdc-select mdc-select--filled" style="min-width:${width}px;max-width:${width}px;width:${width}px;">
   <div class="mdc-select__anchor" style="${this.customheight > 0 ? "height:" + this.customheight + "px;align-items:inherit;padding-left:0px;" : ""}">
     <span class="mdc-select__ripple"></span>
     <span class="mdc-select__selected-text" style="${this.customheight > 0 ? "font-size:" + parseInt(this.customheight * 0.6) + "px;line-height:" + this.customheight + "px;height:" + this.customheight + "px;" : ""}"></span>
@@ -126,9 +126,9 @@ class CcMdcSelect extends HTMLElement {
         </polygon>
       </svg>
     </span>
-    <span class="mdc-floating-label">${label}</span>
-    ${this.customheight > 0 ? "" : '<span class="mdc-line-ripple"></span>'}
-  </div>
+    <span class="mdc-floating-label">${label}</span>` +
+    (this.customheight > 0 ? "" : '<span class="mdc-line-ripple"></span>') + 
+    html`  </div>
 
   <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fixed">
     <ul class="mdc-list">

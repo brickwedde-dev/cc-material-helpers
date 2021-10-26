@@ -25,16 +25,16 @@ class CcMdcListItem extends HTMLLIElement {
     if (typeof this.icon == "object") {
       if (this.icon.src) {
         this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
-        `<img style="max-width:${this.icon.maxwidth}px;width:${this.icon.width}px;max-height:${this.icon.maxheight}px;height:${this.icon.height}px;margin-right:${this.icon.marginright}px;filter: invert(${this.icon.invert});" src="${this.icon.src}"/>
+        html`<img style="max-width:${this.icon.maxwidth}px;width:${this.icon.width}px;max-height:${this.icon.maxheight}px;height:${this.icon.height}px;margin-right:${this.icon.marginright}px;filter: invert(${this.icon.invert});" src="${this.icon.src}"/>
         <span class="mdc-list-item__text">${this.name}</span>`;
       } else if (this.icon.icon) {
         this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
-        `<i style="max-width:${this.icon.maxwidth}px;width:${this.icon.width}px;max-height:${this.icon.maxheight}px;height:${this.icon.height}px;margin-right:${this.icon.marginright}px;filter: invert(${this.icon.invert});${this.icon.color ? "color:" + this.icon.color + ";" : ""}" class="material-icons mdc-list-item__graphic" aria-hidden="true">${this.icon.icon}</i>
+        html`<i style="max-width:${this.icon.maxwidth}px;width:${this.icon.width}px;max-height:${this.icon.maxheight}px;height:${this.icon.height}px;margin-right:${this.icon.marginright}px;filter: invert(${this.icon.invert});${this.icon.color ? "color:" + this.icon.color + ";" : ""}" class="material-icons mdc-list-item__graphic" aria-hidden="true">${this.icon.icon}</i>
         <span class="mdc-list-item__text">${this.name}</span>`;
       }
     } else {
       this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
-        `<i class="material-icons mdc-list-item__graphic" aria-hidden="true">${this.icon}</i>
+        html`<i class="material-icons mdc-list-item__graphic" aria-hidden="true">${this.icon}</i>
         <span class="mdc-list-item__text">${this.name}</span>`;
     }
   }
@@ -86,8 +86,8 @@ class CcMdcListItem2 extends HTMLLIElement {
       if (this.fillcb) {
         this.fillcb(this);
       } else {
-        this.innerHTML = (this._inactive ? `` : `<span class="mdc-list-item__ripple"></span>`) + 
-          `<span class="mdc-list-item__text"><span class="mdc-list-item__primary-text">${this._html1}</span>
+        this.innerHTML = (this._inactive ? `` : html`<span class="mdc-list-item__ripple"></span>`) + 
+          html`<span class="mdc-list-item__text"><span class="mdc-list-item__primary-text">${this._html1}</span>
           <span class="mdc-list-item__secondary-text">${this._html2}</span></span>`;
       }
     }

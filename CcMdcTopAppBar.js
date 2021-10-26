@@ -14,7 +14,7 @@ class CcMdcTopAppBar extends HTMLElement {
 //    var type = this.getAttribute("type") || "text";
 //    var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = `<header class="mdc-top-app-bar" style="position:static;">
+    this.innerHTML = html`<header class="mdc-top-app-bar" style="position:static;">
       <div class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
           <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu_open</button>
