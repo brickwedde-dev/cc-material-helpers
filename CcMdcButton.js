@@ -55,11 +55,11 @@ class CcMdcButton extends HTMLElement {
     if (icon && label) {
       this.innerHTML = html`<button class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">${icon}</i>
-      <span class="mdc-button__label">${label}</span>
+      <span class="mdc-button__label">` + label + html`</span>
     </button>`;
     } else if (label) {
       this.innerHTML = html`<button class="mdc-button mdc-button--raised">
-      <span class="mdc-button__label">${label}</span>
+      <span class="mdc-button__label">` + label + html`</span>
     </button>`;
     } else if (icon) {
       this.innerHTML = html`<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Share">${icon}</button>`;
