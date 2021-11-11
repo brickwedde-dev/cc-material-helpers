@@ -6,6 +6,7 @@ class CcMdcChips extends HTMLElement {
     this._disabled = false;
     this._items = [];
     this.width = 200;
+    this.valueOnly = false;
   }
 
   set disabled (value) {
@@ -41,6 +42,28 @@ class CcMdcChips extends HTMLElement {
     if (!this.mdcElement) {
       return;
     }
+
+    if (this.valueOnly) {
+      this.clearChips();
+
+      for(var item in this._value) {
+        var div = document.createElement("div");
+        div.id = JSON.stringify(item);
+        div.className = "mdc-chip";
+        div.innerHTML = `<div class="mdc-chip__ripple"></div>
+          <span role="gridcell">
+            <span role="checkbox" tabindex="0" aria-checked="false" class="mdc-chip__primary-action">
+              <span class="mdc-chip__text">${item}</span>
+            </span>
+          </span>
+          `;
+        this.mdcElement.appendChild(div);
+        this.mdcComponent.addChip(div);
+      }
+
+      return;
+    }
+
     for(var item of this._items) {
       var div = document.createElement("div");
       div.id = item.value;
@@ -92,8 +115,16 @@ class CcMdcChips extends HTMLElement {
     this.mdcComponent.listen('MDCChip:selection', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      this._value[e.detail.chipId] = e.detail.selected;
-      this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+      if (this.valueOnly) {
+        var v = JSON.parse(e.detail.chipId);
+        if (this._value[v]) {
+          delete this._value[v];
+          this.applyValue();
+        }
+      } else {
+        this._value[e.detail.chipId] = e.detail.selected;
+        this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+      }
     });
 
     this.applyValue();
