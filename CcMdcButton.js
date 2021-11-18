@@ -54,7 +54,7 @@ class CcMdcButton extends HTMLElement {
 
     if (icon && label) {
       this.innerHTML = html`<button class="mdc-button mdc-button--raised">
-      <i class="material-icons mdc-button__icon" aria-hidden="true">${icon}</i>
+      <i class="material-icons mdc-button__icon" aria-hidden="true">` + icon + `</i>
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
     } else if (label) {
