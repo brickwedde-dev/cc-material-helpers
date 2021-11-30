@@ -62,7 +62,7 @@ class CcMdcButton extends HTMLElement {
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
     } else if (icon) {
-      this.innerHTML = html`<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Share">${icon}</button>`;
+      this.innerHTML = html`<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Share">` + icon + `</button>`;
     }
 
     this.button = this.childNodes[0];
