@@ -146,7 +146,9 @@ class CcMdcDialog extends HTMLElement {
 
   setMaxWidth(width) {
     var surface = this.querySelector(".mdc-dialog__surface");
-    surface.style.maxWidth = width;
+    if (surface) {
+      surface.style.maxWidth = width;
+    }
   }
 
   disconnectedCallback() {
