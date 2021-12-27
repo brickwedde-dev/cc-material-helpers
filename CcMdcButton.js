@@ -70,6 +70,11 @@ class CcMdcButton extends HTMLElement {
     if (!actionbar) {
       this.mdcComponent = mdc.ripple.MDCRipple.attachTo(this.button);
     }
+
+    var clickfun = this.getAttribute("@click");
+    if (htmlFunctionArray[clickfun]) {
+      this.addEventListener("click", htmlFunctionArray[clickfun].func);
+    }
   }
 
   disconnectedCallback() {

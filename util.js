@@ -4,12 +4,19 @@ String.prototype.escapeXml = function escapeXml () {
   return span.innerHTML;
 }
 
+const htmlFunctionArray = {};
+var htmlFunctionArrayCount = 0;
+
 const html = function html(strings, ...values) {
   let str = '';
   strings.forEach((string, i) => {
     var s = (values.length > i) ? values[i] : "";
     if (!isDefined(s) || !s.escapeXml) {
-      if (isDefined(s) && s.toString) {
+      if (s instanceof Function) {
+        var name = "@function:" + (htmlFunctionArrayCount++);
+        htmlFunctionArray[name] = { func : s, timestamp : new Date().getTime() };
+        s = name;
+      } else if (isDefined(s) && s.toString) {
         s = s.toString();
       } else {
         s = "" + s;

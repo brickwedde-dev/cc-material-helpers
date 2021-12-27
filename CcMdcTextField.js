@@ -44,6 +44,24 @@ class CcMdcTextField extends HTMLElement {
     this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
     this.label = this.querySelector("label");
     this.input = this.querySelector("input");
+
+    var changefun = this.getAttribute("@change");
+    if (htmlFunctionArray[changefun]) {
+      this.addEventListener("change", htmlFunctionArray[changefun].func);
+    }
+
+    var targetfun = this.getAttribute(".target");
+    if (htmlFunctionArray[targetfun]) {
+      var obj = htmlFunctionArray[targetfun].func();
+      var id = this.getAttribute("id");
+      this.addEventListener("change", () => {
+        obj[id] = this.value;
+      });
+      if (isDefined(obj[id])) {
+        this._value = obj[id];
+      }
+    }
+
     this.applyValue();
     this.applyDisabled();
   }
