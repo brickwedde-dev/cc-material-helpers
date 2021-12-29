@@ -1,6 +1,7 @@
 class CcMdcDialog extends HTMLElement {
   constructor() {
     super();
+    this.zIndex = -1;
   }
 
   setHtml(html) {
@@ -12,6 +13,11 @@ class CcMdcDialog extends HTMLElement {
     }
     return this;
   }
+
+  setZIndex(index) {
+    this.zIndex = index;
+    return this;
+ }
 
   setContentElement(contentElement) {
     this.contentElement = contentElement;
@@ -45,7 +51,7 @@ class CcMdcDialog extends HTMLElement {
 
     switch (type) {
       case "nobuttons":
-        this.innerHTML = html`<div class="mdc-dialog" style="z-index:1000;">
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:${this.zIndex >= 0 ? this.zIndex : 1000};">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
@@ -60,7 +66,7 @@ class CcMdcDialog extends HTMLElement {
         break;
       default:
       case "alert":
-        this.innerHTML = html`<div class="mdc-dialog" style="z-index:1000;">
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:${this.zIndex >= 0 ? this.zIndex : 1000};">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               role="alertdialog"
@@ -80,7 +86,7 @@ class CcMdcDialog extends HTMLElement {
         </div>`;
         break;
       case "okcancel":
-        this.innerHTML = html`<div class="mdc-dialog" style="z-index:1000;">
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:${this.zIndex >= 0 ? this.zIndex : 1000};">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
               style="display:table;";

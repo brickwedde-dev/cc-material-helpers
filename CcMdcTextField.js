@@ -1,10 +1,5 @@
 var globalLabelCount = 0;
 
-function isDefined(v) {
-  var t = typeof v;
-  return t != "null" && t != "undefined" && t != "void";
-}
-
 class CcMdcTextField extends HTMLElement {
   constructor() {
     super();
