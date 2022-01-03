@@ -167,7 +167,8 @@ class CcMdcSelect extends HTMLElement {
 
     var changefun = this.getAttribute("@change");
     if (htmlFunctionArray[changefun]) {
-      this.addEventListener("change", htmlFunctionArray[changefun].func);
+      let fun = htmlFunctionArray[changefun];
+      this.addEventListener("change", (e) => {setTimeout(() => {fun.func(e)},0)});
     }
 
     var targetfun = this.getAttribute(".target");
