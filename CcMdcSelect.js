@@ -38,22 +38,35 @@ class CcMdcSelect extends HTMLElement {
   }
 
   addItem (html, value) {
-    var stringifiedvalue = JSON.stringify(value);
-    if (this.mdcList) {
-      var li = document.createElement("li");
-      if (this._value === stringifiedvalue) {
-        li.className = "mdc-list-item mdc-list-item--selected";
-        li.setAttribute("aria-selected", true);
+    return this.addItems([{html, value}]);
+  }
+
+  addItems (items) {
+    for(var item of items) {
+      var stringifiedvalue = JSON.stringify(item.value);
+      if (this.mdcList) {
+        var li = document.createElement("li");
+        if (this._value === stringifiedvalue) {
+          li.className = "mdc-list-item mdc-list-item--selected";
+          li.setAttribute("aria-selected", true);
+        } else {
+          li.className = "mdc-list-item";
+        }
+        li.setAttribute("data-value", stringifiedvalue);
+        if (isDefined(item.html)) {
+          li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.html}</span>`;
+        } else if (isDefined(item.name)) {
+          li.innerHTML = html`<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.name}</span>`;
+        }
+
+        this.mdcList.appendChild(li);
       } else {
-        li.className = "mdc-list-item";
+        this._items.push(item);
       }
-      li.setAttribute("data-value", stringifiedvalue);
-      li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${html}</span>`
-      this.mdcList.appendChild(li);
+    }
+    if (this.mdcComponent) {
       this.mdcComponent.layout();
       this.mdcComponent.layoutOptions();
-    } else {
-      this._items.push({html, value});
     }
   }
 
@@ -151,6 +164,42 @@ class CcMdcSelect extends HTMLElement {
       this.addItem(item.html, item.value);
     }
     this._items = [];
+
+    var changefun = this.getAttribute("@change");
+    if (htmlFunctionArray[changefun]) {
+      this.addEventListener("change", htmlFunctionArray[changefun].func);
+    }
+
+    var targetfun = this.getAttribute(".target");
+    if (htmlFunctionArray[targetfun] && htmlFunctionArray[targetfun].func && htmlFunctionArray[targetfun].func.__isTarget) {
+      let { obj, prop } = htmlFunctionArray[targetfun].func();
+      this.addEventListener("change", () => {
+        obj[prop] = this.value;
+      });
+      if (isDefined(obj[prop])) {
+        this.value = obj[prop];
+      }
+    }
+
+    var targetfun = this.getAttribute(".options");
+    if (htmlFunctionArray[targetfun] && htmlFunctionArray[targetfun].func && htmlFunctionArray[targetfun].func.__isOptions) {
+      try {
+        let obj = htmlFunctionArray[targetfun].func();
+        if (obj instanceof Array) {
+          this.addItems(obj);
+        } else if (obj instanceof Function || obj instanceof Promise) {
+          var fetcher = obj();
+          fetcher
+          .then((results) => {
+            results = JSON.parse(JSON.stringify(results));
+            this.addItems(results);
+          })
+          .catch(()=>{
+          });
+        }
+      } catch (e) {
+      }
+    }
   }
 
   disconnectedCallback() {

@@ -10,7 +10,11 @@ String.prototype.escapeXml = function escapeXml () {
 }
 
 const htmlFunctionArray = {};
-var htmlFunctionArrayCount = 0;
+let htmlFunctionArrayCount = 0;
+
+const $TARGET = (obj, prop) => { var f = () => {return {obj, prop}}; f.__isTarget = true; return f;};
+
+const $OPTIONS = (obj) => { var f = () => {return obj}; f.__isOptions = true; return f;};
 
 const html = function html(strings, ...values) {
   let str = '';
@@ -18,8 +22,8 @@ const html = function html(strings, ...values) {
     var s = (values.length > i) ? values[i] : "";
     if (!isDefined(s) || !s.escapeXml) {
       if (s instanceof Function) {
-        var name = "@function:" + (htmlFunctionArrayCount++);
-        htmlFunctionArray[name] = { func : s, timestamp : new Date().getTime() };
+        let name = "@function:" + (htmlFunctionArrayCount++);
+        htmlFunctionArray[name] = { func : s, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
         s = name;
       } else if (isDefined(s) && s.toString) {
         s = s.toString();

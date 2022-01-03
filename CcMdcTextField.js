@@ -46,14 +46,13 @@ class CcMdcTextField extends HTMLElement {
     }
 
     var targetfun = this.getAttribute(".target");
-    if (htmlFunctionArray[targetfun]) {
-      var obj = htmlFunctionArray[targetfun].func();
-      var id = this.getAttribute("id");
+    if (htmlFunctionArray[targetfun] && htmlFunctionArray[targetfun].func && htmlFunctionArray[targetfun].func.__isTarget) {
+      var { obj, prop } = htmlFunctionArray[targetfun].func();
       this.addEventListener("change", () => {
-        obj[id] = this.value;
+        obj[prop] = this.value;
       });
-      if (isDefined(obj[id])) {
-        this._value = obj[id];
+      if (isDefined(obj[prop])) {
+        this.value = obj[prop];
       }
     }
 
