@@ -2,6 +2,7 @@ class CcMdcDialog extends HTMLElement {
   constructor() {
     super();
     this.zIndex = -1;
+    this.allowpreventclose = false;
   }
 
   setHtml(html) {
@@ -14,10 +15,15 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
 
+  setPreventCloseCallback(value) {
+    this.allowpreventclose = value;
+    return this;
+  }
+
   setZIndex(index) {
     this.zIndex = index;
     return this;
- }
+  }
 
   setContentElement(contentElement) {
     this.contentElement = contentElement;
@@ -96,11 +102,12 @@ class CcMdcDialog extends HTMLElement {
               aria-describedby="my-dialog-content">
               <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;max-height:calc(100vh - 70px);"></div>
               <div class="mdc-dialog__actions">
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="ok">
+                                                            <!-- data-mdc-dialog-action="ok"-->
+                <button id="okbutton" type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-button-default="true">
                   <div class="mdc-button__ripple"></div>
                   <span class="mdc-button__label">${ok}</span>
                 </button>
-                <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                <button id="cancelbutton" type="button" class="mdc-button mdc-dialog__button">
                   <div class="mdc-button__ripple"></div>
                   <span class="mdc-button__label">${cancel}</span>
                 </button>
@@ -138,15 +145,44 @@ class CcMdcDialog extends HTMLElement {
       this.mdcComponent.open();
     }
 
+    var okbutton = this.querySelector("#okbutton");
+    if (okbutton) {
+      okbutton.addEventListener("click", (e) => {
+        if (this.allowpreventclose) {
+          if (this.allowpreventclose("ok", this)) {
+            return;
+          }
+        }
+        if (this.dlgResolve) {
+          this.dlgResolve("ok");
+        } else {
+          this.dlgClosed = "ok";
+        }
+        this.mdcComponent.close();
+      })
+    }
+    var cancelbutton = this.querySelector("#cancelbutton");
+    if (cancelbutton) {
+      cancelbutton.addEventListener("click", (e) => {
+        if (this.allowpreventclose) {
+          if (this.allowpreventclose("cancel", this)) {
+            return;
+          }
+        }
+        if (this.dlgResolve) {
+          this.dlgResolve("cancel");
+        } else {
+          this.dlgClosed = "cancel";
+        }
+        this.mdcComponent.close();
+      })
+    }
+
+    
     this.dialog.addEventListener("MDCDialog:closed", (e) => {
-      if (this.dlgResolve) {
-        this.dlgResolve(e.detail.action);
-      } else {
-        this.dlgClosed = e.detail.action;
-      }
       setTimeout(() => {
         this.parentNode.removeChild(this);
-      }, 100);
+      }, 10);
     });
   }
 
