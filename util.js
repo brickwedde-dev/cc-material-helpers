@@ -9,6 +9,13 @@ String.prototype.escapeXml = function escapeXml () {
   return span.innerHTML;
 }
 
+String.prototype.interpolate = function(params, defaultvalue, foundnames) {
+  var sanitized = this
+    .replace(/\$\{([\s]*[^;\s\{]+[\s]*)\}/g, function(_, match){ var t = match.trim(); foundnames[t] = true; if (!isDefined(params[t])) {params[t] = isDefined(defaultvalue) ? defaultvalue : ""}; return `\$\{map.${t}\}`; })
+    .replace(/(\$\{(?!map\.)[^}]+\})/g, '');
+  return new Function('map', `return \`${sanitized}\`;`)(params);
+}
+
 const htmlFunctionArray = {};
 let htmlFunctionArrayCount = 0;
 
