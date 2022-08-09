@@ -15,6 +15,10 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
 
+  setText(text) {
+    return this.setHtml(("" + text).escapeXml())
+  }
+
   setPreventCloseCallback(value) {
     this.allowpreventclose = value;
     return this;

@@ -9,12 +9,14 @@ class CcMdcTextField extends HTMLElement {
   connectedCallback() {
     globalLabelCount++;
 
-    var step = this.getAttribute("step") || "";
-    var min = this.getAttribute("min") || "";
-    var max = this.getAttribute("max") || "";
+    var step = this.getAttribute("step") || undefined;
+    var min = this.getAttribute("min") || undefined;
+    var max = this.getAttribute("max") || undefined;
 
     this.type = this.getAttribute("type") || "text";
     var label = this.getAttribute("label") || "Label";
+    var pattern = this.getAttribute("pattern") || this.pattern || undefined;
+
     if (this.hasAttribute("value")) {
       this._value = this.getAttribute("value");
     }
@@ -32,7 +34,7 @@ class CcMdcTextField extends HTMLElement {
     this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
-  <input type="${type}" step="${step}" ${min ? `min="${min}"` : ``} ${max ? `max="${max}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
+  <input type="${type}" ${isDefined(step) ? `step="${step}"` : ``} ${isDefined(min) ? `min="${min}"` : ``} ${isDefined(max) ? `max="${max}"` : ``} ${isDefined(pattern) ? `pattern="${pattern}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
   <span class="mdc-line-ripple"></span>
 </label>`;
 
