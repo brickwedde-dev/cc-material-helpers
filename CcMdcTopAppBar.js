@@ -3,6 +3,7 @@ class CcMdcTopAppBar extends HTMLElement {
   constructor(drawer) {
     super();
     this.drawer = drawer;
+    this._bottomBar = false;
   }
 
   connectedCallback() {
@@ -14,7 +15,7 @@ class CcMdcTopAppBar extends HTMLElement {
 //    var type = this.getAttribute("type") || "text";
 //    var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = html`<header class="mdc-top-app-bar" style="position:static;">
+    this.innerHTML = html`<header class="mdc-top-app-bar" style="${this._bottomBar ? "height: 64px; bottom: 0px; left: 0px; right: 0px; position: absolute; overflow:hidden;" : "position:static;"}">
       <div class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
           <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu_open</button>
@@ -24,7 +25,7 @@ class CcMdcTopAppBar extends HTMLElement {
         </section>
       </div>
     </header>
-    <main class="main-content" id="main-content" style="top: 64px; bottom: 0px; left: 0px; right: 0px; position: absolute; overflow:auto;">
+    <main class="main-content" id="main-content" style="${this._bottomBar ? "top: 0px; bottom: 64px; left: 0px; right: 0px; position: absolute; overflow:auto;" : "top: 64px; bottom: 0px; left: 0px; right: 0px; position: absolute; overflow:auto;"}">
     </main>`;
 
     this.mdcComponent = mdc.topAppBar.MDCTopAppBar.attachTo(this.childNodes[0]);
@@ -44,6 +45,18 @@ class CcMdcTopAppBar extends HTMLElement {
     } else if (s instanceof HTMLElement) {
       this.titleElement.innerHTML = "";
       this.titleElement.appendChild(s);
+    }
+  }
+
+  set bottomBar (bottomBar) {
+    this.bottomBar = bottomBar;
+    var x = this.querySelector(".mdc-top-app-bar");
+    if (x) {
+      x.style = this._bottomBar ? "height: 64px; bottom: 0px; left: 0px; right: 0px; position: absolute; overflow:hidden;" : "position:static;";
+    }
+    x = this.querySelector(".main-content");
+    if (x) {
+      x.style = this._bottomBar ? "top: 0px; bottom: 64px; left: 0px; right: 0px; position: absolute; overflow:auto;" : "top: 64px; bottom: 0px; left: 0px; right: 0px; position: absolute; overflow:auto;";
     }
   }
 
