@@ -21,6 +21,10 @@ class CcMdcMenu extends HTMLElement {
     }
 
     this.childNodes[0].addEventListener("MDCMenu:selected", (e) => {
+      try {
+        e.detail.value = JSON.parse(e.detail.item.jsonvalue)
+      } catch (e) {
+      }
       this.dispatchEvent(new CustomEvent("selected", {detail : e.detail}));
     });
 
@@ -54,18 +58,20 @@ class CcMdcMenu extends HTMLElement {
     }
   }
   
-  addElement(li) {
+  addElement(li, value) {
     if (this.ulElem) {
       this.ulElem.appendChild (li);
     }
+    li.jsonvalue = JSON.stringify(value);
     this.items.push(li);
     return li;
   }
 
-  addItem(html) {
+  addItem(html, value) {
     var li = document.createElement("li");
     li.className="mdc-list-item";
     li.role="menuitem";
+    li.jsonvalue = JSON.stringify(value);
     li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text"></span>`;
     var span = li.querySelector(".mdc-list-item__text");
     if (typeof html == "string") {
