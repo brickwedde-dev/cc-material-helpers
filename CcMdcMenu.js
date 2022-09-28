@@ -71,7 +71,6 @@ class CcMdcMenu extends HTMLElement {
     var li = document.createElement("li");
     li.className="mdc-list-item";
     li.role="menuitem";
-    li.jsonvalue = JSON.stringify(value);
     li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text"></span>`;
     var span = li.querySelector(".mdc-list-item__text");
     if (typeof html == "string") {
@@ -79,7 +78,7 @@ class CcMdcMenu extends HTMLElement {
     } else if (html instanceof HTMLElement) {
       span.appendChild(html);
     }
-    this.addElement(li);
+    this.addElement(li, value);
     return li;
   }
 
