@@ -95,3 +95,13 @@ const t9n = function t9n(strings, ...values) {
   });
   return str;
 }
+
+function debounce(callback, timeout) {
+    let timer;
+    return function (...args) {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(callback, timeout, ...args);
+    };
+}
