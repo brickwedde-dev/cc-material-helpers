@@ -7,7 +7,7 @@ class CcMdcCheckbox extends HTMLElement {
   connectedCallback() {
     globalLabelCount++;
 
-    var label = this.getAttribute("label") || "Label";
+    var label = this.label || this.getAttribute("label") || "Label";
 
     this.innerHTML = html`<div class="mdc-form-field">
       <div class="mdc-checkbox">
@@ -34,7 +34,7 @@ class CcMdcCheckbox extends HTMLElement {
     this.mdcFormField = mdc.formField.MDCFormField.attachTo(this.querySelector('.mdc-form-field'));
     this.mdcFormField.input = this.mdcComponent;
     this.input = this.querySelector("input");
-    this.label = this.querySelector("label");
+    this.labeldiv = this.querySelector("label");
     this.applyValue();
     this.applyDisabled();
   }
@@ -52,11 +52,11 @@ class CcMdcCheckbox extends HTMLElement {
         this.mdcComponent.disabled = false;
       }
     }
-    if (this.label) {
+    if (this.labeldiv) {
       if (this._disabled) {
-        this.label.style.color = "rgba(0, 0, 0, 0.38)";
+        this.labeldiv.style.color = "rgba(0, 0, 0, 0.38)";
       } else {
-        this.label.style.color = "inherit";
+        this.labeldiv.style.color = "inherit";
       }
     }
   }

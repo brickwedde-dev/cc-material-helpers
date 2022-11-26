@@ -7,8 +7,10 @@ class CcMdcSlider extends HTMLElement {
     this._max = 100;
     this._step = 1;
 
-    var bound = this.resizehandler.bind(this);
-    this.resizehandler = debounce(bound, 100);
+    const resizeObserver = new ResizeObserver((entries) => {
+      this.resizehandler();
+    });
+    resizeObserver.observe(this);
   }
 
   connectedCallback() {
@@ -60,15 +62,13 @@ class CcMdcSlider extends HTMLElement {
 
     this.applyValue();
     this.applyDisabled();
-    document.addEventListener('cc-divider-resize', this.resizehandler, false);
   }
 
   disconnectedCallback() {
     this.mdcComponent.destroy();
-    document.removeEventListener('cc-divider-resize', this.resizehandler, false);
   }
 
-  resizehandler (e) {
+  resizehandler () {
     if (this.mdcComponent) {
       this.mdcComponent.layout();
     }

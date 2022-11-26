@@ -105,3 +105,7 @@ function debounce(callback, timeout) {
         timer = setTimeout(callback, timeout, ...args);
     };
 }
+
+function isEllipsisActive(e) {
+     return (e.offsetWidth < e.scrollWidth);
+}
