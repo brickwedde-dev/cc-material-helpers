@@ -26,6 +26,7 @@ class CcMdcSlider extends HTMLElement {
         <div class="mdc-slider__thumb-container">
           <div class="mdc-slider__pin">
             <span class="mdc-slider__pin-value-marker"></span>
+            <span class="mdc-slider__pin-value-marker marker1" style="display:none;"></span>
           </div>
           <svg class="mdc-slider__thumb" width="21" height="21">
             <circle cx="10.5" cy="10.5" r="7.875"></circle>
@@ -33,24 +34,6 @@ class CcMdcSlider extends HTMLElement {
           <div class="mdc-slider__focus-ring"></div>
         </div>
       </div>`;
-    /*html`<div class="mdc-slider mdc-slider--discrete">
-        <input class="mdc-slider__input" type="range" min="${this._min}" max="${this._max}" value="${this._value}" step="${this._step}" name="${label}" aria-label="${label}">
-        <div class="mdc-slider__track">
-          <div class="mdc-slider__track--inactive"></div>
-          <div class="mdc-slider__track--active">
-            <div class="mdc-slider__track--active_fill"></div>
-          </div>
-        </div>
-        <div class="mdc-slider__thumb-container">
-          <div class="mdc-slider__track-marker-container" aria-hidden="true">
-            <div class="mdc-slider__value-indicator">
-              <span class="mdc-slider__pin-value-marker">0</span>
-            </div>
-          </div>
-          <div class="mdc-slider__thumb-knob"></div>
-        </div>
-      </div>
-`;*/
 
     this.rootElement = this.childNodes[0];
     this.mdcComponent = mdc.slider.MDCSlider.attachTo(this.rootElement);
@@ -62,7 +45,17 @@ class CcMdcSlider extends HTMLElement {
     this.mdcComponent.min = this.getAttribute("min") || this._min;
 */
     this.rootElement.addEventListener("MDCSlider:change", (e) => {
-      //this.indicator.innerText = this.mdcComponent.value;
+      var origmarker = this.querySelector(".mdc-slider__pin-value-marker")
+      var custommarker = this.querySelector(".marker1")
+      this._value = this.mdcComponent.value;
+      this.dispatchEvent(new CustomEvent("change", { detail: { value : this._value, custommarker, origmarker }}));
+    });
+
+    this.rootElement.addEventListener("MDCSlider:input", (e) => {
+      var origmarker = this.querySelector(".mdc-slider__pin-value-marker")
+      var custommarker = this.querySelector(".marker1")
+      this._value = this.mdcComponent.value;
+      this.dispatchEvent(new CustomEvent("input", { detail: { value : this._value, custommarker, origmarker }}));
     });
 
     this.applyValue();
