@@ -6,6 +6,9 @@ class CcMdcSlider extends HTMLElement {
     this._min = 0;
     this._max = 100;
     this._step = 1;
+
+    var bound = this.resizehandler.bind(this);
+    this.resizehandler = debounce(bound, 100);
   }
 
   connectedCallback() {
@@ -15,31 +18,67 @@ class CcMdcSlider extends HTMLElement {
     }
     this._disabled = this.getAttribute("disabled") ? true : false;
 
-    this.innerHTML = html`<div class="mdc-slider mdc-slider--discrete" tabindex="0" role="slider" aria-valuemin="${this._min}" aria-valuemax="${this._max}" aria-valuestep="${this._step}" aria-valuenow="${this._value}" aria-label="${label}">
-  <div class="mdc-slider__track-container">
-    <div class="mdc-slider__track" style="transform: scaleX(0.1);"></div>
-  </div>
-  <div class="mdc-slider__thumb-container" style="transform: translateX(77.9px) translateX(-50%);">
-    <div class="mdc-slider__pin">
-      <span class="mdc-slider__pin-value-marker">${this._value}</span>
-    </div>
-    <svg class="mdc-slider__thumb" width="21" height="21">
-      <circle cx="10.5" cy="10.5" r="7.875"></circle>
-    </svg>
-    <div class="mdc-slider__focus-ring"></div>
-  </div>
-</div>
-`;
+    this.innerHTML = html`<div class="mdc-slider mdc-slider--discrete mdc-slider--display-markers" tabindex="0" role="slider" aria-valuemin="${this._min}" aria-valuemax="${this._max}" aria-valuenow="${this._value}" data-step="${this._step}" aria-label="${label}">
+        <div class="mdc-slider__track-container">
+          <div class="mdc-slider__track"></div>
+          <div class="mdc-slider__track-marker-container"></div>
+        </div>
+        <div class="mdc-slider__thumb-container">
+          <div class="mdc-slider__pin">
+            <span class="mdc-slider__pin-value-marker"></span>
+          </div>
+          <svg class="mdc-slider__thumb" width="21" height="21">
+            <circle cx="10.5" cy="10.5" r="7.875"></circle>
+          </svg>
+          <div class="mdc-slider__focus-ring"></div>
+        </div>
+      </div>`;
+    /*html`<div class="mdc-slider mdc-slider--discrete">
+        <input class="mdc-slider__input" type="range" min="${this._min}" max="${this._max}" value="${this._value}" step="${this._step}" name="${label}" aria-label="${label}">
+        <div class="mdc-slider__track">
+          <div class="mdc-slider__track--inactive"></div>
+          <div class="mdc-slider__track--active">
+            <div class="mdc-slider__track--active_fill"></div>
+          </div>
+        </div>
+        <div class="mdc-slider__thumb-container">
+          <div class="mdc-slider__track-marker-container" aria-hidden="true">
+            <div class="mdc-slider__value-indicator">
+              <span class="mdc-slider__pin-value-marker">0</span>
+            </div>
+          </div>
+          <div class="mdc-slider__thumb-knob"></div>
+        </div>
+      </div>
+`;*/
 
     this.rootElement = this.childNodes[0];
     this.mdcComponent = mdc.slider.MDCSlider.attachTo(this.rootElement);
-    this.indicator = this.querySelector(".mdc-slider__value-indicator-text");
+    //this.indicator = this.querySelector(".mdc-slider__value-indicator-text");
 
+/*
     this.mdcComponent.step = this.getAttribute("step") || this._step;
     this.mdcComponent.max = this.getAttribute("max") || this._max;
     this.mdcComponent.min = this.getAttribute("min") || this._min;
+*/
+    this.rootElement.addEventListener("MDCSlider:change", (e) => {
+      //this.indicator.innerText = this.mdcComponent.value;
+    });
+
     this.applyValue();
     this.applyDisabled();
+    document.addEventListener('cc-divider-resize', this.resizehandler, false);
+  }
+
+  disconnectedCallback() {
+    this.mdcComponent.destroy();
+    document.removeEventListener('cc-divider-resize', this.resizehandler, false);
+  }
+
+  resizehandler (e) {
+    if (this.mdcComponent) {
+      this.mdcComponent.layout();
+    }
   }
 
   set disabled (value) {
@@ -98,8 +137,8 @@ class CcMdcSlider extends HTMLElement {
     }
   }
 
-  disconnectedCallback() {
-    this.mdcComponent.destroy();
+  refresh() {
+    this.mdcComponent
   }
 }
 
