@@ -21,11 +21,11 @@ class CcAceEditor extends HTMLElement {
   }
 
   applyDisabled() {
-    if (this.input) {
+    if (this.editor) {
       if (this._disabled) {
-        this.input.setAttribute("disabled", true);
+        this.editor.setReadOnly(true);
       } else {
-        this.input.removeAttribute("disabled");
+        this.editor.setReadOnly(false);
       }
     }
   }
