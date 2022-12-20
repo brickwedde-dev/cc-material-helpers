@@ -6,7 +6,6 @@ class CcAceEditor extends HTMLElement {
 
   connectedCallback() {
     this.style.display = "inline-block";
-    this.style.position = "relative";
 
     if (isDefined(this.getAttribute("disabled"))) {
       this._disabled = this.getAttribute("disabled");
