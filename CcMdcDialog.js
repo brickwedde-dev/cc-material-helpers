@@ -52,6 +52,7 @@ class CcMdcDialog extends HTMLElement {
   }
 
   connectedCallback() {
+    var flexmaxwidth = this.flexmaxwidth || this.getAttribute("flexmaxwidth") || null;
     var html1 = this.html || this.getAttribute("html") || null;
     var type = this.type || this.getAttribute("type") || null;
     this._open = this._open || this.getAttribute("open") || false;
@@ -122,6 +123,11 @@ class CcMdcDialog extends HTMLElement {
         </div>`;
         break;
     }
+
+    if(flexmaxwidth) {
+      this.querySelector(".mdc-dialog__surface").style.maxWidth = "calc(100vw - 50px)";
+    }
+
     var dlgContent = this.querySelector("#my-dialog-content");
     if (this.contentElement) {
       if (this.contentElement.setDialogContainer) {
@@ -256,7 +262,11 @@ class CcMdcDialog extends HTMLElement {
 
 window.customElements.define("cc-mdc-dialog", CcMdcDialog);
 
-function CcAlert(title, htmlcontent) {
-  var dlg = new CcMdcDialog().setHtml(htmlcontent);
+function CcAlert(title, htmlcontent, options) {
+  var dlg = new CcMdcDialog();
+  if (options && options.flexmaxwidth) {
+    dlg.flexmaxwidth = true;
+  }
+  dlg.setHtml(htmlcontent);
   return dlg.open();
 }

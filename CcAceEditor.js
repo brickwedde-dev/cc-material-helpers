@@ -6,7 +6,15 @@ class CcAceEditor extends HTMLElement {
 
   connectedCallback() {
     this.style.display = "inline-block";
-    this.innerHTML = `<div style="height:100%;width:100%;"></div>`;
+    this.style.position = "relative";
+
+    if (isDefined(this.getAttribute("disabled"))) {
+      this._disabled = this.getAttribute("disabled");
+    }
+
+    if (!this.innerHTML) {
+      this.innerHTML = `<div style="height:100%;width:100%;"></div>`;
+    }
     this.editor = ace.edit(this.childNodes[0]);
     this.editor.setTheme("ace/theme/sqlserver");
     this.editor.session.setMode("ace/mode/xml");
