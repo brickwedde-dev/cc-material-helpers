@@ -3,6 +3,19 @@ function isDefined(v) {
   return t != "null" && t != "undefined" && t != "void";
 }
 
+JSON.parseAndCheckOrDefault = function parseAndCheckOrDefault (x, compareType, defaultValue) {
+  try {
+    if (isDefined(x) && x !== "") {
+      var o = JSON.parse(x);
+      if (o instanceof compareType) {
+        return o;
+      }
+    }
+  } catch {
+  }
+  return defaultValue;
+}
+
 String.prototype.escapeXml = function escapeXml () {
   var span = document.createElement("span");
   span.innerText = this;
