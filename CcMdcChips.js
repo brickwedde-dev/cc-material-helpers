@@ -81,9 +81,10 @@ class CcMdcChips extends HTMLElement {
             <span class="mdc-chip__text">${item.html}</span>
           </span>
         </span>
+        ${isDefined(item.icon) ? `
         <span role="gridcell">
           <i class="material-icons mdc-chip__icon mdc-chip__icon--trailing" tabindex="-1" role="button">${item.icon}</i>
-        </span>
+        </span>` : ``}
         `;
       this.mdcElement.appendChild(div);
       this.mdcComponent.addChip(div);
