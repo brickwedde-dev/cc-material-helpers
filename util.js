@@ -29,6 +29,13 @@ String.prototype.interpolate = function(params, defaultvalue, foundnames) {
   return new Function('map', `return \`${sanitized}\`;`)(params);
 }
 
+Math.prototype.gaussianRandom = function(mean=0, stdev=1) {
+    let u = 1 - Math.random();
+    let v = Math.random();
+    let z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+    return z * stdev + mean;
+}
+
 Number.prototype.pad = function(size) {
   var neg = this < 0;
   if (neg) {
