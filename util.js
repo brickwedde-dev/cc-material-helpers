@@ -29,6 +29,18 @@ String.prototype.interpolate = function(params, defaultvalue, foundnames) {
   return new Function('map', `return \`${sanitized}\`;`)(params);
 }
 
+Number.prototype.pad = function(size) {
+  var neg = this < 0;
+  if (neg) {
+    size--;
+    s = String(-this);
+  } else {
+    s = String(this);
+  }
+  while (s.length < (size || 2)) {s = "0" + s;}
+  return (neg ? "-" : "") + s;
+}
+
 const htmlFunctionArray = {};
 let htmlFunctionArrayCount = 0;
 
