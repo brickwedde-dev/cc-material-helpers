@@ -5,10 +5,12 @@ class CcMdcTextArea extends HTMLElement {
   }
 
   connectedCallback() {
+    globalLabelCount++;
     var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled mdc-text-field--textarea mdc-text-field--no-label">
+    this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled mdc-text-field--textarea">
     <span class="mdc-text-field__ripple"></span>
+    <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
     <span class="mdc-text-field__resizer">
       <textarea class="mdc-text-field__input" rows="8" cols="40" aria-label="${label}"></textarea>
     </span>
