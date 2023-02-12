@@ -25,7 +25,7 @@ class CcMdcTopAppBar extends HTMLElement {
         </section>
       </div>
     </header>
-    <main class="main-content" id="main-content" style="${this._bottomBar ? "top: 0px; bottom: 64px; left: 0px; right: 0px; position: absolute; overflow:auto;" : "top: 64px; bottom: 0px; left: 0px; right: 0px; position: absolute; overflow:auto;"}">
+    <main class="main-content ${this._bottomBar ? "main-content-bottom-app-bar" : "main-content-top-app-bar"}" id="main-content" style="left: 0px; right: 0px; position: absolute; overflow:auto;"}">
     </main>`;
 
     this.mdcComponent = mdc.topAppBar.MDCTopAppBar.attachTo(this.childNodes[0]);
