@@ -42,14 +42,23 @@ class CcMdcTextField extends HTMLElement {
     this.label = this.querySelector("label");
     this.input = this.querySelector("input");
 
-    var changefun = this.getAttribute("@change");
-    if (htmlFunctionArray[changefun]) {
-      this.addEventListener("change", htmlFunctionArray[changefun].func);
+    var changefun = htmlFunctionArray[this.getAttribute("@change")];
+    if (changefun) {
+      this.addEventListener("change", changefun.func);
     }
 
-    var targetfun = this.getAttribute(".target");
-    if (htmlFunctionArray[targetfun] && htmlFunctionArray[targetfun].func && htmlFunctionArray[targetfun].func.__isTarget) {
-      var { obj, prop } = htmlFunctionArray[targetfun].func();
+    let enterfun = htmlFunctionArray[this.getAttribute("@enter")];
+    if (enterfun) {
+      this.addEventListener("keyup", (e) => {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+          enterfun.func();
+        }
+      });
+    }
+
+    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
+    if (targetfun && targetfun.func && targetfun.func.__isTarget) {
+      var { obj, prop } = targetfun.func();
       this.addEventListener("change", () => {
         obj[prop] = this.value;
       });

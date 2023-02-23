@@ -34,6 +34,11 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
 
+  setFillContentFunction(fillContentFunction) {
+    this.fillContentFunction = fillContentFunction;
+    return this;
+  }
+
   setType(type) {
     this.type = type;
     return this;
@@ -134,6 +139,8 @@ class CcMdcDialog extends HTMLElement {
         this.contentElement.setDialogContainer(this);
       }
       dlgContent.appendChild(this.contentElement);
+    } else if (this.fillContentFunction) {
+      this.fillContentFunction(dlgContent);
     } else if (html1) {
       dlgContent.innerHTML = html1;
     }
