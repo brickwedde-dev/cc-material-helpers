@@ -20,7 +20,7 @@ class CcMdcButton extends HTMLElement {
     if (icon && icon.charAt && icon.charAt(0) == "/") {
       icon = html`<img src="${icon}" style="width:16px;height:16px;">`;
     }
-    var i = this.querySelector(".material-icons");
+    var i = this.selfIcon ? this : this.querySelector(".material-icons");
     if (i) {
       i.innerHTML = icon;
     }
@@ -95,20 +95,25 @@ class CcMdcButton extends HTMLElement {
         </div>
       </div>
     </button>`;
+      this.button = this.childNodes[0];
     } else if (icon && label) {
       this.innerHTML = html`<button class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">` + icon + `</i>
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
+      this.button = this.childNodes[0];
     } else if (label) {
       this.innerHTML = html`<button class="mdc-button mdc-button--raised">
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
+      this.button = this.childNodes[0];
     } else if (icon) {
-      this.innerHTML = html`<i class="material-icons mdc-button__icon" aria-label="">` + icon + `</i>`;
+      this.className = "material-icons mdc-button__icon"
+      this.innerHTML = icon;
+      this.button = this;
+      this.selfIcon = true;
     }
 
-    this.button = this.childNodes[0];
 
     if (this._color) {
       this.button.style.color = this._color;
