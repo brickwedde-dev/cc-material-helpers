@@ -14,7 +14,7 @@ class CcMdcTextField extends HTMLElement {
     var max = this.getAttribute("max") || undefined;
 
     this.type = this.getAttribute("type") || "text";
-    var label = this.getAttribute("label") || "Label";
+    var label = this.getAttribute("label") || this.label || "Label";
     var pattern = this.getAttribute("pattern") || this.pattern || undefined;
 
     if (this.hasAttribute("value")) {
