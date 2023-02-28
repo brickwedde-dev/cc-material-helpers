@@ -100,6 +100,15 @@
 .mdc-button:disabled {
   background-color: transparent;
 }
+
+.mdc-button__icon {
+  user-select: none;
+}
+
+.material-icons {
+  user-select: none;
+}
+
 .mdc-button .mdc-button__icon {
   /* @noflip */
   margin-left: 0;
