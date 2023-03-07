@@ -37,6 +37,12 @@ class CcMdcSlider extends HTMLElement {
         </div>
       </div>`;
 
+    var s = this.querySelector(".mdc-slider");
+    s.style.height = (this.offsetHeight - 2) + "px";
+
+    var c = this.querySelector(".mdc-slider__thumb-container");
+    c.style.top = (14 + parseInt((s.offsetHeight - 48) / 2)) + "px";
+
     this.rootElement = this.childNodes[0];
     this.mdcComponent = mdc.slider.MDCSlider.attachTo(this.rootElement);
     //this.indicator = this.querySelector(".mdc-slider__value-indicator-text");
