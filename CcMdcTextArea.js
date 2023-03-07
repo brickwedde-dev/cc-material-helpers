@@ -8,7 +8,9 @@ class CcMdcTextArea extends HTMLElement {
     globalLabelCount++;
     var label = this.getAttribute("label") || "Label";
 
-    this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled mdc-text-field--textarea">
+    var hasWidth = ("" + this.style.width).indexOf("px") > 0;
+
+    this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled mdc-text-field--textarea" ${hasWidth ? `style="width:100%;height:100%;"` : ``}>
     <span class="mdc-text-field__ripple"></span>
     <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
     <span class="mdc-text-field__resizer">
