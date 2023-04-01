@@ -134,3 +134,33 @@ function debounce(callback, timeout) {
 function isEllipsisActive(e) {
      return (e.offsetWidth < e.scrollWidth);
 }
+
+function depthFirstTreeSort(arr, cmp, idkey, parentkey, rootkey, levelkey) {
+    function makeTree(treesrc) {
+        var tree = {};
+        for (var i = 0; i < treesrc.length; i++) {
+            if (!tree[treesrc[i][parentkey]]) {
+              tree[treesrc[i][parentkey]] = [];
+            }
+            tree[treesrc[i][parentkey]].push(treesrc[i]);
+        }
+        return tree;
+    }
+
+    function depthFirstTraversal(tree, id, cmpfun, callback, level) {
+        var children = tree[id];
+        if (children) {
+            children.sort(cmpfun);
+            for (var i = 0; i < children.length; i++) {
+              children[i][levelkey] = level;
+              callback(children[i]);
+              depthFirstTraversal(tree, children[i][idkey], cmpfun, callback, level + 1);
+            }
+        }
+    }
+
+    var i = 0;
+    depthFirstTraversal(makeTree(arr), rootkey, cmp, function(node) {
+        arr[i++] = node;
+    }, 0);
+}
