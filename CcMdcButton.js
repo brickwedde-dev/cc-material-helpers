@@ -84,6 +84,8 @@ class CcMdcButton extends HTMLElement {
       icon = html`<img src="${icon}" style="width:16px;height:16px;">`;
     }
 
+    var hasWidth = ("" + this.style.width).indexOf("px") > 0;
+
     this.style.userSelect = "none";
 
     if (this.selectlabel) {
@@ -98,7 +100,7 @@ class CcMdcButton extends HTMLElement {
     </button>`;
       this.button = this.childNodes[0];
     } else if (icon && label) {
-      this.innerHTML = html`<button class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button ${hasWidth ? `style="width:100%;"` : ``} class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">` + icon + `</i>
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
