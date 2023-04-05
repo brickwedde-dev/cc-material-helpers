@@ -115,9 +115,9 @@ class CcMdcButton extends HTMLElement {
         this.button = this;
       } else {
         this.innerHTML = html`<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="">` + icon + `</button>`;
+        this.button = this.childNodes[0];
       }
     }
-
 
     if (this._color) {
       this.button.style.color = this._color;
