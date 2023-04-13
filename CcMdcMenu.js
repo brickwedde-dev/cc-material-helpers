@@ -14,7 +14,10 @@ class CcMdcMenu extends HTMLElement {
     this.ulElem = this.querySelector("ul");
     this.mdcComponent = mdc.menu.MDCMenu.attachTo(this.childNodes[0]);
 
-    if (this.anchor) {
+    if (this.absoluteXY) {
+      this.mdcComponent.setAbsolutePosition (this.absoluteXY.x, this.absoluteXY.y);
+      this.mdcComponent.setIsHoisted(true);
+    } else if (this.anchor) {
       this.mdcComponent.setAnchorElement(this.anchor);
       this.mdcComponent.setIsHoisted(true);
       this.anchor = null;
@@ -33,6 +36,15 @@ class CcMdcMenu extends HTMLElement {
     }
 
     this.mdcComponent.open = this._open;
+  }
+
+  setAbsolutePosition (x, y) {
+    if (this.mdcComponent) {
+      this.mdcComponent.setAbsolutePosition (x, y);
+      this.mdcComponent.setIsHoisted(true);
+    } else {
+      this.absoluteXY = {x, y};
+    }
   }
 
   setAnchorElement(anchor) {
