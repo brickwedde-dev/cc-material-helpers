@@ -46,19 +46,22 @@ class CcMdcChips extends HTMLElement {
     if (this.valueOnly) {
       this.clearChips();
 
-      for(var item in this._value) {
-        var div = document.createElement("div");
-        div.id = JSON.stringify(item);
-        div.className = "mdc-chip";
-        div.innerHTML = `<div class="mdc-chip__ripple"></div>
-          <span role="gridcell">
-            <span role="checkbox" tabindex="0" aria-checked="false" class="mdc-chip__primary-action">
-              <span class="mdc-chip__text">${item}</span>
+      if (this.bits) {
+      } else {
+        for(var item in this._value) {
+          var div = document.createElement("div");
+          div.id = JSON.stringify(item);
+          div.className = "mdc-chip";
+          div.innerHTML = `<div class="mdc-chip__ripple"></div>
+            <span role="gridcell">
+              <span role="checkbox" tabindex="0" aria-checked="false" class="mdc-chip__primary-action">
+                <span class="mdc-chip__text">${item}</span>
+              </span>
             </span>
-          </span>
-          `;
-        this.mdcElement.appendChild(div);
-        this.mdcComponent.addChip(div);
+            `;
+          this.mdcElement.appendChild(div);
+          this.mdcComponent.addChip(div);
+        }
       }
 
       return;
@@ -91,7 +94,11 @@ class CcMdcChips extends HTMLElement {
     }
     this._items = [];
     for(var chip of this.mdcComponent.chips) {
-      chip.selected = this._value && this._value[chip.id];
+      if (this.bits) {
+        chip.selected = (this._value & parseInt(chip.id)) ? true : false;
+      } else {
+        chip.selected = this._value && this._value[chip.id];
+      }
     }
   }
 
@@ -107,6 +114,7 @@ class CcMdcChips extends HTMLElement {
     
     var label = this.label || this.getAttribute("label") || null;
     var width = this.getAttribute("width") || this.width || 200;
+    this.bits = this.bits || this.getAttribute("bits") == "true" || false;
 
     this.innerHTML = `<div class="mdc-chip-set mdc-chip-set--filter" role="grid"></div>`;
 
@@ -116,7 +124,10 @@ class CcMdcChips extends HTMLElement {
     this.mdcComponent.listen('MDCChip:selection', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      if (this.valueOnly) {
+      if (this.bits) {
+        this._value = e.detail.selected ? this._value | parseInt(e.detail.chipId) : this._value & ~parseInt(e.detail.chipId);
+        this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+      } else if (this.valueOnly) {
         var v = JSON.parse(e.detail.chipId);
         if (this._value[v]) {
           delete this._value[v];
