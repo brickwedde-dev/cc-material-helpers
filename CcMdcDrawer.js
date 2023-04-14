@@ -2,6 +2,7 @@ class CcMdcDrawer extends HTMLElement {
   constructor() {
     super();
     this._drawerTitleHtml = "";
+    this.openDrawer = true;
   }
 
   connectedCallback() {
@@ -18,7 +19,7 @@ class CcMdcDrawer extends HTMLElement {
     this.querySelector(".mdc-drawer__content").appendChild(this.mdcList);
 
     this.mdcComponent = mdc.drawer.MDCDrawer.attachTo(this.childNodes[0]);
-    this.mdcComponent.open = true;
+    this.mdcComponent.open = this.openDrawer;
     this.contentElement = this.querySelector(".mdc-drawer-app-content");
 
     this.header = this.querySelector(".mdc-drawer__header");
