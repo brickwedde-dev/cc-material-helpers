@@ -121,6 +121,21 @@ const t9n = function t9n(strings, ...values) {
   return str;
 }
 
+const t9nhtml = function t9n(strings, ...values) {
+  var xl8 = t9n_xl8 (strings, values);
+  if (xl8) {
+    strings = xl8.strings;
+    values = xl8.values;
+  }
+
+  let str = '';
+  strings.forEach((string, i) => {
+    var s = (values.length > i) ? values[i] : "";
+    str += string + "" + s;
+  });
+  return str;
+}
+
 function debounce(callback, timeout) {
     let timer;
     return function (...args) {
