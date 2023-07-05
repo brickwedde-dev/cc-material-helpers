@@ -179,3 +179,14 @@ function depthFirstTreeSort(arr, cmp, idkey, parentkey, rootkey, levelkey) {
         arr[i++] = node;
     }, 0);
 }
+
+function makeUnselectable(element) {
+  if (typeof element.onselectstart !== 'undefined') {
+    element.onselectstart = () => { return false; };
+  }
+  element.style['userSelect'] = 'none';
+  if (typeof element.unselectable === 'string') {
+    element.unselectable = 'on';
+  }
+  return element;
+}
