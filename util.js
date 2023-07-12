@@ -190,3 +190,69 @@ function makeUnselectable(element) {
   }
   return element;
 }
+
+function searchhelper_matches(needle, haystack)
+{
+  haystack = haystack.toLocaleLowerCase();
+  var needles = needle.toLocaleLowerCase().split(" ");
+  var found = false;
+  for(var needle of needles) {
+    if (needle.startsWith("+")) {
+      needle = needle.substring(1);
+      if(haystack.indexOf(needle) < 0) {
+        return false;
+      } else {
+        found = true;
+      }
+    } else if(!found && haystack.indexOf(needle) >= 0) {
+      found = true;
+    }
+  }
+  return found;
+}
+
+function searchhelper_filter(needle, callback)
+{
+  var needles = needle.toLocaleLowerCase().split(" ");
+  return (haystack) => {
+    var found = false;
+    for(var needle of needles) {
+      if (needle.startsWith("+")) {
+        needle = needle.substring(1);
+        if(haystack.indexOf(needle) < 0) {
+          return false;
+        } else {
+          found = true;
+        }
+      } else if(!found && haystack.indexOf(needle) >= 0) {
+        found = true;
+      }
+    }
+    return found;
+  }
+}
+
+/*
+var a = [
+  {name:"hello world"},
+  {name:"helloworld"},
+  {name:"hell world"},
+  {name:"hello worl"},
+  {name:"helo word"},
+];
+var filterfn = searchhelper_filter("+hello world");
+console.log("1", a.filter((x) => { return filterfn(x.name); }));
+
+console.log("------")
+
+console.log("1", searchhelper_filter("hello world")("hello wor"))
+console.log("2", searchhelper_filter("+hello world")("hello wor"))
+console.log("3", searchhelper_filter("hello +world")("hello wor"))
+console.log("4", searchhelper_filter("+hello +world")("hell world"))
+console.log("5", searchhelper_filter("+hello +world")("hello world"))
+console.log("6", searchhelper_filter("the hello +world")("the world"))
+console.log("7", searchhelper_filter("the hello +world")("hello world"))
+console.log("8", searchhelper_filter("the hello +world")("world"))
+console.log("9", searchhelper_filter("the hello +world")("the hello"))
+
+*/
