@@ -45,8 +45,14 @@ class CcMdcTextField extends HTMLElement {
       this.label = this.querySelector("label");
       this.input = this.querySelector("input");
       this.button = this.querySelector("button");
-      var ph = this.input.offsetHeight;
-      this.input.style.width = (this.input.offsetWidth - ph) + "px"
+      var ph = (this.input.offsetHeight || (parseInt(this.style.height) / 2) || 28);
+      if (this.input.offsetWidth) {
+        this.input.style.width = (this.input.offsetWidth - ph) + "px"
+      } else if (parseInt(this.style.width)) {
+        this.input.style.width = parseInt(this.style.width) - 2 * ph;
+      } else {
+        this.input.style.width = 150 - 2 * ph;
+      }
       this.button.style.minWidth = parseInt(ph) + "px";
       this.button.style.width = parseInt(ph) + "px";
       this.button.style.height = parseInt(ph) + "px";
@@ -54,6 +60,8 @@ class CcMdcTextField extends HTMLElement {
         CcColorPickerDlg(t9n`color picker`, this.value)
         .then((color) => {
           this.value = "#" + color.rgba[0].toString(16).pad(2) + color.rgba[1].toString(16).pad(2) + color.rgba[2].toString(16).pad(2);
+          this.dispatchEvent(new InputEvent("input"));
+          this.dispatchEvent(new InputEvent("change"));
         })
         .catch((e) => {
           console.error(e)
