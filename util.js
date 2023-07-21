@@ -31,6 +31,7 @@ String.prototype.interpolate = function(params, defaultvalue, foundnames) {
 
 Number.prototype.pad = function(size) {
   var neg = this < 0;
+  var s = "";
   if (neg) {
     size--;
     s = String(-this);
@@ -39,6 +40,12 @@ Number.prototype.pad = function(size) {
   }
   while (s.length < (size || 2)) {s = "0" + s;}
   return (neg ? "-" : "") + s;
+}
+
+String.prototype.pad = function(size) {
+  var s = this;
+  while (s.length < (size || 2)) {s = "0" + s;}
+  return s;
 }
 
 const htmlFunctionArray = {};

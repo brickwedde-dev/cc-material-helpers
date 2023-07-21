@@ -31,16 +31,52 @@ class CcMdcTextField extends HTMLElement {
         break;
     }
 
-    this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
+    if (this.type == "color") {
+      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : `style="width:140px"`}>
+  <span class="mdc-text-field__ripple"></span>
+  <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
+  <span style="white-space:nowrap;">
+    <input type="text" ${isDefined(step) ? `step="${step}"` : ``} ${isDefined(min) ? `min="${min}"` : ``} ${isDefined(max) ? `max="${max}"` : ``} ${isDefined(pattern) ? `pattern="${pattern}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
+    <button style="vertical-align:top;padding:0px;border:0px;display:inline-block;width:24px;height:24px;"></button>  
+  </span>
+  <span class="mdc-line-ripple"></span>
+</label>`;
+      this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
+      this.label = this.querySelector("label");
+      this.input = this.querySelector("input");
+      this.button = this.querySelector("button");
+      var ph = this.input.offsetHeight;
+      this.input.style.width = (this.input.offsetWidth - ph) + "px"
+      this.button.style.minWidth = parseInt(ph) + "px";
+      this.button.style.width = parseInt(ph) + "px";
+      this.button.style.height = parseInt(ph) + "px";
+      this.button.addEventListener("click", () => {
+        CcColorPickerDlg(t9n`color picker`, this.value)
+        .then((color) => {
+          this.value = "#" + color.rgba[0].toString(16).pad(2) + color.rgba[1].toString(16).pad(2) + color.rgba[2].toString(16).pad(2);
+        })
+        .catch((e) => {
+          console.error(e)
+        });
+      })
+      this.input.addEventListener("change", () => {
+        this.button.style.backgroundColor = this.value;
+      })
+      this.input.addEventListener("input", () => {
+        this.button.style.backgroundColor = this.value;
+      })
+    } else {
+      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
   <input type="${type}" ${isDefined(step) ? `step="${step}"` : ``} ${isDefined(min) ? `min="${min}"` : ``} ${isDefined(max) ? `max="${max}"` : ``} ${isDefined(pattern) ? `pattern="${pattern}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
   <span class="mdc-line-ripple"></span>
 </label>`;
+      this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
+      this.label = this.querySelector("label");
+      this.input = this.querySelector("input");
+    }
 
-    this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
-    this.label = this.querySelector("label");
-    this.input = this.querySelector("input");
 
     var changefun = htmlFunctionArray[this.getAttribute("@change")];
     if (changefun) {
@@ -106,6 +142,12 @@ class CcMdcTextField extends HTMLElement {
       case "minutes":
         this._value = CcMdcTextField_minutesToString(value);
         break;
+      case "color":
+        this._value = value;
+        if (this.button) {
+          this.button.style.backgroundColor = value;
+        }
+        break;
       default:
         this._value = value;
         break;
@@ -139,6 +181,11 @@ class CcMdcTextField extends HTMLElement {
   applyValue() {
     if (this.mdcComponent && isDefined(this._value)) {
       this.mdcComponent.value = this._value;
+    }
+    if (this.type == "color") {
+      if (this.button) {
+        this.button.style.backgroundColor = this._value;
+      }
     }
   }
 

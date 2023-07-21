@@ -277,3 +277,38 @@ function CcAlert(title, htmlcontent, options) {
   dlg.setHtml(htmlcontent);
   return dlg.open();
 }
+
+function CcColorPickerDlg(title, selectedcolor, options) {
+  return new Promise((resolve, reject) => {
+    var oInfo = { picker : null, };
+    var dlg = new CcMdcDialog();
+    dlg.setFillContentFunction((dlgContent) => {
+      oInfo.picker = new Picker({
+          parent: dlgContent,
+          popup: false,
+          alpha: false,
+          editor: true,
+          color: selectedcolor,
+          onChange: function(color) {
+              oInfo.color = color;
+          },
+      });
+    });
+    dlg.type = "okcancel";
+    dlg.open()
+    .then((x) => {
+      switch (x) {
+        case "ok":
+          resolve(oInfo.color);
+          break;
+        case "cancel":
+          reject("cancel");
+          break;
+      }
+    })
+    .catch((e) => {
+      reject(e);
+    });
+  });
+}
+
