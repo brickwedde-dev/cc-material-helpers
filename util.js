@@ -128,6 +128,21 @@ const t9n = function t9n(strings, ...values) {
   return str;
 }
 
+const t9nhtml = function t9n(strings, ...values) {
+  var xl8 = t9n_xl8 (strings, values);
+  if (xl8) {
+    strings = xl8.strings;
+    values = xl8.values;
+  }
+
+  let str = '';
+  strings.forEach((string, i) => {
+    var s = (values.length > i) ? values[i] : "";
+    str += string + "" + s;
+  });
+  return str;
+}
+
 function debounce(callback, timeout) {
     let timer;
     return function (...args) {
@@ -141,3 +156,110 @@ function debounce(callback, timeout) {
 function isEllipsisActive(e) {
      return (e.offsetWidth < e.scrollWidth);
 }
+
+function depthFirstTreeSort(arr, cmp, idkey, parentkey, rootkey, levelkey) {
+    function makeTree(treesrc) {
+        var tree = {};
+        for (var i = 0; i < treesrc.length; i++) {
+            if (!tree[treesrc[i][parentkey]]) {
+              tree[treesrc[i][parentkey]] = [];
+            }
+            tree[treesrc[i][parentkey]].push(treesrc[i]);
+        }
+        return tree;
+    }
+
+    function depthFirstTraversal(tree, id, cmpfun, callback, level) {
+        var children = tree[id];
+        if (children) {
+            children.sort(cmpfun);
+            for (var i = 0; i < children.length; i++) {
+              children[i][levelkey] = level;
+              callback(children[i]);
+              depthFirstTraversal(tree, children[i][idkey], cmpfun, callback, level + 1);
+            }
+        }
+    }
+
+    var i = 0;
+    depthFirstTraversal(makeTree(arr), rootkey, cmp, function(node) {
+        arr[i++] = node;
+    }, 0);
+}
+
+function makeUnselectable(element) {
+  if (typeof element.onselectstart !== 'undefined') {
+    element.onselectstart = () => { return false; };
+  }
+  element.style['userSelect'] = 'none';
+  if (typeof element.unselectable === 'string') {
+    element.unselectable = 'on';
+  }
+  return element;
+}
+
+function searchhelper_matches(needle, haystack)
+{
+  haystack = haystack.toLocaleLowerCase();
+  var needles = needle.toLocaleLowerCase().split(" ");
+  var found = false;
+  for(var needle of needles) {
+    if (needle.startsWith("+")) {
+      needle = needle.substring(1);
+      if(haystack.indexOf(needle) < 0) {
+        return false;
+      } else {
+        found = true;
+      }
+    } else if(!found && haystack.indexOf(needle) >= 0) {
+      found = true;
+    }
+  }
+  return found;
+}
+
+function searchhelper_filter(needle, callback)
+{
+  var needles = needle.toLocaleLowerCase().split(" ");
+  return (haystack) => {
+    var found = false;
+    for(var needle of needles) {
+      if (needle.startsWith("+")) {
+        needle = needle.substring(1);
+        if(haystack.indexOf(needle) < 0) {
+          return false;
+        } else {
+          found = true;
+        }
+      } else if(!found && haystack.indexOf(needle) >= 0) {
+        found = true;
+      }
+    }
+    return found;
+  }
+}
+
+/*
+var a = [
+  {name:"hello world"},
+  {name:"helloworld"},
+  {name:"hell world"},
+  {name:"hello worl"},
+  {name:"helo word"},
+];
+var filterfn = searchhelper_filter("+hello world");
+console.log("1", a.filter((x) => { return filterfn(x.name); }));
+
+console.log("------")
+
+console.log("1", searchhelper_filter("hello world")("hello wor"))
+console.log("2", searchhelper_filter("+hello world")("hello wor"))
+console.log("3", searchhelper_filter("hello +world")("hello wor"))
+console.log("4", searchhelper_filter("+hello +world")("hell world"))
+console.log("5", searchhelper_filter("+hello +world")("hello world"))
+console.log("6", searchhelper_filter("the hello +world")("the world"))
+console.log("7", searchhelper_filter("the hello +world")("hello world"))
+console.log("8", searchhelper_filter("the hello +world")("world"))
+console.log("9", searchhelper_filter("the hello +world")("the hello"))
+
+*/

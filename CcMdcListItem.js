@@ -20,7 +20,7 @@ class CcMdcListItem extends HTMLLIElement {
 
   connectedCallback() {
     this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
-    this.style.cursor = this._inactive ? "default" : "pointer";
+    this.style.cursor = this._selected ? "default" : "pointer";
     this.ariaCurrent = "page";
     if (typeof this.icon == "object") {
       if (this.icon.src) {
@@ -44,19 +44,23 @@ class CcMdcListItem extends HTMLLIElement {
 
   set activated (activated) {
     this._activated = activated;
-    this.style.cursor = this._inactive ? "default" : "pointer";
+    this.style.cursor = this._selected ? "default" : "pointer";
     this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
   }
 
   set selected (selected) {
     this._selected = selected;
-    this.style.cursor = this._inactive ? "default" : "pointer";
+    this.style.cursor = this._selected ? "default" : "pointer";
     this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
+  }
+
+  get selected() {
+    return this._selected;
   }
 
   set inactive (inactive) {
     this._inactive = inactive;
-    this.style.cursor = this._inactive ? "default" : "pointer";
+    this.style.cursor = this._selected ? "default" : "pointer";
     this.className = "mdc-list-item" + (this._activated ? " mdc-list-item--activated" : "") + (this._selected ? " mdc-list-item--selected" : "");
   }
 }

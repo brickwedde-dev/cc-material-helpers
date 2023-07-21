@@ -7,6 +7,7 @@ class CcMdcSelect extends HTMLElement {
     this._items = [];
     this.width = 200;
     this.customheight = 0;
+    this.menuContainerMinWidth = 112;
   }
 
   set disabled (value) {
@@ -160,6 +161,9 @@ class CcMdcSelect extends HTMLElement {
       this.dispatchEvent(new CustomEvent("change", {detail: {value : e.detail.value ? JSON.parse(e.detail.value) : undefined }}));
     });
     
+    var menuContainer = this.querySelector(".mdc-menu");
+    menuContainer.style.minWidth = `${this.menuContainerMinWidth}px`;
+
     this.mdcList = this.querySelector(".mdc-list");
     this.applyDisabled();
     for(var item of this._items) {

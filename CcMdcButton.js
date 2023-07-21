@@ -78,10 +78,13 @@ class CcMdcButton extends HTMLElement {
     var label = this.label || this.getAttribute("label") || null;
     var icon = this.icon || this.getAttribute("icon") || null;
     var actionbar = this.actionbar || this.getAttribute("actionbar") || false;
+    this.selfIcon = isDefined(this.selfIcon) ? this.selfIcon : ((this.getAttribute("selficon") ? true : false) || false);
 
     if (icon && icon.charAt && icon.charAt(0) == "/") {
       icon = html`<img src="${icon}" style="width:16px;height:16px;">`;
     }
+
+    var hasWidth = ("" + this.style.width).indexOf("px") > 0;
 
     this.style.userSelect = "none";
 
@@ -97,7 +100,7 @@ class CcMdcButton extends HTMLElement {
     </button>`;
       this.button = this.childNodes[0];
     } else if (icon && label) {
-      this.innerHTML = html`<button class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button ${hasWidth ? `style="width:100%;"` : ``} class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">` + icon + `</i>
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
@@ -108,12 +111,15 @@ class CcMdcButton extends HTMLElement {
     </button>`;
       this.button = this.childNodes[0];
     } else if (icon) {
-      this.className = "material-icons mdc-button__icon"
-      this.innerHTML = icon;
-      this.button = this;
-      this.selfIcon = true;
+      if (this.selfIcon) {
+        this.className = "material-icons mdc-button__icon"
+        this.innerHTML = icon;
+        this.button = this;
+      } else {
+        this.innerHTML = html`<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="">` + icon + `</button>`;
+        this.button = this.childNodes[0];
+      }
     }
-
 
     if (this._color) {
       this.button.style.color = this._color;
