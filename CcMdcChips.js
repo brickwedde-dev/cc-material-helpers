@@ -7,6 +7,7 @@ class CcMdcChips extends HTMLElement {
     this._items = [];
     this.width = 200;
     this.valueOnly = false;
+    this.addButton = false;
   }
 
   set disabled (value) {
@@ -43,6 +44,12 @@ class CcMdcChips extends HTMLElement {
       return;
     }
 
+    if (this.addButton) {
+      this.addBtn.style.display = "";
+    } else {
+      this.addBtn.style.display = "none";
+    }
+
     if (this.valueOnly) {
       this.clearChips();
 
@@ -61,6 +68,32 @@ class CcMdcChips extends HTMLElement {
             `;
           this.mdcElement.appendChild(div);
           this.mdcComponent.addChip(div);
+        }
+      }
+
+      return;
+    }
+
+    if (this.addButton) {
+      this.clearChips();
+
+      if (this.bits) {
+      } else {
+        for(var item of this._items) {
+          if (this._value[item.value]) {
+            var div = document.createElement("div");
+            div.id = item.value;
+            div.className = "mdc-chip";
+            div.innerHTML = `<div class="mdc-chip__ripple"></div>
+              <span role="gridcell">
+                <span role="checkbox" tabindex="0" aria-checked="false" class="mdc-chip__primary-action">
+                  <span class="mdc-chip__text">${item.html}</span>
+                </span>
+              </span>
+              `;
+            this.mdcElement.appendChild(div);
+            this.mdcComponent.addChip(div);
+          }
         }
       }
 
@@ -112,14 +145,28 @@ class CcMdcChips extends HTMLElement {
   connectedCallback() {
     this.style.display = "inline-block";
     
-    var label = this.label || this.getAttribute("label") || null;
-    var width = this.getAttribute("width") || this.width || 200;
     this.bits = this.bits || this.getAttribute("bits") == "true" || false;
 
-    this.innerHTML = `<div class="mdc-chip-set mdc-chip-set--filter" role="grid"></div>`;
+    this.innerHTML = `<div class="mdc-chip-set mdc-chip-set--filter" role="grid"></div><i id="add" style="display:none;margin-left:10px;cursor:pointer;" class="material-icons mdc-button__icon" aria-hidden="true">add</i>`;
 
     this.mdcElement = this.childNodes[0];
     this.mdcComponent = mdc.chips.MDCChipSet.attachTo(this.mdcElement);
+
+    this.addBtn = this.querySelector("#add");
+    if (this.addButton) {
+      this.addBtn.style.display = "";
+    }
+
+    this.addBtn.addEventListener("click", (e) => {
+      var items = this._items.filter((i) => { return !this._value[i.value] });
+      CcChooser(`Add`, items, "html", "value", "")
+      .then((value) => {
+        this._value[value] = true;
+        this.applyValue();
+      })
+      .catch(() => {
+      });
+    });
 
     this.mdcComponent.listen('MDCChip:selection', (e) => {
       e.stopPropagation();
@@ -133,6 +180,10 @@ class CcMdcChips extends HTMLElement {
           delete this._value[v];
           this.applyValue();
         }
+      } else if (this.addButton) {
+        delete this._value[e.detail.chipId];
+        this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+        this.applyValue();
       } else {
         this._value[e.detail.chipId] = e.detail.selected;
         this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
