@@ -44,6 +44,10 @@ class CcMdcChips extends HTMLElement {
       return;
     }
 
+    if (this._disabled) {
+      this.style.opacity = "0.5";
+    }
+
     if (this.addButton) {
       this.addBtn.style.display = "";
     } else {
@@ -67,7 +71,9 @@ class CcMdcChips extends HTMLElement {
             </span>
             `;
           this.mdcElement.appendChild(div);
-          this.mdcComponent.addChip(div);
+          if (!this._disabled && this.mdcComponent) {
+            this.mdcComponent.addChip(div);
+          }
         }
       }
 
@@ -92,7 +98,9 @@ class CcMdcChips extends HTMLElement {
               </span>
               `;
             this.mdcElement.appendChild(div);
-            this.mdcComponent.addChip(div);
+            if (!this._disabled && this.mdcComponent) {
+              this.mdcComponent.addChip(div);
+            }
           }
         }
       }
@@ -103,7 +111,23 @@ class CcMdcChips extends HTMLElement {
     for(var item of this._items) {
       var div = document.createElement("div");
       div.id = item.value;
-      div.className = "mdc-chip";
+      if (this._disabled) {
+        if (this.bits) {
+          if (this._value & parseInt(item.value)){
+            div.className = "mdc-chip mdc-chip--selected";
+          } else {
+            div.className = "mdc-chip";
+          }
+        } else {
+          if (this._value && this._value[item.value]){
+            div.className = "mdc-chip mdc-chip--selected";
+          } else {
+            div.className = "mdc-chip";
+          }
+        }
+      } else {
+        div.className = "mdc-chip";
+      }
       div.innerHTML = `<div class="mdc-chip__ripple"></div>
         <i class="material-icons mdc-chip__icon mdc-chip__icon--leading mdc-chip__icon--leading-hidden"></i>
         <span class="mdc-chip__checkmark" >
@@ -123,14 +147,18 @@ class CcMdcChips extends HTMLElement {
         </span>` : ``}
         `;
       this.mdcElement.appendChild(div);
-      this.mdcComponent.addChip(div);
+      if (!this._disabled && this.mdcComponent) {
+        this.mdcComponent.addChip(div);
+      }
     }
     this._items = [];
-    for(var chip of this.mdcComponent.chips) {
-      if (this.bits) {
-        chip.selected = (this._value & parseInt(chip.id)) ? true : false;
-      } else {
-        chip.selected = this._value && this._value[chip.id];
+    if (this.mdcComponent) {
+      for(var chip of this.mdcComponent.chips) {
+        if (this.bits) {
+          chip.selected = (this._value & parseInt(chip.id)) ? true : false;
+        } else {
+          chip.selected = this._value && this._value[chip.id];
+        }
       }
     }
   }
@@ -150,46 +178,47 @@ class CcMdcChips extends HTMLElement {
     this.innerHTML = `<div class="mdc-chip-set mdc-chip-set--filter" role="grid"></div><i id="add" style="display:none;margin-left:10px;cursor:pointer;" class="material-icons mdc-button__icon" aria-hidden="true">add</i>`;
 
     this.mdcElement = this.childNodes[0];
-    this.mdcComponent = mdc.chips.MDCChipSet.attachTo(this.mdcElement);
+    if (!this._disabled) {
+      this.mdcComponent = mdc.chips.MDCChipSet.attachTo(this.mdcElement);
 
-    this.addBtn = this.querySelector("#add");
-    if (this.addButton) {
-      this.addBtn.style.display = "";
-    }
-
-    this.addBtn.addEventListener("click", (e) => {
-      var items = this._items.filter((i) => { return !this._value[i.value] });
-      CcChooser(`Add`, items, "html", "value", "")
-      .then((value) => {
-        this._value[value] = true;
-        this.applyValue();
-      })
-      .catch(() => {
-      });
-    });
-
-    this.mdcComponent.listen('MDCChip:selection', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      if (this.bits) {
-        this._value = e.detail.selected ? this._value | parseInt(e.detail.chipId) : this._value & ~parseInt(e.detail.chipId);
-        this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
-      } else if (this.valueOnly) {
-        var v = JSON.parse(e.detail.chipId);
-        if (this._value[v]) {
-          delete this._value[v];
-          this.applyValue();
-        }
-      } else if (this.addButton) {
-        delete this._value[e.detail.chipId];
-        this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
-        this.applyValue();
-      } else {
-        this._value[e.detail.chipId] = e.detail.selected;
-        this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+      this.addBtn = this.querySelector("#add");
+      if (this.addButton) {
+        this.addBtn.style.display = "";
       }
-    });
 
+      this.addBtn.addEventListener("click", (e) => {
+        var items = this._items.filter((i) => { return !this._value[i.value] });
+        CcChooser(`Add`, items, "html", "value", "")
+        .then((value) => {
+          this._value[value] = true;
+          this.applyValue();
+        })
+        .catch(() => {
+        });
+      });
+
+      this.mdcComponent.listen('MDCChip:selection', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (this.bits) {
+          this._value = e.detail.selected ? this._value | parseInt(e.detail.chipId) : this._value & ~parseInt(e.detail.chipId);
+          this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+        } else if (this.valueOnly) {
+          var v = JSON.parse(e.detail.chipId);
+          if (this._value[v]) {
+            delete this._value[v];
+            this.applyValue();
+          }
+        } else if (this.addButton) {
+          delete this._value[e.detail.chipId];
+          this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+          this.applyValue();
+        } else {
+          this._value[e.detail.chipId] = e.detail.selected;
+          this.dispatchEvent(new CustomEvent("change", {detail: {value : this._value, changed : e.detail.chipId}}));
+        }
+      });
+    }
     this.applyValue();
   }
 

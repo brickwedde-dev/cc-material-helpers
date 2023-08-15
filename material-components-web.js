@@ -1872,9 +1872,11 @@ var MDCChipSetFoundation = /** @class */function (_super) {
         this.adapter.removeChipAtIndex(index);
         var maxIndex = this.adapter.getChipListCount() - 1;
         var nextIndex = Math.min(index, maxIndex);
-        this.removeFocusFromChipsExcept_(nextIndex);
-        // After removing a chip, we should focus the trailing action for the next chip.
-        this.adapter.focusChipTrailingActionAtIndex(nextIndex);
+        if (nextIndex >= 0) {
+            this.removeFocusFromChipsExcept_(nextIndex);
+            // After removing a chip, we should focus the trailing action for the next chip.
+            this.adapter.focusChipTrailingActionAtIndex(nextIndex);
+        }
     };
     /**
      * Handles a chip navigation event.

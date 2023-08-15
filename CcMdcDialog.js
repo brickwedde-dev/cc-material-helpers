@@ -1,8 +1,11 @@
 class CcMdcDialog extends HTMLElement {
-  constructor() {
+  constructor(options) {
     super();
     this.zIndex = -1;
     this.allowpreventclose = false;
+    if (options && options.flexmaxwidth) {
+      this.flexmaxwidth = true;
+    }
   }
 
   setHtml(html) {
@@ -53,6 +56,12 @@ class CcMdcDialog extends HTMLElement {
     this.type = "okcancel";
     this.ok = ok;
     this.cancel = cancel;
+    return this;
+  }
+
+  setClose(close) {
+    this.type = "alert";
+    this.ok = close;
     return this;
   }
 
