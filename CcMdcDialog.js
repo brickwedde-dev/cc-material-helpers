@@ -287,6 +287,16 @@ function CcAlert(title, htmlcontent, options) {
   return dlg.open();
 }
 
+function CcConfirm(title, htmlcontent, options) {
+  var dlg = new CcMdcDialog();
+  if (options && options.flexmaxwidth) {
+    dlg.flexmaxwidth = true;
+  }
+  dlg.setHtml(htmlcontent);
+  dlg.setOkCancel(t9n`Ok`, t9n`Cancel`);
+  return dlg.open();
+}
+
 function CcColorPickerDlg(title, selectedcolor, options) {
   return new Promise((resolve, reject) => {
     var oInfo = { picker : null, };
