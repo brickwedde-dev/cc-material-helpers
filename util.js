@@ -16,6 +16,35 @@ JSON.parseAndCheckOrDefault = function parseAndCheckOrDefault (x, compareType, d
   return defaultValue;
 }
 
+HTMLElement.prototype.appendHTML = function HTMLElement__appendHTML(html, cleanup = false) {
+  var r = [];
+  var div = document.createElement("div");
+  div.innerHTML = html;
+  while(div.childNodes.length > 0) {
+    var e = div.childNodes[0];
+    if (cleanup && e instanceof Text && e.textContent.trim().length == 0) {
+      div.removeChild(e);
+      continue;
+    }
+    r.push(this.appendChild(e));
+  }
+  return r.length == 1 ? r[0] : r;
+}
+
+function elementsFromHTML(html) {
+  var div = document.createElement("div");
+  div.innerHTML = html;
+  for(var i = div.childNodes.length - 1; i >= 0; i--) {
+    var e = div.childNodes[i];
+    if (e instanceof Text) {
+      if(e.textContent.trim().length == 0) {
+        div.removeChild(e);
+      }
+    }
+  }
+  return div.childNodes;
+}
+
 String.prototype.escapeXml = function escapeXml () {
   var span = document.createElement("span");
   span.innerText = this;

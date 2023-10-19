@@ -59,6 +59,12 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
 
+  setButtons(buttons) {
+    this.type = "buttons";
+    this.buttons = buttons;
+    return this;
+  }
+
   setClose(close) {
     this.type = "alert";
     this.ok = close;
@@ -135,6 +141,46 @@ class CcMdcDialog extends HTMLElement {
           </div>
           <div class="mdc-dialog__scrim"></div>
         </div>`;
+        break;
+      case "buttons":
+        this.innerHTML = html`<div class="mdc-dialog" style="z-index:${this.zIndex >= 0 ? this.zIndex : 1000};">
+          <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface"
+              style="display:table;";
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="my-dialog-title"
+              aria-describedby="my-dialog-content">
+              <div class="mdc-dialog__content" id="my-dialog-content" style="box-sizing:border-box;max-height:calc(100vh - 70px);"></div>
+              <div class="mdc-dialog__actions">
+              </div>
+            </div>
+          </div>
+          <div class="mdc-dialog__scrim"></div>
+        </div>`;
+
+        var actions = this.querySelector(".mdc-dialog__actions");
+        for(var i = 0; i < this.buttons.length; i++) {
+          let b = this.buttons[i];
+          let button = actions.appendHTML(html`<button type="button" class="mdc-button mdc-dialog__button" ${b.default ? `data-mdc-dialog-button-default="true"`: ``}>
+                  <div class="mdc-button__ripple"></div>
+                  <span class="mdc-button__label">${b.label}</span>
+                </button>`);
+          button.addEventListener("click", (e) => {
+            if (this.allowpreventclose) {
+              if (this.allowpreventclose(b.action, this)) {
+                return;
+              }
+            }
+            if (this.dlgResolve) {
+              this.dlgResolve(b.action);
+            } else {
+              this.dlgClosed = b.action;
+            }
+            this.mdcComponent.close();
+          })
+
+        }
         break;
     }
 
