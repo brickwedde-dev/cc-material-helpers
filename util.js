@@ -16,6 +16,56 @@ JSON.parseAndCheckOrDefault = function parseAndCheckOrDefault (x, compareType, d
   return defaultValue;
 }
 
+HTMLElement.prototype.addT9nProp = function HTMLElement__addT9nProp(property, value) {
+  if (!this.__cc_translation) {
+    this.__cc_translation = [];
+    document.body.addEventListener("tr9_changed", () => {
+      this.__applyT9n();
+    });
+  }
+  this.__cc_translation.push({property, value});
+  this[property] = value();
+  return this
+}
+
+HTMLElement.prototype.addT9nAttr = function HTMLElement__addT9nAttr(attribute, value) {
+  if (!this.__cc_translation) {
+    this.__cc_translation = [];
+    document.body.addEventListener("tr9_changed", () => {
+      this.__applyT9n();
+    });
+  }
+  this.__cc_translation.push({attribute, value});
+  this.setAttribute(attribute, value());
+  return this
+}
+
+HTMLElement.prototype.__applyT9n = function HTMLElement____applyT9n() {
+  if (this.__cc_translation) {
+    this.__cc_translation.map((t) => {
+      if (t.property) {
+        this[t.property] = t.value();
+      }
+      if (t.attribute) {
+        this.setAttribute(t.attribute, t.value());
+      }
+    })
+  }
+}
+
+HTMLElement.prototype.setChildren = function HTMLElement__setChildren(childNodes) {
+  var r = [];
+  this.innerHTML = "";
+  if (childNodes instanceof HTMLElement) {
+    this.appendChild(childNodes);
+  } else if(childNodes instanceof Array) {
+    for(var i = 0; i < childNodes.length; i++) {
+      this.appendChild(childNodes[i]);
+    }
+  }
+  return this;
+}
+
 HTMLElement.prototype.appendHTML = function HTMLElement__appendHTML(html, cleanup = false) {
   var r = [];
   var div = document.createElement("div");
@@ -43,6 +93,23 @@ function elementsFromHTML(html) {
     }
   }
   return div.childNodes;
+}
+
+function elementFromHTML(html) {
+  var div = document.createElement("div");
+  div.innerHTML = html;
+  for(var i = div.childNodes.length - 1; i >= 0; i--) {
+    var e = div.childNodes[i];
+    if (e instanceof Text) {
+      if(e.textContent.trim().length == 0) {
+        div.removeChild(e);
+      }
+    }
+  }
+  if (div.childNodes.length == 1) {
+    return div.childNodes[0];
+  }
+  return div;
 }
 
 String.prototype.escapeXml = function escapeXml () {
@@ -122,20 +189,31 @@ function t9n_xl8 (strings, values) {
 
   if (t9n_translations[t9n_language][string]) {
     var o = { values : [] };
-    o.strings = t9n_translations[t9n_language][string].split(/(\${[0-9]*})/).filter((x) => {
-      var m = x.match(/\${[0-9]*}/);
-      if (m) {
-        o.values.push (values[parseInt(m[0].substring(2)) - 1]);
-        return false;
-      }
-      return true;
-    });
+    if (t9n_translations[t9n_language][string].split) {
+      o.strings = t9n_translations[t9n_language][string].split(/(\${[0-9]*})/).filter((x) => {
+        var m = x.match(/\${[0-9]*}/);
+        if (m) {
+          o.values.push (values[parseInt(m[0].substring(2)) - 1]);
+          return false;
+        }
+        return true;
+      });
+    } else {
+      o.strings = [t9n_translations[t9n_language][string]]
+    }
     return o;
   }
   return null;
 }
 
-const t9n = function t9n(strings, ...values) {
+function __t9n(strings, values) {
+  values = values.map((x) => {
+    if (x instanceof Function) {
+      return x();
+    }
+    return x;
+  })
+
   var xl8 = t9n_xl8 (strings, values);
   if (xl8) {
     strings = xl8.strings;
@@ -157,7 +235,21 @@ const t9n = function t9n(strings, ...values) {
   return str;
 }
 
+const t9n = function t9n(strings, ...values) {
+  return __t9n(strings, values);
+}
+
+const t9ntext = function t9ntext(strings, ...values) {
+  return _ => __t9n(strings, values);
+}
+
 const t9nhtml = function t9n(strings, ...values) {
+  values = values.map((x) => {
+    if (x instanceof Function) {
+      return x();
+    }
+    return x;
+  })
   var xl8 = t9n_xl8 (strings, values);
   if (xl8) {
     strings = xl8.strings;
@@ -171,6 +263,22 @@ const t9nhtml = function t9n(strings, ...values) {
   });
   return str;
 }
+
+function htmlelement(strings, ...values) {
+  values = values.map((x) => {
+    if (x instanceof Function) {
+      return x();
+    }
+    return x;
+  })
+  let str = '';
+  strings.forEach((string, i) => {
+    var s = (values.length > i) ? values[i] : "";
+    str += string + "" + s;
+  });
+  return elementFromHTML(str);
+}
+
 
 function debounce(callback, timeout) {
     let timer;
