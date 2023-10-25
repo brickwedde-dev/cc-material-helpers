@@ -19,24 +19,24 @@ JSON.parseAndCheckOrDefault = function parseAndCheckOrDefault (x, compareType, d
 HTMLElement.prototype.addT9nProp = function HTMLElement__addT9nProp(property, value) {
   if (!this.__cc_translation) {
     this.__cc_translation = [];
-    document.body.addEventListener("tr9_changed", () => {
+    document.body.addEventListener("t9n_changed", () => {
       this.__applyT9n();
     });
   }
   this.__cc_translation.push({property, value});
-  this[property] = value();
+  this[property] = value.xlate();
   return this
 }
 
 HTMLElement.prototype.addT9nAttr = function HTMLElement__addT9nAttr(attribute, value) {
   if (!this.__cc_translation) {
     this.__cc_translation = [];
-    document.body.addEventListener("tr9_changed", () => {
+    document.body.addEventListener("t9n_changed", () => {
       this.__applyT9n();
     });
   }
   this.__cc_translation.push({attribute, value});
-  this.setAttribute(attribute, value());
+  this.setAttribute(attribute, value.xlate());
   return this
 }
 
@@ -44,23 +44,38 @@ HTMLElement.prototype.__applyT9n = function HTMLElement____applyT9n() {
   if (this.__cc_translation) {
     this.__cc_translation.map((t) => {
       if (t.property) {
-        this[t.property] = t.value();
+        this[t.property] = t.value.xlate();
       }
       if (t.attribute) {
-        this.setAttribute(t.attribute, t.value());
+        this.setAttribute(t.attribute, t.value.xlate());
       }
     })
   }
 }
 
-HTMLElement.prototype.setChildren = function HTMLElement__setChildren(childNodes) {
+HTMLElement.prototype.setChildren = function HTMLElement__setChildren(...childNodes) {
   var r = [];
   this.innerHTML = "";
-  if (childNodes instanceof HTMLElement) {
-    this.appendChild(childNodes);
-  } else if(childNodes instanceof Array) {
-    for(var i = 0; i < childNodes.length; i++) {
-      this.appendChild(childNodes[i]);
+  this.appendChildren(...childNodes)
+  return this;
+}
+
+HTMLElement.prototype.appendChildren = function HTMLElement__appendChildren(...childNodes) {
+  var r = [];
+  this.innerHTML = "";
+  for(var children of childNodes) {
+    if (children instanceof String || typeof children == "string") {
+      this.appendHTML(children);
+    } else if (children instanceof HTMLElement) {
+      this.appendChild(children);
+    } else if(children instanceof Array) {
+      for(var i = 0; i < children.length; i++) {
+        if (children[i] instanceof String || typeof children[i] == "string") {
+          this.appendHTML(children[i]);
+        } else {
+          this.appendChild(children[i]);
+        }
+      }
     }
   }
   return this;
@@ -171,6 +186,16 @@ const html = function html(strings, ...values) {
   return str;
 }
 
+class CcT9nHolder {
+  constructor (f) {
+    this.f = f;
+  }
+
+  xlate() {
+    return this.f();
+  }
+}
+
 const t9n_translations = {};
 const t9n_languages = {};
 var t9n_language = "de";
@@ -208,8 +233,8 @@ function t9n_xl8 (strings, values) {
 
 function __t9n(strings, values) {
   values = values.map((x) => {
-    if (x instanceof Function) {
-      return x();
+    if (x instanceof CcT9nHolder) {
+      return x.xlate();
     }
     return x;
   })
@@ -240,13 +265,13 @@ const t9n = function t9n(strings, ...values) {
 }
 
 const t9ntext = function t9ntext(strings, ...values) {
-  return _ => __t9n(strings, values);
+  return new CcT9nHolder(_ => __t9n(strings, values));
 }
 
 const t9nhtml = function t9n(strings, ...values) {
   values = values.map((x) => {
-    if (x instanceof Function) {
-      return x();
+    if (x instanceof CcT9nHolder) {
+      return x.xlate();
     }
     return x;
   })
@@ -266,8 +291,12 @@ const t9nhtml = function t9n(strings, ...values) {
 
 function htmlelement(strings, ...values) {
   values = values.map((x) => {
-    if (x instanceof Function) {
-      return x();
+    if (x instanceof CcT9nHolder) {
+      return x.xlate();
+    } else if (x instanceof Function) {
+      let name = "@function:" + (htmlFunctionArrayCount++);
+      htmlFunctionArray[name] = { func : x, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
+      return name;
     }
     return x;
   })

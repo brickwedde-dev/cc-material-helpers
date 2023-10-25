@@ -14,7 +14,7 @@ class CcMdcTextField extends HTMLElement {
     var max = this.getAttribute("max") || undefined;
 
     this.type = this.getAttribute("type") || this.type || "text";
-    var label = this.getAttribute("label") || this.label || "Label";
+    var label = this._label || this.getAttribute("label") || "Label";
     var pattern = this.getAttribute("pattern") || this.pattern || undefined;
 
     if (this.hasAttribute("value")) {
@@ -42,7 +42,7 @@ class CcMdcTextField extends HTMLElement {
   <span class="mdc-line-ripple"></span>
 </label>`;
       this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
-      this.label = this.querySelector("label");
+      this.labeldiv = this.querySelector("label");
       this.input = this.querySelector("input");
       this.button = this.querySelector("button");
       var ph = (this.input.offsetHeight || (parseInt(this.style.height) / 2) || 28);
@@ -81,7 +81,7 @@ class CcMdcTextField extends HTMLElement {
   <span class="mdc-line-ripple"></span>
 </label>`;
       this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
-      this.label = this.querySelector("label");
+      this.labeldiv = this.querySelector("label");
       this.input = this.querySelector("input");
     }
 
@@ -128,12 +128,20 @@ class CcMdcTextField extends HTMLElement {
         this.input.removeAttribute("disabled");
       }
     }
-    if (this.label) {
+    if (this.labeldiv) {
       if (this._disabled) {
-        this.label.className = "mdc-text-field mdc-text-field--filled mdc-text-field--disabled";
+        this.labeldiv.className = "mdc-text-field mdc-text-field--filled mdc-text-field--disabled";
       } else {
-        this.label.className = "mdc-text-field mdc-text-field--filled";
+        this.labeldiv.className = "mdc-text-field mdc-text-field--filled";
       }
+    }
+  }
+
+  set label (value) {
+    this._label = value;
+    var x = this.querySelector(".mdc-floating-label");
+    if (x) {
+      x.innerText = value;
     }
   }
 
