@@ -14,54 +14,35 @@ JSON.parseAndCheckOrDefault = function parseAndCheckOrDefault (x, compareType, d
   } catch {
   }
   return defaultValue;
-}
+};
 
-HTMLElement.prototype.addT9nProp = function HTMLElement__addT9nProp(property, value) {
-  if (!this.__cc_translation) {
-    this.__cc_translation = [];
-    document.body.addEventListener("t9n_changed", () => {
-      this.__applyT9n();
+HTMLElement.prototype.addD5cProp = function HTMLElement__addD5cProp(property, value) {
+  if (value instanceof CcD5cHolder) {
+    value.addEventListener("d5c_changed", () => {
+      this[property] = value.toString();
     });
   }
-  this.__cc_translation.push({property, value});
-  this[property] = value.xlate();
+  this[property] = value.toString();
   return this
 }
 
-HTMLElement.prototype.addT9nAttr = function HTMLElement__addT9nAttr(attribute, value) {
-  if (!this.__cc_translation) {
-    this.__cc_translation = [];
-    document.body.addEventListener("t9n_changed", () => {
-      this.__applyT9n();
+HTMLElement.prototype.addD5cAttr = function HTMLElement__addD5cAttr(attribute, value) {
+  if (value instanceof CcD5cHolder) {
+    value.addEventListener("d5c_changed", () => {
+      this.setAttribute(attribute, value.toString());
     });
   }
-  this.__cc_translation.push({attribute, value});
-  this.setAttribute(attribute, value.xlate());
+  this.setAttribute(attribute, value.toString());
   return this
-}
-
-HTMLElement.prototype.__applyT9n = function HTMLElement____applyT9n() {
-  if (this.__cc_translation) {
-    this.__cc_translation.map((t) => {
-      if (t.property) {
-        this[t.property] = t.value.xlate();
-      }
-      if (t.attribute) {
-        this.setAttribute(t.attribute, t.value.xlate());
-      }
-    })
-  }
 }
 
 HTMLElement.prototype.setChildren = function HTMLElement__setChildren(...childNodes) {
-  var r = [];
   this.innerHTML = "";
   this.appendChildren(...childNodes)
   return this;
 }
 
 HTMLElement.prototype.appendChildren = function HTMLElement__appendChildren(...childNodes) {
-  var r = [];
   this.innerHTML = "";
   for(var children of childNodes) {
     if (children instanceof String || typeof children == "string") {
@@ -127,6 +108,100 @@ function elementFromHTML(html) {
   return div;
 }
 
+;(() => {
+
+  class ValueChangedEvent extends CustomEvent {
+    constructor(type, key, value) {
+      super(type, {detail : undefined})
+      this.key = key;
+      this.value = value;
+    }
+  }
+
+  var addLoggingSettersCheckSymbol = Symbol("addLoggingSettersCheck");
+
+  Object.prototype.addPropertiesListener = function Object__addPropertiesListener (fun) {
+    let helper = Object.getOwnProperty(this, addLoggingSettersCheckSymbol);
+    if (!helper) {
+      Object.defineProperty(this, addLoggingSettersCheckSymbol, {
+        value: {
+          has : new WeakMap(),
+          events : new EventTarget(),
+        },
+        writable: false,
+        enumerable: false,
+      });
+      helper = Object.getOwnProperty(this, addLoggingSettersCheckSymbol);
+    }
+
+    for(const key in this) {
+      if (this.hasOwnProperty(key) && typeof this[key] === 'function') {
+        continue;
+      }
+      if (!helper.has[key]) {
+        helper.has[key] = true;
+
+        let desc = Object.getOwnPropertyDescriptor(this, key);
+
+        Object.defineProperty(this, key, {
+          get: function () {
+            return desc.value;
+          },
+          set: function (newValue) {
+            desc.value = newValue;
+            helper.events.dispatchEvent(new ValueChangedEvent("__ALLPROPERTIES", key, newValue))
+          },
+          enumerable: true,
+          configurable: true,
+        });
+      }
+    }
+    helper.events.addEventListener("__ALLPROPERTIES", fun);
+  }
+
+  Object.prototype.addPropertyListener = function Object__addPropertyListener (key, fun) {
+    let helper = null;
+    let helperlist = Object.getOwnPropertySymbols(this, addLoggingSettersCheckSymbol);
+    if (helperlist.length == 0) {
+      Object.defineProperty(this, addLoggingSettersCheckSymbol, {
+        value: {
+          has : new WeakMap(),
+          events : new EventTarget(),
+        },
+        writable: false,
+        enumerable: false,
+      });
+      helperlist = Object.getOwnPropertySymbols(this, addLoggingSettersCheckSymbol);
+      helper = this[helperlist[0]];
+    } else {
+      helper = this[helperlist[0]];
+    }
+
+    if (this.hasOwnProperty(key) && typeof this[key] === 'function') {
+      return;
+    }
+    if (!helper.has[key]) {
+      helper.has[key] = true;
+
+      let desc = Object.getOwnPropertyDescriptor(this, key);
+
+      Object.defineProperty(this, key, {
+        get: function () {
+          return desc.value;
+        },
+        set: function (newValue) {
+          desc.value = newValue;
+          helper.events.dispatchEvent(new ValueChangedEvent(key, key, newValue))
+        },
+        enumerable: true,
+        configurable: true,
+      });
+    }
+
+    helper.events.addEventListener(key, fun);
+  }
+})();
+
 String.prototype.escapeXml = function escapeXml () {
   var span = document.createElement("span");
   span.innerText = this;
@@ -186,61 +261,143 @@ const html = function html(strings, ...values) {
   return str;
 }
 
-class CcT9nHolder {
+class CcTranslation extends EventTarget {
+  #translations = {};
+  #languages = {};
+  #language = "de";
+  #missingcallback = null;
+  #missingnotified = {};
+  constructor() {
+    super();
+    Object.defineProperty(this, "language", {
+      get : () => {
+        return this.#language;
+      },
+      set : (value) => {
+        this.#language = value;
+        this.dispatchEvent(new CustomEvent("t9n_changed"))
+      },
+    })
+  }
+
+  registermissing (missingcallback) {
+    this.#missingcallback = missingcallback;
+  }
+
+  registerlanguage (language, flag, languagename, translation) {
+    if (translation) {
+      for (var key in translation) {
+        if (!key) {
+          continue;
+        }
+        var value = translation[key];
+        if (!this.#translations[key]) {
+          this.#translations[key] = {};
+        }
+        this.#translations[key][language] = value;
+      }
+    }
+    this.#languages[language] = {flag, languagename};
+  }
+
+  addTranslations(translation) {
+    for (var key in translation) {
+      if (!key) {
+        continue;
+      }
+      var value = translation[key];
+      if (!this.#translations[key]) {
+        this.#translations[key] = {};
+      }
+      for(var language in value) {
+        this.#translations[key][language] = value[language];
+      }
+    }
+  }
+
+  xl8 (strings, values) {
+    var string = strings.join("${}");
+
+    if (!this.#translations[string]) {
+      if (this.#missingcallback) {
+        if (!this.#missingnotified[string + "@"]) {
+          this.#missingnotified[string + "@"] = true;
+          this.#missingcallback(string, undefined);
+        }
+      }
+      return null;
+    }
+
+    if (this.#translations[string][this.language]) {
+      var o = { values : [] };
+      if (this.#translations[string][this.language].split) {
+        o.strings = this.#translations[string][this.language].split(/(\${[0-9]*})/).filter((x) => {
+          var m = x.match(/\${[0-9]*}/);
+          if (m) {
+            o.values.push (values[parseInt(m[0].substring(2)) - 1]);
+            return false;
+          }
+          return true;
+        });
+      } else {
+        o.strings = [this.#translations[string][this.language]]
+      }
+      return o;
+    }
+
+    if (this.#missingcallback) {
+      if (!this.#missingnotified[string + "@"] && !this.#missingnotified[string + "@" + this.language]) {
+        this.#missingnotified[string + "@" + this.language] = true;
+        this.#missingcallback(string, this.language);
+      }
+    }
+    return null;
+  }
+}
+
+var translation = new CcTranslation();
+
+class CcD5cHolder extends EventTarget {
   constructor (f) {
+    super()
     this.f = f;
   }
 
-  xlate() {
-    return this.f();
+  toString() {
+    var x = this.f();
+    while(x instanceof CcD5cHolder) {
+      x = x.toString();
+    }
+    return x;
+  }
+
+  sendEvent() {
+    this.dispatchEvent(new CustomEvent("d5c_changed"));
   }
 }
 
-const t9n_translations = {};
-const t9n_languages = {};
 var t9n_language = "de";
 
 function t9n_registerlanguage (language, flag, languagename, translation) {
-  t9n_translations[language] = translation;
-  t9n_languages[language] = {flag, languagename};
+  return translation.registerlanguage(language, flag, languagename, translation);
 }
 
 function t9n_xl8 (strings, values) {
-  var string = strings.join("${}");
-
-  if (!t9n_translations[t9n_language]) {
-    return null;
-  }
-
-  if (t9n_translations[t9n_language][string]) {
-    var o = { values : [] };
-    if (t9n_translations[t9n_language][string].split) {
-      o.strings = t9n_translations[t9n_language][string].split(/(\${[0-9]*})/).filter((x) => {
-        var m = x.match(/\${[0-9]*}/);
-        if (m) {
-          o.values.push (values[parseInt(m[0].substring(2)) - 1]);
-          return false;
-        }
-        return true;
-      });
-    } else {
-      o.strings = [t9n_translations[t9n_language][string]]
-    }
-    return o;
-  }
-  return null;
+  return translation.xl8(strings, values);
 }
 
-function __t9n(strings, values) {
-  values = values.map((x) => {
-    if (x instanceof CcT9nHolder) {
-      return x.xlate();
+function __t9n(strings, origvalues) {
+  var hasTranslation = false;
+  values = origvalues.map((x) => {
+    if (x instanceof CcD5cHolder) {
+      return x.toString();
     }
     return x;
   })
 
   var xl8 = t9n_xl8 (strings, values);
   if (xl8) {
+    hasTranslation = true;
     strings = xl8.strings;
     values = xl8.values;
   }
@@ -257,6 +414,7 @@ function __t9n(strings, values) {
     }
     str += string + s.escapeXml();
   });
+
   return str;
 }
 
@@ -264,14 +422,39 @@ const t9n = function t9n(strings, ...values) {
   return __t9n(strings, values);
 }
 
-const t9ntext = function t9ntext(strings, ...values) {
-  return new CcT9nHolder(_ => __t9n(strings, values));
+const d5ctext = function d5ctext(strings, ...values) {
+  var hasTranslation = false;
+  var xl8 = t9n_xl8 (strings, values);
+  if (xl8) {
+    hasTranslation = true;
+  }
+
+  var holder = new CcD5cHolder(_ => __t9n(strings, values));
+  values.forEach((x) => {
+    if (x instanceof CcD5cHolder) {
+      x.addEventListener("d5c_changed", () => {
+        holder.sendEvent()
+      })
+    }
+  })
+  if (hasTranslation) {
+    translation.addEventListener("t9n_changed", () => {
+      holder.sendEvent()
+    })
+  }
+  return holder;
 }
 
-const t9nhtml = function t9n(strings, ...values) {
-  values = values.map((x) => {
-    if (x instanceof CcT9nHolder) {
-      return x.xlate();
+const d5cprop = function d5cprop(obj, key) {
+  var holder = new CcD5cHolder(_ => obj[key]);
+  obj.addPropertyListener(key, () => holder.sendEvent())
+  return holder;
+}
+
+const t9nhtml = function t9nhtml(strings, ...origvalues) {
+  var values = origvalues.map((x) => {
+    if (x instanceof CcD5cHolder) {
+      return x.toString();
     }
     return x;
   })
@@ -289,10 +472,11 @@ const t9nhtml = function t9n(strings, ...values) {
   return str;
 }
 
+
 function htmlelement(strings, ...values) {
   values = values.map((x) => {
-    if (x instanceof CcT9nHolder) {
-      return x.xlate();
+    if (x instanceof CcD5cHolder) {
+      return x.toString();
     } else if (x instanceof Function) {
       let name = "@function:" + (htmlFunctionArrayCount++);
       htmlFunctionArray[name] = { func : x, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
