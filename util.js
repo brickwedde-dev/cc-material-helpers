@@ -16,13 +16,25 @@ JSON.parseAndCheckOrDefault = function parseAndCheckOrDefault (x, compareType, d
   return defaultValue;
 };
 
+HTMLElement.prototype.addD5cTranslation = function HTMLElement__addD5cTranslation(property, value) {
+  if (!this.d5cTranslations) {
+    Object.defineProperty(this, "d5cTranslations", {
+      value: {},
+      writable: true,
+      enumerable: false,
+    });
+  }
+  this.d5cTranslations[property] = value;
+  return this
+}
+
 HTMLElement.prototype.addD5cProp = function HTMLElement__addD5cProp(property, value) {
   if (value instanceof CcD5cHolder) {
     value.addEventListener("d5c_changed", () => {
       this[property] = value.toString();
     });
   }
-  this[property] = value.toString();
+  this[property] = (value && value.toString) ? value.toString() : value;
   return this
 }
 
@@ -448,6 +460,11 @@ const d5ctext = function d5ctext(strings, ...values) {
 const d5cprop = function d5cprop(obj, key) {
   var holder = new CcD5cHolder(_ => obj[key]);
   obj.addPropertyListener(key, () => holder.sendEvent())
+  if (obj[key] instanceof CcD5cHolder) {
+    obj[key].addEventListener("d5c_changed", () => {
+      holder.sendEvent()
+    })
+  }
   return holder;
 }
 
