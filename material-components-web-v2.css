@@ -12186,9 +12186,9 @@ a.mdc-list-item {
 }
 
 .CcApp2__CcWizard__HeaderDiv {
-  height : 50px;
-  line-height : 50px;
+  width: 100%;
   font-size : 34px;
+  line-height: 34px;
   vertical-align: middle;
   text-align: center;
   background-color: #fafafa;
@@ -12196,10 +12196,17 @@ a.mdc-list-item {
 
 .CcApp2__CcWizard__StepsDiv {
   color : var(--mdc-theme-secondary);
-  top : 50px;
-  height : 50px;
-  line-height : 50px;
   font-size : 30px;
+  line-height: 30px;
+  vertical-align: middle;
+  text-align: center;
+  clear:both;
+}
+
+.CcApp2__CcWizard__LanguageDiv {
+  float : right;
+  height : 50px;
+  width: 50px;
   vertical-align: middle;
   text-align: center;
 }

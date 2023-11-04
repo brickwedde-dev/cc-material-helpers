@@ -276,7 +276,7 @@ const html = function html(strings, ...values) {
 class CcTranslation extends EventTarget {
   #translations = {};
   #languages = {};
-  #language = "de";
+  #language = window.localStorage.getItem("CcTranslation__language") || "de";
   #missingcallback = null;
   #missingnotified = {};
   constructor() {
@@ -287,6 +287,7 @@ class CcTranslation extends EventTarget {
       },
       set : (value) => {
         this.#language = value;
+        window.localStorage.setItem("CcTranslation__language", this.#language)
         this.dispatchEvent(new CustomEvent("t9n_changed"))
       },
     })
