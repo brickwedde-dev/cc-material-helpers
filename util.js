@@ -293,6 +293,10 @@ class CcTranslation extends EventTarget {
     })
   }
 
+  getLanguages() {
+    return Object.keys(this.#languages);
+  }
+
   registermissing (missingcallback) {
     this.#missingcallback = missingcallback;
   }

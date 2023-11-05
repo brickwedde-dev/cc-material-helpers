@@ -12200,8 +12200,8 @@ a.mdc-list-item {
 }
 
 .CcApp2__CcWizard__LanguageDiv {
-  height : 50px;
-  width: 50px;
+  height : 100%;
+  max-width: 10vw;
   vertical-align: middle;
   text-align: center;
 }
