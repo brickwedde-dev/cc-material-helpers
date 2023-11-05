@@ -132,52 +132,16 @@ function elementFromHTML(html) {
 
   var addLoggingSettersCheckSymbol = Symbol("addLoggingSettersCheck");
 
-  Object.prototype.addPropertiesListener = function Object__addPropertiesListener (fun) {
-    let helper = Object.getOwnProperty(this, addLoggingSettersCheckSymbol);
-    if (!helper) {
-      Object.defineProperty(this, addLoggingSettersCheckSymbol, {
-        value: {
-          has : new WeakMap(),
-          events : new EventTarget(),
-        },
-        writable: false,
-        enumerable: false,
-      });
-      helper = Object.getOwnProperty(this, addLoggingSettersCheckSymbol);
-    }
+  Object.prototype.getD5cProp = function Object__getD5cProp (key) {
+    var holder = new CcD5cHolder(_ => this[key]);
 
-    for(const key in this) {
-      if (this.hasOwnProperty(key) && typeof this[key] === 'function') {
-        continue;
-      }
-      if (!helper.has[key]) {
-        helper.has[key] = true;
-
-        let desc = Object.getOwnPropertyDescriptor(this, key);
-
-        Object.defineProperty(this, key, {
-          get: function () {
-            return desc.value;
-          },
-          set: function (newValue) {
-            desc.value = newValue;
-            helper.events.dispatchEvent(new ValueChangedEvent("__ALLPROPERTIES", key, newValue))
-          },
-          enumerable: true,
-          configurable: true,
-        });
-      }
-    }
-    helper.events.addEventListener("__ALLPROPERTIES", fun);
-  }
-
-  Object.prototype.addPropertyListener = function Object__addPropertyListener (key, fun) {
     let helper = null;
     let helperlist = Object.getOwnPropertySymbols(this, addLoggingSettersCheckSymbol);
     if (helperlist.length == 0) {
       Object.defineProperty(this, addLoggingSettersCheckSymbol, {
         value: {
           has : new WeakMap(),
+          handler : new WeakMap(),
           events : new EventTarget(),
         },
         writable: false,
@@ -192,6 +156,7 @@ function elementFromHTML(html) {
     if (this.hasOwnProperty(key) && typeof this[key] === 'function') {
       return;
     }
+
     if (!helper.has[key]) {
       helper.has[key] = true;
 
@@ -202,15 +167,27 @@ function elementFromHTML(html) {
           return desc.value;
         },
         set: function (newValue) {
+          if (desc.value instanceof CcD5cHolder && helper.handler[key]) {
+            console.warn("D5c dereg", key);
+            desc.value.removeEventListener("d5c_changed", helper.handler[key])
+            helper.handler[key] = null;
+          }
           desc.value = newValue;
-          helper.events.dispatchEvent(new ValueChangedEvent(key, key, newValue))
+          if (desc.value instanceof CcD5cHolder) {
+            console.warn("D5c reg", key);
+            helper.handler[key] = () => {
+              console.warn("D5c event", key);
+              holder.sendEvent()
+            };
+            desc.value.addEventListener("d5c_changed", helper.handler[key])
+          }
+          holder.sendEvent();
         },
         enumerable: true,
         configurable: true,
       });
     }
-
-    helper.events.addEventListener(key, fun);
+    return holder;
   }
 })();
 
@@ -463,14 +440,7 @@ const d5ctext = function d5ctext(strings, ...values) {
 }
 
 const d5cprop = function d5cprop(obj, key) {
-  var holder = new CcD5cHolder(_ => obj[key]);
-  obj.addPropertyListener(key, () => holder.sendEvent())
-  if (obj[key] instanceof CcD5cHolder) {
-    obj[key].addEventListener("d5c_changed", () => {
-      holder.sendEvent()
-    })
-  }
-  return holder;
+  return obj.getD5cProp(key)
 }
 
 const t9nhtml = function t9nhtml(strings, ...origvalues) {
