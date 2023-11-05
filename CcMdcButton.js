@@ -32,6 +32,18 @@ class CcMdcButton extends HTMLElement {
     return this;
   }
 
+  set label (value) {
+    this._label = value;
+    var x = this.querySelector(".mdc-floating-label");
+    if (x) {
+      x.innerText = value;
+    }
+    var x = this.querySelector(".mdc-button__label");
+    if (x) {
+      x.innerText = value;
+    }
+  }
+
   setSelectStyle(label, value) {
     this.selectlabel = label;
     this.selectvalue = value;
@@ -75,7 +87,7 @@ class CcMdcButton extends HTMLElement {
   }
   
   connectedCallback() {
-    var label = this.label || this.getAttribute("label") || null;
+    var label = this._label || this.getAttribute("label") || null;
     var icon = this.icon || this.getAttribute("icon") || null;
     var actionbar = this.actionbar || this.getAttribute("actionbar") || false;
     this.selfIcon = isDefined(this.selfIcon) ? this.selfIcon : ((this.getAttribute("selficon") ? true : false) || false);
@@ -85,6 +97,7 @@ class CcMdcButton extends HTMLElement {
     }
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
+    var hasHeight = ("" + this.style.height).indexOf("px") > 0;
 
     this.style.userSelect = "none";
 
@@ -100,7 +113,7 @@ class CcMdcButton extends HTMLElement {
     </button>`;
       this.button = this.childNodes[0];
     } else if (icon && label) {
-      this.innerHTML = html`<button ${hasWidth ? `style="width:100%;"` : ``} class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button style="${hasWidth ? `width:100%;` : ``}${hasHeight ? `height:100%;` : ``}" class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">` + icon + `</i>
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;

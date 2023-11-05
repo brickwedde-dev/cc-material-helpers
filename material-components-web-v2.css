@@ -12185,13 +12185,25 @@ a.mdc-list-item {
   text-transform: var(--mdc-typography-overline-text-transform, uppercase);
 }
 
+.CcApp2__CcWizard__HeaderRow {
+  background-color: #fafafa;
+}
+
 .CcApp2__CcWizard__HeaderDiv {
-  width: 100%;
   font-size : 34px;
   line-height: 34px;
   vertical-align: middle;
   text-align: center;
-  background-color: #fafafa;
+  flex-grow: 1;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.CcApp2__CcWizard__LanguageDiv {
+  height : 50px;
+  width: 50px;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .CcApp2__CcWizard__StepsDiv {
@@ -12200,13 +12212,12 @@ a.mdc-list-item {
   line-height: 30px;
   vertical-align: middle;
   text-align: center;
-  clear:both;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.CcApp2__CcWizard__LanguageDiv {
-  float : right;
-  height : 50px;
-  width: 50px;
-  vertical-align: middle;
-  text-align: center;
+.CcApp2__CcWizard__ContentCenterDiv {
+  flex-grow:1;
+  align-items: center;
+  justify-content: center;
 }
