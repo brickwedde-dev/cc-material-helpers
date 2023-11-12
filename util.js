@@ -173,7 +173,7 @@ function elementFromHTML(html) {
 
   var addLoggingSettersCheckSymbol = Symbol("addLoggingSettersCheck");
 
-  Object.prototype.getD5cProp = function Object__getD5cProp (key) {
+  function Object__getD5cProp (key) {
     var holder = new CcD5cHolder(_ => this[key]);
 
     let helper = null;
@@ -230,6 +230,12 @@ function elementFromHTML(html) {
     }
     return holder;
   }
+
+  Object.defineProperty(Object.prototype, "getD5cProp", {
+      value: Object__getD5cProp,
+      writable: true,
+      enumerable: false,
+    })
 })();
 
 String.prototype.escapeXml = function escapeXml () {
