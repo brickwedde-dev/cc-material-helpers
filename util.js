@@ -1,4 +1,7 @@
 function isDefined(v) {
+  if (v === null) {
+    return false;
+  }
   var t = typeof v;
   return t != "null" && t != "undefined" && t != "void";
 }
@@ -35,6 +38,16 @@ HTMLElement.prototype.addD5cProp = function HTMLElement__addD5cProp(property, va
     });
   }
   this[property] = (value && value.toString) ? value.toString() : value;
+  return this
+}
+
+Text.prototype.addD5cProp = function Text__addD5cProp(value) {
+  if (value instanceof CcD5cHolder) {
+    value.addEventListener("d5c_changed", () => {
+      this["textContent"] = value.toString();
+    });
+  }
+  this["textContent"] = (value && value.toString) ? value.toString() : value;
   return this
 }
 
@@ -104,20 +117,48 @@ function elementsFromHTML(html) {
 }
 
 function elementFromHTML(html) {
-  var div = document.createElement("div");
-  div.innerHTML = html;
-  for(var i = div.childNodes.length - 1; i >= 0; i--) {
-    var e = div.childNodes[i];
-    if (e instanceof Text) {
-      if(e.textContent.trim().length == 0) {
-        div.removeChild(e);
+  var contdiv = document.createElement("div");
+  contdiv.innerHTML = html;
+
+  var x = (div) => {
+    for(var i = div.childNodes.length - 1; i >= 0; i--) {
+      var e = div.childNodes[i];
+      if (e instanceof Text) {
+        var s = e.textContent.trim();
+        if(s.length == 0) {
+          div.removeChild(e);
+          continue;
+        }
+        if(s.startsWith("@d5c:")) {
+          var holder = d5ctext([s.substring(5)]);
+          e.addD5cProp(holder);
+        }
+      } else if (e instanceof HTMLElement) {
+        x(e);
+        
+        for(var prop of ["__d5c__innerHTML", "__d5c__label"]) {
+          var s = e[prop];
+          if (isDefined(s)) {
+            var holder = d5ctext([s]);
+            e.addD5cProp(prop.substring(7), holder);
+            continue;
+          }
+          var s = e.getAttribute(prop);
+          if (isDefined(s)) {
+            var holder = d5ctext([s]);
+            e.addD5cProp(prop.substring(7), holder);
+            continue;
+          }
+        }
       }
     }
+  };
+
+  x(contdiv);
+  if (contdiv.childNodes.length == 1) {
+    return contdiv.childNodes[0];
   }
-  if (div.childNodes.length == 1) {
-    return div.childNodes[0];
-  }
-  return div;
+  return contdiv;
 }
 
 ;(() => {
@@ -322,7 +363,7 @@ class CcTranslation extends EventTarget {
       return null;
     }
 
-    if (this.#translations[string][this.language]) {
+    if (isDefined(this.#translations[string][this.language])) {
       var o = { values : [] };
       if (this.#translations[string][this.language].split) {
         o.strings = this.#translations[string][this.language].split(/(\${[0-9]*})/).filter((x) => {
