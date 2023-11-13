@@ -297,10 +297,14 @@ const html = function html(strings, ...values) {
   return str;
 }
 
+function getNavLang() {
+  return ((navigator.language || navigator.userLanguage || "de").split(",")[0]).split("-")[0];
+}
+
 class CcTranslation extends EventTarget {
   #translations = {};
   #languages = {};
-  #language = window.localStorage.getItem("CcTranslation__language") || "de";
+  #language = window.localStorage.getItem("CcTranslation__language") || getNavLang();
   #missingcallback = null;
   #missingnotified = {};
   constructor() {
@@ -356,43 +360,62 @@ class CcTranslation extends EventTarget {
     }
   }
 
+  getLangObjFromString(s) {
+    var o = { values : [] };
+    if (s.split) {
+      o.strings = s.split(/(\${[0-9]*})/).filter((x) => {
+        var m = x.match(/\${[0-9]*}/);
+        if (m) {
+          o.values.push (values[parseInt(m[0].substring(2)) - 1]);
+          return false;
+        }
+        return true;
+      });
+    } else {
+      o.strings = [s]
+    }
+    return o;
+  }
+
   xl8 (strings, values) {
     var string = strings.join("${}");
 
     if (!this.#translations[string]) {
       if (this.#missingcallback) {
-        if (!this.#missingnotified[string + "@"]) {
-          this.#missingnotified[string + "@"] = true;
-          this.#missingcallback(string, undefined);
+        var debug = false;
+        if (this.#missingcallback(string, undefined, this.#missingnotified[string + "@"])) {
+          debug = true;
+        }
+        this.#missingnotified[string + "@"] = true;
+        if (debug) {
+          return { values : [], strings : [`@@${string}@@`] };
         }
       }
       return null;
     }
 
-    if (isDefined(this.#translations[string][this.language])) {
-      var o = { values : [] };
-      if (this.#translations[string][this.language].split) {
-        o.strings = this.#translations[string][this.language].split(/(\${[0-9]*})/).filter((x) => {
-          var m = x.match(/\${[0-9]*}/);
-          if (m) {
-            o.values.push (values[parseInt(m[0].substring(2)) - 1]);
-            return false;
-          }
-          return true;
-        });
-      } else {
-        o.strings = [this.#translations[string][this.language]]
+    var lang = this.language;
+    if (this.#translations[string][lang]) {
+      if (this.#translations[string][lang].split) {
+        return this.getLangObjFromString(this.#translations[string][lang])
       }
+
+      var o = { values : [] };
+      o.strings = [this.#translations[string][lang]]
       return o;
     }
 
     if (this.#missingcallback) {
-      if (!this.#missingnotified[string + "@"] && !this.#missingnotified[string + "@" + this.language]) {
-        this.#missingnotified[string + "@" + this.language] = true;
-        this.#missingcallback(string, this.language);
+      var debug = false;
+      if (this.#missingcallback(string, this.language, this.#missingnotified[string + "@" + this.language])) {
+        debug = true;
+      }
+      this.#missingnotified[string + "@" + this.language] = true;
+      if (debug) {
+        return { values : [], strings : [`@@${string}@@`] };
       }
     }
-    return null;
+    return this.getLangObjFromString(string);
   }
 }
 

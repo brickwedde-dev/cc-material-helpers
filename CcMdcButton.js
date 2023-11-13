@@ -96,6 +96,7 @@ class CcMdcButton extends HTMLElement {
       icon = html`<img src="${icon}" style="width:16px;height:16px;">`;
     }
 
+    var hasFontSize = ("" + this.style.fontSize).indexOf("p") > 0;
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
     var hasHeight = ("" + this.style.height).indexOf("px") > 0;
 
@@ -113,7 +114,7 @@ class CcMdcButton extends HTMLElement {
     </button>`;
       this.button = this.childNodes[0];
     } else if (icon && label) {
-      this.innerHTML = html`<button style="${hasWidth ? `width:100%;` : ``}${hasHeight ? `height:100%;` : ``}" class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button style="${hasWidth ? `width:100%;` : ``}${hasHeight ? `height:100%;` : ``}${hasFontSize ? `font-size:${this.style.fontSize};` : ``}" class="mdc-button mdc-button--raised">
       <i class="material-icons mdc-button__icon" aria-hidden="true">` + icon + `</i>
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;

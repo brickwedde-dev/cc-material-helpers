@@ -12199,6 +12199,14 @@ a.mdc-list-item {
   margin-bottom: 10px;
 }
 
+.CcApp2__CcWizard__LogoutDiv {
+  vertical-align: middle;
+  text-align: center;
+  flex-grow: 1;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .CcApp2__CcWizard__LanguageDiv {
   height : 100%;
   max-width: 10vw;
