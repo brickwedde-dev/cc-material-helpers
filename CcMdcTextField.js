@@ -85,6 +85,25 @@ class CcMdcTextField extends HTMLElement {
       this.input = this.querySelector("input");
     }
 
+    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
+    if (targetfun && targetfun.func && targetfun.func instanceof CcD5cHolder) {
+      let d5cholder = targetfun.func;
+      d5cholder.addEventListener("d5c_changed", () => {
+        this.value = d5cholder.toString();
+      })
+      this.addEventListener("change", () => {
+        d5cholder.setValue(this.value);
+      });
+      this.value = d5cholder.toString();
+    } else if (targetfun && targetfun.func && targetfun.func.__isTarget) {
+      var { obj, prop } = targetfun.func();
+      this.addEventListener("change", () => {
+        obj[prop] = this.value;
+      });
+      if (isDefined(obj[prop])) {
+        this.value = obj[prop];
+      }
+    }
 
     var changefun = htmlFunctionArray[this.getAttribute("@change")];
     if (changefun) {
@@ -98,17 +117,6 @@ class CcMdcTextField extends HTMLElement {
           enterfun.func();
         }
       });
-    }
-
-    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
-    if (targetfun && targetfun.func && targetfun.func.__isTarget) {
-      var { obj, prop } = targetfun.func();
-      this.addEventListener("change", () => {
-        obj[prop] = this.value;
-      });
-      if (isDefined(obj[prop])) {
-        this.value = obj[prop];
-      }
     }
 
     this.applyValue();

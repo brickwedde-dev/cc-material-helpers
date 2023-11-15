@@ -68,7 +68,6 @@ HTMLElement.prototype.setChildren = function HTMLElement__setChildren(...childNo
 }
 
 HTMLElement.prototype.appendChildren = function HTMLElement__appendChildren(...childNodes) {
-  this.innerHTML = "";
   for(var children of childNodes) {
     if (children instanceof String || typeof children == "string") {
       this.appendHTML(children);
@@ -174,7 +173,7 @@ function elementFromHTML(html) {
   var addLoggingSettersCheckSymbol = Symbol("addLoggingSettersCheck");
 
   function Object__getD5cProp (key) {
-    var holder = new CcD5cHolder(_ => this[key]);
+    var holder = new CcD5cHolder(_ => this[key], v => {this[key] = v});
 
     let helper = null;
     let helperlist = Object.getOwnPropertySymbols(this, addLoggingSettersCheckSymbol);
@@ -202,6 +201,14 @@ function elementFromHTML(html) {
       helper.has[key] = true;
 
       let desc = Object.getOwnPropertyDescriptor(this, key);
+      if (!desc) {
+        Object.defineProperty(this, key, {
+          enumerable: true,
+          configurable: true,
+        });
+
+        desc = Object.getOwnPropertyDescriptor(this, key);
+      }
 
       Object.defineProperty(this, key, {
         get: function () {
@@ -283,6 +290,10 @@ const html = function html(strings, ...values) {
     var s = (values.length > i) ? values[i] : "";
     if (!isDefined(s) || !s.escapeXml) {
       if (s instanceof Function) {
+        let name = "@function:" + (htmlFunctionArrayCount++);
+        htmlFunctionArray[name] = { func : s, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
+        s = name;
+      } else if (s instanceof CcD5cHolder) {
         let name = "@function:" + (htmlFunctionArrayCount++);
         htmlFunctionArray[name] = { func : s, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
         s = name;
@@ -422,17 +433,24 @@ class CcTranslation extends EventTarget {
 var translation = new CcTranslation();
 
 class CcD5cHolder extends EventTarget {
-  constructor (f) {
+  constructor (getvalue, setvalue) {
     super()
-    this.f = f;
+    this.getvalue = getvalue;
+    this.setvalue = setvalue;
   }
 
   toString() {
-    var x = this.f();
+    var x = this.getvalue();
     while(x instanceof CcD5cHolder) {
       x = x.toString();
     }
     return x;
+  }
+
+  setValue(x) {
+    if (this.setvalue) {
+      this.setvalue(x);
+    }
   }
 
   sendEvent() {
@@ -538,7 +556,9 @@ const t9nhtml = function t9nhtml(strings, ...origvalues) {
 function htmlelement(strings, ...values) {
   values = values.map((x) => {
     if (x instanceof CcD5cHolder) {
-      return x.toString();
+      let name = "@function:" + (htmlFunctionArrayCount++);
+      htmlFunctionArray[name] = { func : x, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
+      return name;
     } else if (x instanceof Function) {
       let name = "@function:" + (htmlFunctionArrayCount++);
       htmlFunctionArray[name] = { func : x, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
