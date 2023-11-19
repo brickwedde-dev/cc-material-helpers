@@ -105,6 +105,15 @@ class CcMdcTextField extends HTMLElement {
       }
     }
 
+    var inputfun = htmlFunctionArray[this.getAttribute("@input")];
+    if (inputfun) {
+      var d = debounce(inputfun.func, 100)
+      this.input.addEventListener("input", d);
+      this.input.addEventListener("keyup", d);
+      this.input.addEventListener("keydown", d);
+      this.input.addEventListener("change", d);
+    }
+
     var changefun = htmlFunctionArray[this.getAttribute("@change")];
     if (changefun) {
       this.addEventListener("change", changefun.func);

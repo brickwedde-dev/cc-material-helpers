@@ -55,7 +55,13 @@ class CcMdcSelect extends HTMLElement {
         }
         li.setAttribute("data-value", stringifiedvalue);
         if (isDefined(item.html)) {
-          li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.html}</span>`;
+          if (item.html instanceof HTMLElement) {
+            li.innerHTML = `<span class="mdc-list-item__ripple"></span>`;
+            item.html.className = (item.html.className ? item.html.className + " " : "") + "mdc-list-item__text"
+            li.appendChild(item.html)
+          } else {
+            li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.html}</span>`;
+          }
         } else if (isDefined(item.name)) {
           li.innerHTML = html`<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.name}</span>`;
         }
@@ -177,9 +183,20 @@ class CcMdcSelect extends HTMLElement {
       this.addEventListener("change", (e) => {setTimeout(() => {fun.func(e)},0)});
     }
 
-    var targetfun = this.getAttribute(".target");
-    if (htmlFunctionArray[targetfun] && htmlFunctionArray[targetfun].func && htmlFunctionArray[targetfun].func.__isTarget) {
-      let { obj, prop } = htmlFunctionArray[targetfun].func();
+    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
+    if (targetfun && targetfun.func && targetfun.func instanceof CcD5cHolder) {
+      let d5cholder = targetfun.func;
+      d5cholder.addEventListener("d5c_changed", () => {
+        if (this.value != d5cholder.toString()) {
+          this.value = d5cholder.toString();
+        }
+      })
+      this.addEventListener("change", () => {
+        d5cholder.setValue(this.value);
+      });
+      this.value = d5cholder.toString();
+    } else if (targetfun && targetfun.func && targetfun.func.__isTarget) {
+      let { obj, prop } = targetfun.func();
       this.addEventListener("change", () => {
         obj[prop] = this.value;
       });
