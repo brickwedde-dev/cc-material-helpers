@@ -75,6 +75,7 @@ class CcMdcSelect extends HTMLElement {
       this.mdcComponent.layout();
       this.mdcComponent.layoutOptions();
     }
+    return this;
   }
 
   set selectedIndex (i) {

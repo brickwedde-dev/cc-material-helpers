@@ -371,17 +371,22 @@ class CcTranslation extends EventTarget {
     }
   }
 
-  getLangObjFromString(s) {
+  getLangObjFromString(s, values) {
     var o = { values : [] };
     if (s.split) {
-      o.strings = s.split(/(\${[0-9]*})/).filter((x) => {
-        var m = x.match(/\${[0-9]*}/);
+      o.strings = s.split(/(\${[0-9]*})/);
+      for(var i = 0; i < o.strings.length; i++) {
+        var m = o.strings[i].match(/\${([0-9]*)}/);
         if (m) {
-          o.values.push (values[parseInt(m[0].substring(2)) - 1]);
-          return false;
+          if (m[1]) {
+            o.values.push (values[parseInt(m[1]) - 1]);
+          } else {
+            o.values.push (values[i - 1]);
+          }
+          o.strings.splice(i, 1);
+          i--;
         }
-        return true;
-      });
+      }
     } else {
       o.strings = [s]
     }
@@ -408,7 +413,7 @@ class CcTranslation extends EventTarget {
     var lang = this.language;
     if (this.#translations[string][lang]) {
       if (this.#translations[string][lang].split) {
-        return this.getLangObjFromString(this.#translations[string][lang])
+        return this.getLangObjFromString(this.#translations[string][lang], values)
       }
 
       var o = { values : [] };
@@ -426,7 +431,7 @@ class CcTranslation extends EventTarget {
         return { values : [], strings : [`@@${string}@@`] };
       }
     }
-    return this.getLangObjFromString(string);
+    return this.getLangObjFromString(string, values);
   }
 }
 

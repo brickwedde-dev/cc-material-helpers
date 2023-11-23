@@ -3190,7 +3190,7 @@ svg.mdc-button__icon {
   color: var(--mdc-theme-primary, rgba(0, 0, 0, 0.87));
 }
 .mdc-dialog .mdc-dialog__content {
-  color: var(--mdc-theme-primary, rgba(0, 0, 0, 0.6));
+/*  color: var(--mdc-theme-primary, rgba(0, 0, 0, 0.6));*/
 }
 .mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title, .mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions {
   border-color: rgba(0, 0, 0, 0.12);
@@ -12203,14 +12203,14 @@ a.mdc-list-item {
   vertical-align: middle;
   text-align: center;
   flex-grow: 1;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  vertical-align : top;
 }
 
 .CcApp2__CcWizard__LanguageDiv {
   height : 100%;
   max-width: 10vw;
-  vertical-align: middle;
+  padding-left:10px;
+  vertical-align: top;
   text-align: center;
 }
 
