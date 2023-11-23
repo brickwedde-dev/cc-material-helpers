@@ -122,6 +122,8 @@ class CcMdcSelect extends HTMLElement {
   }
 
   connectedCallback() {
+    this._disabled = this.getAttribute("disabled") ? true : false;
+
     var label = this.label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
 
