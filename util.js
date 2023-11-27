@@ -463,10 +463,20 @@ class CcD5cHolder extends EventTarget {
   }
 }
 
-var t9n_language = "de";
+Object.defineProperty(globalThis, "t9n_language", {
+  get: function () {
+    return translation.language;
+  },
+  set: function (newValue) {
+    translation.language = newValue;
+  },
+  enumerable: true,
+  configurable: true,
+});
 
-function t9n_registerlanguage (language, flag, languagename, translation) {
-  return translation.registerlanguage(language, flag, languagename, translation);
+
+function t9n_registerlanguage (language, flag, languagename, p_translation) {
+  return translation.registerlanguage(language, flag, languagename, p_translation);
 }
 
 function t9n_xl8 (strings, values) {
