@@ -35,6 +35,41 @@ class CcMdcCheckbox extends HTMLElement {
     this.mdcFormField.input = this.mdcComponent;
     this.input = this.querySelector("input");
     this.labeldiv = this.querySelector("label");
+
+    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
+    if (targetfun && targetfun.func && targetfun.func instanceof CcD5cHolder) {
+      let d5cholder = targetfun.func;
+      d5cholder.addEventListener("d5c_changed", () => {
+        this.value = d5cholder.toString();
+      })
+      this.addEventListener("change", () => {
+        d5cholder.setValue(this.value);
+      });
+      this.value = d5cholder.toString();
+    } else if (targetfun && targetfun.func && targetfun.func.__isTarget) {
+      var { obj, prop } = targetfun.func();
+      this.addEventListener("change", () => {
+        obj[prop] = this.value;
+      });
+      if (isDefined(obj[prop])) {
+        this.value = obj[prop];
+      }
+    }
+
+    var inputfun = htmlFunctionArray[this.getAttribute("@input")];
+    if (inputfun) {
+      var d = debounce(inputfun.func, 100)
+      this.input.addEventListener("input", d);
+      this.input.addEventListener("keyup", d);
+      this.input.addEventListener("keydown", d);
+      this.input.addEventListener("change", d);
+    }
+
+    var changefun = htmlFunctionArray[this.getAttribute("@change")];
+    if (changefun) {
+      this.addEventListener("change", changefun.func);
+    }
+
     this.applyValue();
     this.applyDisabled();
   }
