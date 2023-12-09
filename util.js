@@ -116,7 +116,11 @@ function elementsFromHTML(html) {
 }
 
 function elementFromHTML(html) {
-  var contdiv = document.createElement("div");
+  var d = "div";
+  if (html.substring(0, 3).toLowerCase().startsWith("<tr")){
+    d = "tbody";
+  }
+  var contdiv = document.createElement(d);
   contdiv.innerHTML = html;
 
   var x = (div) => {
