@@ -1,4 +1,4 @@
-class CcMdcCheckbox extends HTMLElement {
+class CcMdcRadio extends HTMLElement {
   constructor() {
     super();
     this._disabled = false;
@@ -7,52 +7,55 @@ class CcMdcCheckbox extends HTMLElement {
   connectedCallback() {
     globalLabelCount++;
 
-    var label = this.label || this.getAttribute("label") || "Label";
+    var label = this._label || this.getAttribute("label") || "Label";
+    var name = this.getAttribute("name") || `cc-mdc-label-${globalLabelCount}`;
+    if (!isDefined(this.radiovalue)) {
+      this.radiovalue = this.getAttribute("value") || "true";
+    }
 
-    this.innerHTML = html`<div class="mdc-form-field">
-      <div class="mdc-checkbox">
-        <input type="checkbox"
-              class="mdc-checkbox__native-control"
-              id="cc-mdc-label-${globalLabelCount}"/>
-        <div class="mdc-checkbox__background">
-          <svg class="mdc-checkbox__checkmark"
-              viewBox="0 0 24 24">
-            <path class="mdc-checkbox__checkmark-path"
-                  fill="none"
-                  d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-          </svg>
-          <div class="mdc-checkbox__mixedmark"></div>
+    this.innerHTML = `<div class="mdc-form-field">
+      <div class="mdc-form-field">
+        <div class="mdc-radio">
+          <input class="mdc-radio__native-control" type="radio" id="cc-mdc-label-${globalLabelCount}" name="${name}" value="${this.radiovalue}">
+          <div class="mdc-radio__background">
+            <div class="mdc-radio__outer-circle"></div>
+            <div class="mdc-radio__inner-circle"></div>
+          </div>
+          <div class="mdc-radio__ripple"></div>
         </div>
-        <div class="mdc-checkbox__ripple"></div>
+        <label for="cc-mdc-label-${globalLabelCount}">${label}</label>
       </div>
-      <label for="cc-mdc-label-${globalLabelCount}">${label}</label>
     </div>
     `;
 
-    this.mdcCheckboxDiv = this.querySelector(".mdc-checkbox");
-    this.mdcComponent = mdc.checkbox.MDCCheckbox.attachTo(this.mdcCheckboxDiv);
+    this.mdcRadioDiv = this.querySelector(".mdc-radio");
+    this.mdcComponent = mdc.radio.MDCRadio.attachTo(this.mdcRadioDiv);
     this.mdcFormField = mdc.formField.MDCFormField.attachTo(this.querySelector('.mdc-form-field'));
     this.mdcFormField.input = this.mdcComponent;
     this.input = this.querySelector("input");
-    this.labeldiv = this.querySelector("label");
+    this.label = this.querySelector("label");
 
     var targetfun = htmlFunctionArray[this.getAttribute(".target")];
     if (targetfun && targetfun.func && targetfun.func instanceof CcD5cHolder) {
       let d5cholder = targetfun.func;
       d5cholder.addEventListener("d5c_changed", () => {
-        this.value = d5cholder.toString();
+        this.value = d5cholder.toString() == this.radiovalue;
       })
       this.addEventListener("change", () => {
-        d5cholder.setValue(this.value);
+        if (this.value) {
+          d5cholder.setValue(this.radiovalue);
+        }
       });
-      this.value = d5cholder.toString();
+      this.value = d5cholder.toString() == this.radiovalue;
     } else if (targetfun && targetfun.func && targetfun.func.__isTarget) {
       var { obj, prop } = targetfun.func();
       this.addEventListener("change", () => {
-        obj[prop] = this.value;
+        if (this.value) {
+          obj[prop] = this.radiovalue;
+        }
       });
       if (isDefined(obj[prop])) {
-        this.value = obj[prop];
+        this.value = obj[prop] == this.radiovalue;
       }
     }
 
@@ -87,12 +90,20 @@ class CcMdcCheckbox extends HTMLElement {
         this.mdcComponent.disabled = false;
       }
     }
-    if (this.labeldiv) {
+    if (this.label) {
       if (this._disabled) {
-        this.labeldiv.style.color = "rgba(0, 0, 0, 0.38)";
+        this.label.style.color = "rgba(0, 0, 0, 0.38)";
       } else {
-        this.labeldiv.style.color = "inherit";
+        this.label.style.color = "inherit";
       }
+    }
+  }
+
+  set label (value) {
+    this._label = value;
+    var x = this.querySelector(".mdc-floating-label");
+    if (x) {
+      x.innerText = value;
     }
   }
 
@@ -112,16 +123,12 @@ class CcMdcCheckbox extends HTMLElement {
     if (this.mdcComponent && isDefined(this._value)) {
       if (this._value === "true") {
         this.mdcComponent.checked = true;
-      } else if (this._value === "false") {
-        this.mdcComponent.checked = false;
       } else if (this._value === "on") {
         this.mdcComponent.checked = true;
       } else if (this._value === true) {
         this.mdcComponent.checked = true;
-      } else if (this._value === false) {
-        this.mdcComponent.checked = false;
       } else {
-        this.mdcComponent.checked = this._value;
+        this.mdcComponent.checked = false;
       }
     }
   }
@@ -132,4 +139,4 @@ class CcMdcCheckbox extends HTMLElement {
   }
 }
 
-window.customElements.define("cc-mdc-checkbox", CcMdcCheckbox);
+window.customElements.define("cc-mdc-radio", CcMdcRadio);

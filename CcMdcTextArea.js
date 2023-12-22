@@ -6,7 +6,7 @@ class CcMdcTextArea extends HTMLElement {
 
   connectedCallback() {
     globalLabelCount++;
-    var label = this.getAttribute("label") || "Label";
+    var label = this._label || this.getAttribute("label") || "Label";
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
 
@@ -21,6 +21,41 @@ class CcMdcTextArea extends HTMLElement {
 
     this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
     this.input = this.querySelector("textarea");
+
+    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
+    if (targetfun && targetfun.func && targetfun.func instanceof CcD5cHolder) {
+      let d5cholder = targetfun.func;
+      d5cholder.addEventListener("d5c_changed", () => {
+        this.value = d5cholder.toString();
+      })
+      this.addEventListener("change", () => {
+        d5cholder.setValue(this.value);
+      });
+      this.value = d5cholder.toString();
+    } else if (targetfun && targetfun.func && targetfun.func.__isTarget) {
+      var { obj, prop } = targetfun.func();
+      this.addEventListener("change", () => {
+        obj[prop] = this.value;
+      });
+      if (isDefined(obj[prop])) {
+        this.value = obj[prop];
+      }
+    }
+
+    var inputfun = htmlFunctionArray[this.getAttribute("@input")];
+    if (inputfun) {
+      var d = debounce(inputfun.func, 100)
+      this.input.addEventListener("input", d);
+      this.input.addEventListener("keyup", d);
+      this.input.addEventListener("keydown", d);
+      this.input.addEventListener("change", d);
+    }
+
+    var changefun = htmlFunctionArray[this.getAttribute("@change")];
+    if (changefun) {
+      this.addEventListener("change", changefun.func);
+    }
+
     this.applyValue();
     this.applyDisabled();
   }
@@ -40,15 +75,16 @@ class CcMdcTextArea extends HTMLElement {
     }
   }
 
-  set value (value) {
-    switch (this.type) {
-      case "minutes":
-        this._value = CcMdcTextField_minutesToString(value);
-        break;
-      default:
-        this._value = value;
-        break;
+  set label (value) {
+    this._label = value;
+    var x = this.querySelector(".mdc-floating-label");
+    if (x) {
+      x.innerText = value;
     }
+  }
+
+  set value (value) {
+    this._value = value;
     this.applyValue();
   }
 
