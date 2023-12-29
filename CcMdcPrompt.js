@@ -45,11 +45,11 @@ class CcMdcPrompt extends HTMLElement {
             <cc-mdc-select id="objects" style="margin:10px;" label="${label}"></cc-mdc-select>
           </div>
           <div class="mdc-dialog__actions">
-            <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="ok">
+            <button type="button" class="mdc-button mdc-dialog__button" id="ok">
               <div class="mdc-button__ripple"></div>
               <span class="mdc-button__label">${ok}</span>
             </button>
-            <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+            <button type="button" class="mdc-button mdc-dialog__button" id="cancel">
               <div class="mdc-button__ripple"></div>
               <span class="mdc-button__label">${cancel}</span>
             </button>
@@ -58,6 +58,42 @@ class CcMdcPrompt extends HTMLElement {
       </div>
       <div class="mdc-dialog__scrim"></div>
     </div>`;
+
+    var okBtn = this.querySelector("#ok");
+    okBtn.addEventListener("click", (e) => {
+      var valueinput;
+      if (this.availableObjects) {
+        valueinput = this.querySelector("#objects");
+      } else {
+        valueinput = this.querySelector("#value");
+      }
+      if (valueinput) {
+        this._value = valueinput.value;
+      }
+
+      if (this.checkFun) {
+        if (!this.checkFun(this._value)) {
+          return;
+        }
+      }
+
+      if (this.dlgResolve) {
+        this.dlgResolve("ok");
+      }
+
+      setTimeout(() => {
+        this.parentNode.removeChild(this);
+      }, 100);
+    })
+    var cancelBtn = this.querySelector("#cancel");
+    cancelBtn.addEventListener("click", (e) => {
+      if (this.dlgResolve) {
+        this.dlgResolve("cancel");
+      }
+      setTimeout(() => {
+        this.parentNode.removeChild(this);
+      }, 100);
+    })
 
     var dlgContent = this.querySelector("#my-dialog-content");
     if (this.contentElement) {
@@ -89,25 +125,6 @@ class CcMdcPrompt extends HTMLElement {
     
     this.mdcComponent.open();
 
-    this.dialog.addEventListener("MDCDialog:closed", (e) => {
-      var valueinput;
-      if (this.availableObjects) {
-        valueinput = this.querySelector("#objects");
-      } else {
-        valueinput = this.querySelector("#value");
-      }
-      if (valueinput) {
-        this._value = valueinput.value;
-      }
-
-      if (this.dlgResolve) {
-        this.dlgResolve(e.detail.action);
-      }
-
-      setTimeout(() => {
-        this.parentNode.removeChild(this);
-      }, 100);
-    });
 
     this.applyValue();
   }
@@ -122,11 +139,12 @@ class CcMdcPrompt extends HTMLElement {
 
 window.customElements.define("cc-mdc-prompt", CcMdcPrompt);
 
-function CcPrompt(label, defaultvalue) {
+function CcPrompt(label, defaultvalue, checkFun) {
   return new Promise((resolve, reject) => {
     var p = new CcMdcPrompt();
     p.label = label;
     p.value = defaultvalue;
+    p.checkFun = checkFun;
     p.dlgResolve = (action) => {
       if (action == "ok") {
         resolve(p.value);
