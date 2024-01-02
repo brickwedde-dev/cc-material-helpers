@@ -29,8 +29,8 @@ class CcMdcPrompt extends HTMLElement {
 
   connectedCallback() {
     var label = this.label || this.getAttribute("label") || "";
-    var ok = this.ok || this.getAttribute("ok") || "Ok";
-    var cancel = this.cancel || this.getAttribute("cancel") || "Abbruch";
+    var ok = this.ok || this.getAttribute("ok") || t9n`Ok`;
+    var cancel = this.cancel || this.getAttribute("cancel") || t9n`Cancel`;
 
     this.innerHTML = `<div class="mdc-dialog" style="z-index:1000;">
       <div class="mdc-dialog__container">

@@ -403,7 +403,7 @@ class CcTranslation extends EventTarget {
     if (!this.#translations[string]) {
       if (this.#missingcallback) {
         var debug = false;
-        if (this.#missingcallback(string, undefined, this.#missingnotified[string + "@"])) {
+        if (this.#missingcallback(string, this.#language, this.#missingnotified[string + "@"])) {
           debug = true;
         }
         this.#missingnotified[string + "@"] = true;
