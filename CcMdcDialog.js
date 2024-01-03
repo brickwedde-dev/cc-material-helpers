@@ -185,7 +185,8 @@ class CcMdcDialog extends HTMLElement {
     }
 
     if(flexmaxwidth) {
-      this.querySelector(".mdc-dialog__surface").style.maxWidth = "calc(100vw - 50px)";
+      var surf = this.querySelector(".mdc-dialog__surface")
+      surf.style.maxWidth = "calc(100vw - 50px)";
     }
 
     var dlgContent = this.querySelector("#my-dialog-content");
