@@ -344,7 +344,7 @@ class PdfState {
       if (firstpage > box.firstpage) {
         firstpage = box.firstpage
       }
-      if (lastpage < box.lasttop) {
+      if (lastpage < box.lastpage) {
         lastpage = box.lastpage
       }
     }
