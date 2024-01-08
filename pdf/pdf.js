@@ -388,6 +388,7 @@ class PdfState {
 
     this.pageNo = lastpage;
     this.top = lasttop;
+    return { firstpage, lastpage, firsttop, lasttop, texts : [], totalleft : 0, totalwidth : 0, options : {} }
   }
 
 };
