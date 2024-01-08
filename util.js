@@ -119,6 +119,8 @@ function elementFromHTML(html) {
   var d = "div";
   if (html.substring(0, 3).toLowerCase().startsWith("<tr")){
     d = "tbody";
+  } else if (html.substring(0, 3).toLowerCase().startsWith("<td")){
+    d = "tr";
   }
   var contdiv = document.createElement(d);
   contdiv.innerHTML = html;
