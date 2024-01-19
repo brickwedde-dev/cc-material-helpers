@@ -110,7 +110,7 @@ class CcMdcPrompt extends HTMLElement {
       var valueinput = this.querySelector("#objects");
       if (valueinput) {
         for(var obj of this.availableObjects) {
-          valueinput.addItem(obj[this.nameProperty], obj[this.idProperty]);
+          valueinput.addItem(obj[this.nameProperty], this.idProperty ? obj[this.idProperty] : obj);
         }
       }
     } else {
