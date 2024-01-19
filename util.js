@@ -119,6 +119,8 @@ function elementFromHTML(html) {
   var d = "div";
   if (html.substring(0, 3).toLowerCase().startsWith("<tr")){
     d = "tbody";
+  } else if (html.substring(0, 3).toLowerCase().startsWith("<td")){
+    d = "tr";
   }
   var contdiv = document.createElement(d);
   contdiv.innerHTML = html;
@@ -399,11 +401,12 @@ class CcTranslation extends EventTarget {
 
   xl8 (strings, values) {
     var string = strings.join("${}");
+    var lang = this.#language;
 
-    if (!this.#translations[string]) {
+    if (!Object.hasOwn(this.#translations, string)) {
       if (this.#missingcallback) {
         var debug = false;
-        if (this.#missingcallback(string, undefined, this.#missingnotified[string + "@"])) {
+        if (this.#missingcallback(string, lang, this.#missingnotified[string + "@"])) {
           debug = true;
         }
         this.#missingnotified[string + "@"] = true;
@@ -414,7 +417,6 @@ class CcTranslation extends EventTarget {
       return null;
     }
 
-    var lang = this.language;
     if (this.#translations[string][lang]) {
       if (this.#translations[string][lang].split) {
         return this.getLangObjFromString(this.#translations[string][lang], values)
@@ -425,14 +427,16 @@ class CcTranslation extends EventTarget {
       return o;
     }
 
-    if (this.#missingcallback) {
-      var debug = false;
-      if (this.#missingcallback(string, this.language, this.#missingnotified[string + "@" + this.language])) {
-        debug = true;
-      }
-      this.#missingnotified[string + "@" + this.language] = true;
-      if (debug) {
-        return { values : [], strings : [`@@${string}@@`] };
+    if (!Object.hasOwn(this.#translations[string], lang)) {
+      if (this.#missingcallback) {
+        var debug = false;
+        if (this.#missingcallback(string, lang, this.#missingnotified[string + "@" + this.language])) {
+          debug = true;
+        }
+        this.#missingnotified[string + "@" + this.language] = true;
+        if (debug) {
+          return { values : [], strings : [`@@${string}@@`] };
+        }
       }
     }
     return this.getLangObjFromString(string, values);

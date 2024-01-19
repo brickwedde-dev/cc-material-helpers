@@ -8,6 +8,7 @@ class CcMdcCheckbox extends HTMLElement {
     globalLabelCount++;
 
     var label = this.label || this.getAttribute("label") || "Label";
+    this._disabled = this.getAttribute("disabled") ? true : false;
 
     this.innerHTML = html`<div class="mdc-form-field">
       <div class="mdc-checkbox">

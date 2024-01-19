@@ -22,7 +22,8 @@ class CcMdcTextField extends HTMLElement {
     }
     this._disabled = this.getAttribute("disabled") ? true : false;
 
-    var hasWidth = ("" + this.style.width).indexOf("px") > 0;
+    var hasWidth = ("" + this.style.width).indexOf("px") > 0 || ("" + this.style.width).indexOf("vw") > 0;
+    var hasHeight = ("" + this.style.height).indexOf("px") > 0 || ("" + this.style.height).indexOf("vh") > 0;
 
     var type = this.type;
     switch (this.type) {
@@ -32,7 +33,7 @@ class CcMdcTextField extends HTMLElement {
     }
 
     if (this.type == "color") {
-      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : `style="width:140px"`}>
+      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${(hasWidth || hasHeight) ? `style="width:100%"` : `style="width:140px"`}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
   <span style="white-space:nowrap;">
@@ -74,7 +75,7 @@ class CcMdcTextField extends HTMLElement {
         this.button.style.backgroundColor = this.value;
       })
     } else {
-      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasWidth ? `style="width:100%"` : ``}>
+      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${(hasWidth || hasHeight) ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
   <input type="${type}" ${isDefined(step) ? `step="${step}"` : ``} ${isDefined(min) ? `min="${min}"` : ``} ${isDefined(max) ? `max="${max}"` : ``} ${isDefined(pattern) ? `pattern="${pattern}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
