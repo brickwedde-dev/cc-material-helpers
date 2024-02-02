@@ -38,11 +38,11 @@ class CcMdcSelect extends HTMLElement {
     }
   }
 
-  addItem (html, value) {
-    return this.addItems([{html, value}]);
+  addItem (html, value, ignoreLayoutOptions) {
+    return this.addItems([{html, value}], ignoreLayoutOptions);
   }
 
-  addItems (items) {
+  addItems (items, ignoreLayoutOptions) {
     for(var item of items) {
       var stringifiedvalue = JSON.stringify(item.value);
       if (this.mdcList) {
@@ -71,11 +71,17 @@ class CcMdcSelect extends HTMLElement {
         this._items.push(item);
       }
     }
+    if (!ignoreLayoutOptions) {
+      this.layoutOptions();
+    }
+    return this;
+  }
+
+  layoutOptions() {
     if (this.mdcComponent) {
       this.mdcComponent.layout();
       this.mdcComponent.layoutOptions();
     }
-    return this;
   }
 
   set selectedIndex (i) {
@@ -176,8 +182,9 @@ class CcMdcSelect extends HTMLElement {
     this.mdcList = this.querySelector(".mdc-list");
     this.applyDisabled();
     for(var item of this._items) {
-      this.addItem(item.html, item.value);
+      this.addItem(item.html, item.value, true/*ignoreLayoutOptions*/);
     }
+    this.layoutOptions();
     this._items = [];
 
     var changefun = this.getAttribute("@change");
