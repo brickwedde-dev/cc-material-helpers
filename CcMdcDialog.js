@@ -33,6 +33,20 @@ class CcMdcDialog extends HTMLElement {
   }
 
   setContentElement(contentElement) {
+    if (contentElement && contentElement.addEventListener) {
+      contentElement.addEventListener("enabledialogbutton_ok", () => {
+        var btn = this.querySelector("#okbutton")
+        if (btn) {
+          btn.removeAttribute("disabled")
+        }
+      });
+      contentElement.addEventListener("disabledialogbutton_ok", () => {
+        var btn = this.querySelector("#okbutton")
+        if (btn) {
+          btn.setAttribute("disabled", "true")
+        }
+      });
+    }
     this.contentElement = contentElement;
     return this;
   }

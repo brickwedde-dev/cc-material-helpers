@@ -77,6 +77,14 @@ class CcMdcSelect extends HTMLElement {
     return this;
   }
 
+  get itemcount() {
+    if (this.mdcList) {
+      return this.mdcList.querySelectorAll("li").length
+    } else {
+      return this._items.length
+    }
+  }
+
   layoutOptions() {
     if (this.mdcComponent) {
       this.mdcComponent.layout();
