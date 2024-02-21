@@ -16,6 +16,7 @@ class CcDrawing extends HTMLElement {
 
   init() {
     var label = this._label || this.getAttribute("label") || "";
+    var bgcolor = this._bgcolor || this.getAttribute("backgroundcolor") || "";
     this.labelDiv = document.createElement("div");
     this.labelDiv.style.padding = "0px";
     this.labelDiv.style.margin = "5px";
@@ -29,6 +30,10 @@ class CcDrawing extends HTMLElement {
     this.canvas.style.height = (this.offsetHeight - this.labelDiv.offsetHeight) + "px";
     this.canvas.style.border = "1px solid #bbb";
     this.canvas.style.borderRadius = "4px";
+
+    if (bgcolor) {
+      this.canvas.style.backgroundColor = bgcolor;
+    }
 
     this.canvas.width = this.offsetWidth;
     this.canvas.height = (this.offsetHeight - this.labelDiv.offsetHeight);
