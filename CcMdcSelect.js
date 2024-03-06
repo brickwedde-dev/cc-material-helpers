@@ -142,8 +142,11 @@ class CcMdcSelect extends HTMLElement {
     var width = this.getAttribute("width") || this.width || 200;
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
+    if (hasWidth) {
+      width = parseInt(this.style.width);
+    }
 
-    this.innerHTML = html`<div class="mdc-select mdc-select--filled" ${hasWidth ? `style="width:100%"` : `style="min-width:${width}px;max-width:${width}px;width:${width}px;"`}>
+    this.innerHTML = html`<div class="mdc-select mdc-select--filled" ${hasWidth ? `style="width:100%;min-width:100%;max-width:100%;"` : `style="min-width:${width}px;max-width:${width}px;width:${width}px;"`}>
   <div class="mdc-select__anchor" style="${this.customheight > 0 ? "height:" + this.customheight + "px;align-items:inherit;padding-left:0px;" : ""}">
     <span class="mdc-select__ripple"></span>
     <span class="mdc-select__selected-text" style="${this.customheight > 0 ? "font-size:" + parseInt(this.customheight * 0.6) + "px;line-height:" + this.customheight + "px;height:" + this.customheight + "px;" : ""}"></span>
