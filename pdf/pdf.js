@@ -369,14 +369,16 @@ class PdfState {
       var pdfpage = this.pages.getPdfPage(i);
       var page = pdfpage.page;
       for(var box of boxes) {
-        if (i == firstpage && i == lastpage) {
-          page.drawRectangle({x: box.totalleft, y: lasttop, width: box.totalwidth, height: firsttop - lasttop, color: box.options.background,})
-        } else if (i == firstpage) {
-          page.drawRectangle({x: box.totalleft, y: pdfpage.footerheight, width: box.totalwidth, height: firsttop - pdfpage.footerheight, color: box.options.background,})
-        } else if (i == lastpage) {
-          page.drawRectangle({x: box.totalleft, y: lasttop, width: box.totalwidth, height: pdfpage.height - (pdfpage.headerheight + lasttop), color: box.options.background,})
-        } else  {
-          page.drawRectangle({x: box.totalleft, y: pdfpage.footerheight, width: box.totalwidth, height: pdfpage.height - (pdfpage.headerheight + pdfpage.footerheight), color: box.options.background,})
+        if (box.options.background) {
+          if (i == firstpage && i == lastpage) {
+            page.drawRectangle({x: box.totalleft, y: lasttop, width: box.totalwidth, height: firsttop - lasttop, color: box.options.background,})
+          } else if (i == firstpage) {
+            page.drawRectangle({x: box.totalleft, y: pdfpage.footerheight, width: box.totalwidth, height: firsttop - pdfpage.footerheight, color: box.options.background,})
+          } else if (i == lastpage) {
+            page.drawRectangle({x: box.totalleft, y: lasttop, width: box.totalwidth, height: pdfpage.height - (pdfpage.headerheight + lasttop), color: box.options.background,})
+          } else  {
+            page.drawRectangle({x: box.totalleft, y: pdfpage.footerheight, width: box.totalwidth, height: pdfpage.height - (pdfpage.headerheight + pdfpage.footerheight), color: box.options.background,})
+          }
         }
       }
     }
