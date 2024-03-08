@@ -293,7 +293,7 @@ class PdfState {
       firstfittest = null;
       firstfitrest = null;
 
-      if (testtext.length > 0) {
+      if (isDefined(testtext) && testtext.length > 0) {
         let page = this.page
         let top = this.top;
         let text = testtext;
@@ -328,7 +328,7 @@ class PdfState {
       } else {
         break;
       }
-    } while (testtext.length > 0);
+    } while (isDefined(testtext) && testtext.length > 0);
 
     var lastpage = this.pageNo
     var lasttop = this.top
