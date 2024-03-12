@@ -243,92 +243,125 @@ class PdfState {
     var width = totalwidth - ((options.paddingLeft || textHeight * 0.5) + (options.paddingRight || textHeight * 0.5) + ((options.padding || 0) * 2));
     var left = totalleft + ((options.paddingLeft || textHeight * 0.5) + (options.padding || 0));
 
-    do {
-      this.breakIfNeeded(textHeight);
-
+    if (width > 0) {
       do {
-        var br = testtext.indexOf("\r");
-        if (br == 0) {
-          this.top -= textHeight;
-          testtext = testtext.substring(1);
-          resttext = "";
-          continue;
-        }
-        if (br > 0) {
-          resttext = testtext.substring(br);
-          testtext = testtext.substring(0, br);
-        }
-        const textWidth = font.widthOfTextAtSize(testtext, size);
-        if (textWidth <= width) {
-          if (!firstfittest) {
-            firstfittest = testtext;
-            firstfitrest = resttext;
+        this.breakIfNeeded(textHeight);
+
+        do {
+          var br = testtext.indexOf("\r");
+          if (br == 0) {
+            this.top -= textHeight;
+            testtext = testtext.substring(1);
+            resttext = "";
+            continue;
           }
-          if (resttext === "" || resttext.charAt(0) == "\r") {
-            break;
+          if (br > 0) {
+            resttext = testtext.substring(br);
+            testtext = testtext.substring(0, br);
           }
-          var valid = false;
-          switch (testtext.charAt(testtext.length - 1)) {
-            case "?":
-            case "!":
-            case ",":
-            case " ":
-            case "-":
-              valid = true;
+          const textWidth = font.widthOfTextAtSize(testtext, size);
+          if (textWidth <= width) {
+            if (!firstfittest) {
+              firstfittest = testtext;
+              firstfitrest = resttext;
+            }
+            if (resttext === "" || resttext.charAt(0) == "\r") {
+              break;
+            }
+            var valid = false;
+            switch (testtext.charAt(testtext.length - 1)) {
+              case "?":
+              case "!":
+              case ",":
+              case " ":
+              case "-":
+                valid = true;
+                break;
+            }
+            if (valid) {
+              break;
+            }
+          }
+
+          var jj = testtext.length - 1;
+
+          var tt = textWidth / (width || 1);
+          if (tt > 3) {
+            // text is 3 times wider -> half it
+            jj = Math.ceil(jj / (tt * 0.5));
+          }
+
+          // optimized search
+          while(jj > 1) {
+            switch (testtext.charAt(jj - 1)) {
+              case "?":
+              case "!":
+              case ",":
+              case " ":
+              case "-":
+                var rem = testtext.slice(jj - testtext.length);
+                resttext = rem + resttext;
+                testtext = testtext.substring(0, jj);
+                jj = -1;
+                break;
+            }
+            jj--;
+          }
+          if (jj == -2) {
+            // found optimized valid position
+            continue;
+          }
+
+          // char by char fallback
+          resttext = testtext.slice(-1) + resttext;
+          testtext = testtext.substring(0, testtext.length - 1);
+        } while (testtext.length > 0);
+
+        if (testtext.length == 0) {
+          testtext = firstfittest;
+          resttext = firstfitrest;
+        }
+
+        firstfittest = null;
+        firstfitrest = null;
+
+        if (isDefined(testtext) && testtext.length > 0) {
+          let page = this.page
+          let top = this.top;
+          let text = testtext;
+          let textWidth = font.widthOfTextAtSize(text, size);
+          switch (options.align) {
+            case "left":
+            default:
+              texts.push(() => {
+                page.drawText(text, { x: left, y: top - textHeightOrig, size, font, color : options.color || rgb(0, 0, 0), });
+              })
+              break;
+            case "center":
+              texts.push(() => {
+                page.drawText(text, { x: left + ((width - textWidth) / 2), y: top - textHeightOrig, size, font, color : options.color || rgb(0, 0, 0), });
+              })
+              break;
+            case "right":
+              texts.push(() => {
+                page.drawText(text, { x: left + width - textWidth, y: top - textHeightOrig, size, font, color : options.color || rgb(0, 0, 0), });
+              })
               break;
           }
-          if (valid) {
-            break;
+
+          this.top -= textHeight;
+
+          if (resttext.charAt(0) == "\r") {
+            resttext = resttext.substring(1);
           }
+
+          testtext = resttext;
+          resttext = "";
+        } else {
+          break;
         }
-        resttext = testtext.slice(-1) + resttext;
-        testtext = testtext.substring(0, testtext.length - 1);
-      } while (testtext.length > 0);
-
-      if (testtext.length == 0) {
-        testtext = firstfittest;
-        resttext = firstfitrest;
-      }
-
-      firstfittest = null;
-      firstfitrest = null;
-
-      if (isDefined(testtext) && testtext.length > 0) {
-        let page = this.page
-        let top = this.top;
-        let text = testtext;
-        let textWidth = font.widthOfTextAtSize(text, size);
-        switch (options.align) {
-          case "left":
-          default:
-            texts.push(() => {
-              page.drawText(text, { x: left, y: top - textHeightOrig, size, font, color : options.color || rgb(0, 0, 0), });
-            })
-            break;
-          case "center":
-            texts.push(() => {
-              page.drawText(text, { x: left + ((width - textWidth) / 2), y: top - textHeightOrig, size, font, color : options.color || rgb(0, 0, 0), });
-            })
-            break;
-          case "right":
-            texts.push(() => {
-              page.drawText(text, { x: left + width - textWidth, y: top - textHeightOrig, size, font, color : options.color || rgb(0, 0, 0), });
-            })
-            break;
-        }
-
-        this.top -= textHeight;
-
-        if (resttext.charAt(0) == "\r") {
-          resttext = resttext.substring(1);
-        }
-
-        testtext = resttext;
-        resttext = "";
-      } else {
-        break;
-      }
-    } while (isDefined(testtext) && testtext.length > 0);
+      } while (isDefined(testtext) && testtext.length > 0);
+    }
 
     var lastpage = this.pageNo
     var lasttop = this.top
