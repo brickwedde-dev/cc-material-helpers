@@ -1,4 +1,18 @@
-const { PDFDocument, StandardFonts, rgb } = PDFLib;
+if (typeof window === 'undefined') {
+  var { rgb } = require("./pdf-lib");
+} else {
+  var { rgb } = require("/common/cc-material-helpers/pdf/pdf-lib");
+}
+
+if (typeof isDefined === 'undefined') {
+  var isDefined = function(v) {
+    if (v === null) {
+      return false;
+    }
+    var t = typeof v;
+    return t != "null" && t != "undefined" && t != "void";
+  }
+}
 
 class PdfPage {
   page
@@ -393,3 +407,4 @@ class PdfState {
 
 };
 
+module.exports = { PdfPages, PdfPage, PdfState }
