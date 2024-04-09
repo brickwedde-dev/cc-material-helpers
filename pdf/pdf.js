@@ -14,6 +14,15 @@ if (typeof isDefined === 'undefined') {
   }
 }
 
+if (typeof CustomEvent === 'undefined') {
+  class CustomEvent {
+    constructor(name, detail) {
+      this.name = name;
+      this.detail = detail.detail;
+    }
+  }
+}
+
 class PdfPage {
   page
   options
