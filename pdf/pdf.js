@@ -14,9 +14,11 @@ if (typeof isDefined === 'undefined') {
   }
 }
 
-if (typeof CustomEvent === 'undefined') {
-  class CustomEvent {
+var s = typeof CustomEvent;
+if (s === 'undefined') {
+  CustomEvent = class CustomEvent extends Event {
     constructor(name, detail) {
+      super("CustomEvent");
       this.name = name;
       this.detail = detail.detail;
     }
