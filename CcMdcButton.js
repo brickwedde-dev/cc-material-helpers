@@ -78,6 +78,15 @@ class CcMdcButton extends HTMLElement {
 
   applyDisabled() {
     if (this.button) {
+      if (this.selectlabel) {
+        var d = this.querySelector(".mdc-select");
+        if (this._disabled) {
+          d.className = "mdc-select mdc-select--disabled mdc-select--filled"
+        } else {
+          d.className = "mdc-select mdc-select--filled"
+        }
+        return;
+      }
       if (this._disabled) {
         this.button.setAttribute("disabled", true);
       } else {
