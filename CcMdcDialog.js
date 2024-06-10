@@ -321,6 +321,11 @@ class CcMdcDialog extends HTMLElement {
     });
   }
 
+  showDlg() {
+    this.open();
+    return this;
+  }
+
   close() {
     this.mdcComponent.close();
     try {
