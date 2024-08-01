@@ -1,7 +1,7 @@
 if (typeof window === 'undefined') {
-  var { rgb } = require("./pdf-lib");
+  var { PDFDocument, rgb } = require("./pdf-lib");
 } else {
-  var { rgb } = require("/common/cc-material-helpers/pdf/pdf-lib");
+  var { PDFDocument, rgb } = require("/commonlibs/cc-material-helpers/pdf/pdf-lib");
 }
 
 if (typeof isDefined === 'undefined') {
@@ -11,6 +11,17 @@ if (typeof isDefined === 'undefined') {
     }
     var t = typeof v;
     return t != "null" && t != "undefined" && t != "void";
+  }
+}
+
+var s = typeof CustomEvent;
+if (s === 'undefined') {
+  CustomEvent = class CustomEvent extends Event {
+    constructor(name, detail) {
+      super("CustomEvent");
+      this.name = name;
+      this.detail = detail.detail;
+    }
   }
 }
 
