@@ -114,6 +114,9 @@ class CcMdcSelect extends HTMLElement {
     if (this.mdcComponent) {
       try {
         if (this.mdcComponent.value) {
+          if (this.mdcComponent.value === "undefined") {
+            return undefined;
+          }
           return JSON.parse(this.mdcComponent.value);
         }
       } catch (e) {}
