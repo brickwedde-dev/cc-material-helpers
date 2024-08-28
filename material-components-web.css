@@ -5,9 +5,18 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://github.com/material-components/material-components-web/blob/master/LICENSE
  */
+
 @charset "UTF-8";
 .mdc-touch-target-wrapper {
   display: inline;
+}
+
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
 }
 
 .mdc-elevation-overlay {

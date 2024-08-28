@@ -10,6 +10,14 @@
   display: inline;
 }
 
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+
 .mdc-elevation-overlay {
   position: absolute;
   border-radius: inherit;
