@@ -129,7 +129,7 @@ class CcMdcButton extends HTMLElement {
     </button>`;
       this.button = this.childNodes[0];
     } else if (label) {
-      this.innerHTML = html`<button class="mdc-button mdc-button--raised">
+      this.innerHTML = html`<button style="${hasWidth ? `width:100%;` : ``}${hasHeight ? `height:100%;` : ``}${hasFontSize ? `font-size:${this.style.fontSize};` : ``}" class="mdc-button mdc-button--raised">
       <span class="mdc-button__label">` + label + html`</span>
     </button>`;
       this.button = this.childNodes[0];

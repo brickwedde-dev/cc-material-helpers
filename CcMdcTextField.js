@@ -24,7 +24,7 @@ class CcMdcTextField extends HTMLElement {
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0 || ("" + this.style.width).indexOf("vw") > 0;
     var hasHeight = ("" + this.style.height).indexOf("px") > 0 || ("" + this.style.height).indexOf("vh") > 0;
-
+    var hasTrailingIcon = this.getAttribute("trailingicon") || this.trailingicon || false;
     var type = this.type;
     switch (this.type) {
       case "minutes":
@@ -75,15 +75,25 @@ class CcMdcTextField extends HTMLElement {
         this.button.style.backgroundColor = this.value;
       })
     } else {
-      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${(hasWidth || hasHeight) ? `style="width:100%"` : ``}>
+      this.innerHTML = html`<label class="mdc-text-field mdc-text-field--filled" ${hasTrailingIcon ? "mdc-text-field--with-trailing-icon" : ""} ${(hasWidth || hasHeight) ? `style="width:100%"` : ``}>
   <span class="mdc-text-field__ripple"></span>
   <span class="mdc-floating-label" id="cc-mdc-label-${globalLabelCount}">${label}</span>
   <input type="${type}" ${isDefined(step) ? `step="${step}"` : ``} ${isDefined(min) ? `min="${min}"` : ``} ${isDefined(max) ? `max="${max}"` : ``} ${isDefined(pattern) ? `pattern="${pattern}"` : ``} class="mdc-text-field__input" aria-labelledby="cc-mdc-label-${globalLabelCount}">
+  <i id="trailingIcon" style="opacity:0.4;${hasTrailingIcon ? "" : "display:none;"};float:right;" class='material-icons'>${hasTrailingIcon}</i>
   <span class="mdc-line-ripple"></span>
 </label>`;
       this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.childNodes[0]);
       this.labeldiv = this.querySelector("label");
       this.input = this.querySelector("input");
+    }
+
+    if (hasTrailingIcon) {
+      var i = this.querySelector("#trailingIcon");
+      i.addEventListener("click", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.dispatchEvent(new CustomEvent("clicktrailingicon"));
+      });
     }
 
     var targetfun = htmlFunctionArray[this.getAttribute(".target")];
