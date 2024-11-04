@@ -3,6 +3,7 @@ class CcMdcMenu extends HTMLElement {
     super();
     this.items = [];
     this._open = false;
+    this.skipFocus = false;
   }
 
   connectedCallback() {
@@ -22,6 +23,8 @@ class CcMdcMenu extends HTMLElement {
       this.mdcComponent.setIsHoisted(true);
       this.anchor = null;
     }
+
+    this.mdcComponent.skipFocus = this.skipFocus;
 
     this.childNodes[0].addEventListener("MDCMenu:selected", (e) => {
       try {

@@ -6458,7 +6458,7 @@ var MDCDrawer = /** @class */function (_super) {
             focusActiveNavigationItem: function focusActiveNavigationItem() {
                 var activeNavItemEl = _this.root.querySelector("." + foundation_1.MDCListFoundation.cssClasses.LIST_ITEM_ACTIVATED_CLASS);
                 if (activeNavItemEl) {
-                    activeNavItemEl.focus();
+                    //activeNavItemEl.focus();
                 }
             },
             notifyClose: function notifyClose() {
@@ -9076,7 +9076,7 @@ var MDCList = /** @class */function (_super) {
             focusItemAtIndex: function focusItemAtIndex(index) {
                 var element = _this.listElements[index];
                 if (element) {
-                    element.focus();
+                    //element.focus();
                 }
             },
             getAttributeForElementIndex: function getAttributeForElementIndex(index, attr) {
@@ -11685,10 +11685,10 @@ var MDCMenu = /** @class */function (_super) {
                 return _this.items.length;
             },
             focusItemAtIndex: function focusItemAtIndex(index) {
-                return _this.items[index].focus();
+                return ;//_this.items[index].focus();
             },
             focusListRoot: function focusListRoot() {
-                return _this.root.querySelector(constants_1.strings.LIST_SELECTOR).focus();
+                return _this.skipFocus || _this.root.querySelector(constants_1.strings.LIST_SELECTOR).focus();
             },
             isSelectableItemAtIndex: function isSelectableItemAtIndex(index) {
                 return !!ponyfill_1.closest(_this.items[index], "." + constants_1.cssClasses.MENU_SELECTION_GROUP);
