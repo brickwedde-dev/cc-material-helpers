@@ -32,6 +32,11 @@ class CcMdcDialog extends HTMLElement {
     return this;
   }
 
+  setSize(width, height) {
+    this._width = width;
+    this._height = height;
+  }
+
   setContentElement(contentElement) {
     if (contentElement && contentElement.addEventListener) {
       contentElement.addEventListener("enabledialogbutton_ok", () => {
@@ -114,6 +119,7 @@ class CcMdcDialog extends HTMLElement {
         this.innerHTML = html`<div class="mdc-dialog" style="z-index:${this.zIndex >= 0 ? this.zIndex : 1000};">
           <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
+              style="${this._width > 0 ? `width:${this._width}px;` : ``}${this._height > 0 ? `height:${this._height}px;` : ``}"
               role="alertdialog"
               aria-modal="true"
               aria-labelledby="my-dialog-title"
