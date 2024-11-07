@@ -365,7 +365,11 @@ function CcConfirm(title, htmlcontent, options) {
     dlg.flexmaxwidth = true;
   }
   dlg.setHtml(htmlcontent);
-  dlg.setOkCancel(t9n`Ok`, t9n`Cancel`);
+  if (options && options.yesno) {
+    dlg.setOkCancel(t9n`Yes`, t9n`No`);
+  } else {
+    dlg.setOkCancel(t9n`Ok`, t9n`Cancel`);
+  }
   return dlg.open();
 }
 
