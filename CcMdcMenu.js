@@ -97,6 +97,37 @@ class CcMdcMenu extends HTMLElement {
     return li;
   }
 
+  addSubMenu(html, submenu) {
+    var li = document.createElement("li");
+    li.className="mdc-list-item";
+    li.role="menuitem";
+    li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text"></span><span style="margin-left:auto;" id="arrow" class="material-icons mdc-button__icon">arrow_right</span>`;
+    var span = li.querySelector(".mdc-list-item__text");
+
+    li.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      submenu.setAnchorElement(li.querySelector("#arrow"));
+      document.body.appendChild(submenu);
+
+      submenu.addEventListener("selected", (e) => {
+        this.dispatchEvent(new CustomEvent("selected", {detail : e.detail}));
+        document.body.removeChild(submenu);
+      });
+
+      submenu.open = true;
+    });
+
+    if (typeof html == "string") {
+      span.innerHTML = html;
+    } else if (html instanceof HTMLElement) {
+      span.appendChild(html);
+    }
+    this.addElement(li, undefined);
+    return li;
+  }
+
   addSeparator() {
     var li = document.createElement("li");
     li.className="mdc-list-divider";
