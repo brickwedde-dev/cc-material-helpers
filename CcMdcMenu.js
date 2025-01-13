@@ -2,6 +2,7 @@ class CcMdcMenu extends HTMLElement {
   constructor() {
     super();
     this.items = [];
+    this.submenus = [];
     this._open = false;
     this.skipFocus = false;
   }
@@ -32,6 +33,17 @@ class CcMdcMenu extends HTMLElement {
       } catch (e) {
       }
       this.dispatchEvent(new CustomEvent("selected", {detail : e.detail}));
+    });
+
+    this.childNodes[0].addEventListener("MDCMenuSurface:closed", (e) => {
+      for(var submenu of this.submenus) {
+        try {
+          document.body.removeChild(submenu);
+        } catch(e) {
+        }
+        submenu.hasAnchor = false;
+      }
+      this.dispatchEvent(new CustomEvent("closed", {detail : e.detail}));
     });
 
     for (var li of this.items) {
@@ -98,6 +110,8 @@ class CcMdcMenu extends HTMLElement {
   }
 
   addSubMenu(html, submenu) {
+    this.submenus.push(submenu);
+
     var li = document.createElement("li");
     li.className="mdc-list-item";
     li.role="menuitem";
@@ -108,13 +122,15 @@ class CcMdcMenu extends HTMLElement {
       e.stopPropagation();
       e.preventDefault();
 
-      submenu.setAnchorElement(li.querySelector("#arrow"));
-      document.body.appendChild(submenu);
+      if (!submenu.hasAnchor) {
+        submenu.hasAnchor = true;
+        submenu.setAnchorElement(li.querySelector("#arrow"));
+        document.body.appendChild(submenu);
 
-      submenu.addEventListener("selected", (e) => {
-        this.dispatchEvent(new CustomEvent("selected", {detail : e.detail}));
-        document.body.removeChild(submenu);
-      });
+        submenu.addEventListener("selected", (e) => {
+          this.dispatchEvent(new CustomEvent("selected", {detail : e.detail}));
+        });
+      }
 
       submenu.open = true;
     });
@@ -137,6 +153,13 @@ class CcMdcMenu extends HTMLElement {
   }
 
   disconnectedCallback() {
+    for(var submenu of this.submenus) {
+      try {
+        document.body.removeChild(submenu);
+      } catch(e) {
+      }
+      submenu.hasAnchor = false;
+    }
     this.mdcComponent.destroy();
   }
 }
