@@ -1,7 +1,7 @@
 class CcMdcSelect extends HTMLElement {
   constructor(label) {
     super();
-    this.label = label;
+    this._label = label;
     this._value = JSON.stringify(undefined);
     this._disabled = false;
     this._items = [];
@@ -129,6 +129,14 @@ class CcMdcSelect extends HTMLElement {
     return null;
   }
 
+  set label (value) {
+    this._label = value;
+    var c = this.querySelector(".mdc-floating-label");
+    if (c) {
+      c.innerText = value;
+    }
+  }
+
   applyValue() {
     if (this.mdcComponent && isDefined(this._value)) {
       try {
@@ -141,7 +149,7 @@ class CcMdcSelect extends HTMLElement {
   connectedCallback() {
     this._disabled = this.getAttribute("disabled") ? true : false;
 
-    var label = this.label || this.getAttribute("label") || "";
+    var label = this._label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
