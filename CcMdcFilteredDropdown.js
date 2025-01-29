@@ -24,11 +24,6 @@ class CcMdcFilteredDropdown extends HTMLElement {
   <span class="mdc-line-ripple"></span>
 </label>`;
 
-    this.menu = new CcMdcMenu();
-    this.menu.skipFocus = true;
-    this.menu.setAbsolutePosition (this.offsetLeft, this.offsetTop + 51);
-    this.appendChild(this.menu);
-
     this.labeldiv = this.querySelector("label");
     this.mdcComponent = mdc.textField.MDCTextField.attachTo(this.labeldiv);
     this.input = this.querySelector("input");
@@ -46,31 +41,36 @@ class CcMdcFilteredDropdown extends HTMLElement {
       });
     }
 
-    this.menu.addEventListener(("selected"), (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.value = "";
-      this.dispatchEvent(new CustomEvent("selected", {detail : e.detail.value}));
-    });
-
     var filterfun = htmlFunctionArray[this.getAttribute("@filter")] || this.filterfun ? { func : this.filterfun} : null;
     if (filterfun) {
       var eh = debounce(() => {
           this._value = this.mdcComponent.value;
 
+          if (this.menu) {
+            this.menu.parentNode.removeChild(this.menu);
+            this.menu = null;
+          }
+
           if (this._value) {
-            this.menu.clearItems();
             var items = filterfun.func(this._value);
             if (items.length > 0) {
+              this.menu = new CcMdcMenu();
+              this.menu.skipFocus = true;
+              var pos = this.getBoundingClientRect()
+              debugger
+              this.menu.setAbsolutePosition (pos.x, pos.y + 51);
+              document.body.appendChild(this.menu);
+              this.menu.addEventListener(("selected"), (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.value = "";
+                this.dispatchEvent(new CustomEvent("selected", {detail : e.detail.value}));
+              });
               for(var item of items) {
                 this.menu.addItem(item.html, item.value);
               }
               this.menu.open = true;
-            } else {
-              this.menu.open = false;
             }
-          } else {
-            this.menu.open = false;
           }
         }, 100);
 
