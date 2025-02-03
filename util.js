@@ -362,6 +362,12 @@ class CcTranslation extends EventTarget {
     this.#languages[language] = {flag, languagename};
   }
 
+  allowRegisteredOnly() {
+    if (!this.#languages[this.#language]) {
+      this.#language = Object.keys(this.#languages)[0];
+    }
+  }
+
   addTranslations(translation) {
     for (var key in translation) {
       if (!key) {
