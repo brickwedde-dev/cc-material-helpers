@@ -57,7 +57,6 @@ class CcMdcFilteredDropdown extends HTMLElement {
               this.menu = new CcMdcMenu();
               this.menu.skipFocus = true;
               var pos = this.getBoundingClientRect()
-              debugger
               this.menu.setAbsolutePosition (pos.x, pos.y + 51);
               document.body.appendChild(this.menu);
               this.menu.addEventListener(("selected"), (e) => {
