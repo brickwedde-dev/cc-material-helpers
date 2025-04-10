@@ -147,6 +147,14 @@ class CcMdcSelect extends HTMLElement {
   }
 
   connectedCallback() {
+    for(var cn of this.childNodes) {
+      if (cn.nodeType == Node.ELEMENT_NODE && cn.tagName == "OPTION") {
+        var value = cn.getAttribute("value") || cn.innerText;
+        var htmlcontent = cn.innerHTML;
+        this._items.push({html:htmlcontent, value});
+      }
+    }
+
     this._disabled = this.getAttribute("disabled") ? true : false;
 
     var label = this._label || this.getAttribute("label") || "";
