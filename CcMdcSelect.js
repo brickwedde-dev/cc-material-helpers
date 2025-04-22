@@ -147,21 +147,39 @@ class CcMdcSelect extends HTMLElement {
   }
 
   connectedCallback() {
+    for(var cn of this.childNodes) {
+      if (cn.nodeType == Node.ELEMENT_NODE && cn.tagName == "OPTION") {
+        var value = cn.getAttribute("value") || cn.innerText;
+        var htmlcontent = cn.innerHTML;
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+        }
+        this._items.push({html:htmlcontent, value});
+      }
+    }
+
     this._disabled = this.getAttribute("disabled") ? true : false;
 
     var label = this._label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
+    var height = this.customheight || this.getAttribute("height") || this.height || 56;
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0;
     if (hasWidth) {
       width = parseInt(this.style.width);
     }
 
+    var hasHeight = ("" + this.style.height).indexOf("px") > 0;
+    if (hasHeight) {
+      height = parseInt(this.style.height);
+    }
+
     this.innerHTML = html`<div class="mdc-select mdc-select--filled" ${hasWidth ? `style="width:100%;min-width:100%;max-width:100%;"` : `style="min-width:${width}px;max-width:${width}px;width:${width}px;"`}>
-  <div class="mdc-select__anchor" style="${this.customheight > 0 ? "height:" + this.customheight + "px;align-items:inherit;padding-left:0px;" : ""}">
+  <div class="mdc-select__anchor" style="${height != 56 ? "height:" + height + "px;align-items:inherit;padding-left:0px;" : ""}">
     <span class="mdc-select__ripple"></span>
-    <span class="mdc-select__selected-text" style="${this.customheight > 0 ? "font-size:" + parseInt(this.customheight * 0.6) + "px;line-height:" + this.customheight + "px;height:" + this.customheight + "px;" : ""}"></span>
-    <span class="mdc-select__dropdown-icon" style="${this.customheight > 0 ? "margin-left:0px;margin-right:0px;" : ""}">
+    <span class="mdc-select__selected-text" style="${height != 56 ? "font-size:" + parseInt(height * 0.6) + "px;line-height:" + height + "px;height:" + height + "px;" : ""}"></span>
+    <span class="mdc-select__dropdown-icon" style="${height != 56 ? "margin-left:0px;margin-right:0px;" : ""}">
       <svg
           class="mdc-select__dropdown-icon-graphic"
           viewBox="7 10 10 5">
@@ -180,7 +198,7 @@ class CcMdcSelect extends HTMLElement {
       </svg>
     </span>
     <span class="mdc-floating-label">${label}</span>` +
-    (this.customheight > 0 ? "" : '<span class="mdc-line-ripple"></span>') + 
+    (height != 56 ? "" : '<span class="mdc-line-ripple"></span>') + 
     html`  </div>
 
   <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fixed">

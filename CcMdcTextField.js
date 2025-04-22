@@ -175,6 +175,13 @@ class CcMdcTextField extends HTMLElement {
 
   set value (value) {
     switch (this.type) {
+      case "hex":
+        if (value && value.length > 0) {
+          this._value = value.map((v) => v.toHex(2)).join(",");
+        } else {
+          this._value = "";
+        }
+        break;
       case "datetime-local":
         if (value) {
           var tzoffset = (new Date(value)).getTimezoneOffset() * 60000;
@@ -207,6 +214,9 @@ class CcMdcTextField extends HTMLElement {
         case "minutes":
           var x = this.mdcComponent.value.split(":");
           return parseInt(x[0]) * 60 + parseInt(x[1]);
+        case "hex":
+          var x = this.mdcComponent.value.split(",").map((v) => parseInt(v, 16));
+          return x;
       }
   
       return this.mdcComponent.value;
@@ -218,6 +228,9 @@ class CcMdcTextField extends HTMLElement {
       case "minutes":
         var x = this._value.split(":");
         return parseInt(x[0]) * 60 + parseInt(x[1]);
+      case "hex":
+        var x = this._value.split(",").map((v) => { return parseInt(v, 16); });
+        return x;
     }
     return this._value;
   }

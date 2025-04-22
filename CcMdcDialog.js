@@ -1,4 +1,6 @@
 class CcMdcDialog extends HTMLElement {
+  thenOnOk = false;
+
   constructor(options) {
     super();
     this.zIndex = -1;
@@ -15,6 +17,11 @@ class CcMdcDialog extends HTMLElement {
     if (dlgContent) {
       dlgContent.innerHTML = html;
     }
+    return this;
+  }
+
+  setThenOnOk(value) {
+    this.thenOnOk = value;
     return this;
   }
 
@@ -193,7 +200,15 @@ class CcMdcDialog extends HTMLElement {
               }
             }
             if (this.dlgResolve) {
-              this.dlgResolve(b.action);
+              if (this.thenOnOk) {
+                if (b.action == "ok") {
+                  this.dlgResolve();
+                } else {
+                  this.dlgReject();
+                }
+              } else {
+                this.dlgResolve(b.action);
+              }
             } else {
               this.dlgClosed = b.action;
             }
@@ -247,7 +262,11 @@ class CcMdcDialog extends HTMLElement {
           }
         }
         if (this.dlgResolve) {
-          this.dlgResolve("ok");
+          if (this.thenOnOk) {
+            this.dlgResolve();
+          } else {
+            this.dlgResolve("ok");
+          }
         } else {
           this.dlgClosed = "ok";
         }
@@ -263,7 +282,13 @@ class CcMdcDialog extends HTMLElement {
           }
         }
         if (this.dlgResolve) {
-          this.dlgResolve("cancel");
+          if (this.thenOnOk) {
+            if (this.dlgReject) {
+              this.dlgReject();
+            }
+          } else {
+            this.dlgResolve("cancel");
+          }
         } else {
           this.dlgClosed = "cancel";
         }
@@ -370,6 +395,7 @@ function CcConfirm(title, htmlcontent, options) {
   } else {
     dlg.setOkCancel(t9n`Ok`, t9n`Cancel`);
   }
+  dlg.thenOnOk = options && options.thenOnOk ? true : false;
   return dlg.open();
 }
 

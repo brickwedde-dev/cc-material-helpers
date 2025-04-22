@@ -41,9 +41,12 @@ class CcMdcFilteredDropdown extends HTMLElement {
       });
     }
 
-    var filterfun = htmlFunctionArray[this.getAttribute("@filter")] || this.filterfun ? { func : this.filterfun} : null;
+    var filterfun = (htmlFunctionArray[this.getAttribute("@filter")]) || (this.filterfun ? { func : this.filterfun} : null);
     if (filterfun) {
       var eh = debounce(() => {
+          if (this._value === this.mdcComponent.value) {
+            return;
+          }
           this._value = this.mdcComponent.value;
 
           if (this.menu) {
