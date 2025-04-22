@@ -395,8 +395,8 @@ class PdfState {
 
   renderBoxes(boxes) {
     var firstpage = 99999;
-    var lastpage = -1;
-    var firsttop = -1;
+    var lastpage = -99999;
+    var firsttop = -99999;
     var lasttop = 99999;
     for(var box of boxes) {
       if (firstpage > box.firstpage) {
@@ -419,7 +419,7 @@ class PdfState {
       }
     }
     
-    if (firstpage == 99999 || lastpage == -1 || firsttop == -1 || lasttop == 99999) {
+    if (firstpage == 99999 || lastpage == -99999 || firsttop == -99999 || lasttop == 99999) {
       return;
     }
 
