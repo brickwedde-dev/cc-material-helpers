@@ -304,6 +304,13 @@ class CcMdcDialog extends HTMLElement {
     });
   }
 
+  set disabledOk(value) {
+    var okbutton = this.querySelector("#okbutton");
+    if (okbutton) {
+      okbutton.disabled = value;
+    }
+  }
+
   setMaxWidth(width) {
     var surface = this.querySelector(".mdc-dialog__surface");
     if (surface) {
