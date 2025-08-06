@@ -116,6 +116,15 @@ class CcMdcTextField extends HTMLElement {
       }
     }
 
+    this.input.addEventListener("blur", () => {
+      if (max !== undefined && this.value > parseFloat(max)) {
+        this.value = max;
+      }
+      if (min !== undefined && this.value < parseFloat(min)) {
+        this.value = min;
+      }
+    });
+
     var inputfun = htmlFunctionArray[this.getAttribute("@input")];
     if (inputfun) {
       var d = debounce(inputfun.func, 100)
