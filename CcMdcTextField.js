@@ -133,6 +133,10 @@ class CcMdcTextField extends HTMLElement {
       this.input.addEventListener("keydown", d);
       this.input.addEventListener("change", d);
     }
+    
+    this.input.addEventListener("paste", (e) => {e.stopPropagation();}, true);
+    this.input.addEventListener("copy", (e) => {debugger;e.stopPropagation();}, true);
+    this.input.addEventListener("cut", (e) => {e.stopPropagation();}, true);
 
     var changefun = htmlFunctionArray[this.getAttribute("@change")];
     if (changefun) {
