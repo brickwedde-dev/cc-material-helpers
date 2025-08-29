@@ -1,6 +1,6 @@
 class CcMdcListItemDndCb extends CcDragDrop {
-  constructor(fillcb) {
-    super(true);
+  constructor(fillcb, draggable) {
+    super(draggable === undefined ? true : draggable);
     this._inactive = false;
     this._activated = false;
     this._connected = false;

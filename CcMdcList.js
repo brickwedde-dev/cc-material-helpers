@@ -110,6 +110,11 @@ class CcMdcList extends HTMLElement {
     this.dndarrow.style.display = "block";
     var top = li ? li.offsetTop : 0;
     switch (position) {
+      case "above":
+        break;
+      case "center":
+        top += li ? li.offsetHeight / 2: 0;
+        break;
       case "below":
         top += li ? li.offsetHeight : 0;
         break;
@@ -168,8 +173,8 @@ class CcMdcList extends HTMLElement {
     return li;
   }
 
-  addItemDndCallback(fillcb) {
-    var li = new CcMdcListItemDndCb(fillcb);
+  addItemDndCallback(fillcb, draggable) {
+    var li = new CcMdcListItemDndCb(fillcb, draggable);
     if (this.ulElem) {
       this.ulElem.appendChild (li);
     }
