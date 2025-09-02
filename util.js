@@ -679,6 +679,18 @@ function searchhelper_matches(needle, haystack)
   return found;
 }
 
+function searchhelper_matchesall(needle, haystack)
+{
+  haystack = haystack.toLocaleLowerCase();
+  var needles = needle.toLocaleLowerCase().split(" ");
+  for(var needle of needles) {
+    if(haystack.indexOf(needle) < 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function searchhelper_filter(needle, callback)
 {
   var needles = needle.toLocaleLowerCase().split(" ");

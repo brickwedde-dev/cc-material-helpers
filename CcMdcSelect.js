@@ -8,6 +8,7 @@ class CcMdcSelect extends HTMLElement {
     this.width = 200;
     this.customheight = 0;
     this.menuContainerMinWidth = 112;
+    this.hasFilter = false;
   }
 
   set disabled (value) {
@@ -42,7 +43,49 @@ class CcMdcSelect extends HTMLElement {
     return this.addItems([{html, value}], ignoreLayoutOptions);
   }
 
+  #implFilter = false;
   addItems (items, ignoreLayoutOptions) {
+    if (this.hasFilter && !this.#implFilter) {
+      if (this.mdcList) {
+        this.#implFilter = true;
+        let fli = document.createElement("li");
+        fli.className = "mdc-list-item";
+        fli.style.height = "60px";
+        fli.innerHTML = `
+          <span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text"><cc-mdc-text-field style="display:inline-block;width:250px;height:56px;" type="text" value="" label="${t9n`Suche`}"></cc-mdc-text-field></span>
+        `;
+        var inp = fli.querySelector("cc-mdc-text-field");
+        var listener = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          var filterText = (inp.value || "").toLowerCase();
+          for(var i = 0; i < this.mdcList.childNodes.length; i++) {
+            var cli = this.mdcList.childNodes[i];
+            if (cli == fli) {
+              continue;
+            }
+            if (cli && cli.style) {
+              var bShow = !filterText;
+              var cliText = (cli.innerText || "").toLowerCase();
+              bShow |= cliText.indexOf(filterText) >= 0;
+              bShow |= searchhelper_matchesall(filterText, cliText);
+              if (bShow) {
+                cli.style.display = "";
+              } else {
+                cli.style.display = "none";
+              }
+            }
+          }
+        };
+        inp.addEventListener("change", listener);
+        inp.addEventListener("input", listener);
+        fli.addEventListener("click", (e) => {e.preventDefault(); e.stopPropagation(); inp.focus();});
+        fli.addEventListener("mousedown", (e) => {e.preventDefault(); e.stopPropagation()});
+        fli.addEventListener("mouseup", (e) => {e.preventDefault(); e.stopPropagation()});
+        this.mdcList.appendChild(fli);
+      }
+    }
+
     for(var item of items) {
       var stringifiedvalue = JSON.stringify(item.value);
       if (this.mdcList) {
