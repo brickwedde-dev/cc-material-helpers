@@ -388,7 +388,9 @@ function CcAlert(title, htmlcontent, options) {
     dlg.flexmaxwidth = true;
   }
   dlg.setHtml(htmlcontent);
-  options.dlg = dlg;
+  if (options) {
+    options.dlg = dlg;
+  }
   return dlg.open();
 }
 
