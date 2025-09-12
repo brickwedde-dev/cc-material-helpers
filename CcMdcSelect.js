@@ -80,8 +80,8 @@ class CcMdcSelect extends HTMLElement {
         inp.addEventListener("change", listener);
         inp.addEventListener("input", listener);
         fli.addEventListener("click", (e) => {e.preventDefault(); e.stopPropagation(); inp.focus();});
-        fli.addEventListener("mousedown", (e) => {e.preventDefault(); e.stopPropagation()});
-        fli.addEventListener("mouseup", (e) => {e.preventDefault(); e.stopPropagation()});
+        fli.addEventListener("mousedown", (e) => {e.stopPropagation()});
+        fli.addEventListener("mouseup", (e) => {e.stopPropagation()});
         this.mdcList.appendChild(fli);
       }
     }
