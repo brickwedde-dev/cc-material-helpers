@@ -77,6 +77,7 @@ class CcMdcValueColorRegions extends HTMLElement {
       row.style.marginBottom = "4px";
 
       var textField = new CcMdcTextField();
+      textField.label = t9n`Wert`;
       textField.type = "number";
       textField.style.width = "120px";
       (function (idx, tf) {

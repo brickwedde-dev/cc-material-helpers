@@ -34,8 +34,8 @@ class CcMdcLevelIndicator extends HTMLElement {
       return;
     }
 
-    var min = 0;
     var max = this._regions[this._regions.length - 1].value;
+    var min = this._regions[0].value - ((max - this._regions[0].value) * 0.1);
     if (max <= min) {
       max = min + 1;
     }
