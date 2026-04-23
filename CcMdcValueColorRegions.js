@@ -6,19 +6,28 @@ class CcMdcValueColorRegions extends HTMLElement {
   }
 
   connectedCallback() {
-    this.rowsContainer = document.createElement("div");
-    this.appendChild(this.rowsContainer);
-
     this.addBtn = new CcMdcButton();
     this.addBtn.setIcon("add");
     this.addBtn.setActionbar(true);
     this.addBtn.addEventListener("click", () => {
-      this._regions.push({ value: 0, color: "#000000" });
+      var maxValue = 0;
+      for (let i = 0; i < this._regions.length; i++) {
+        var region = this._regions[i];
+        if (region.value > maxValue) {
+          maxValue = region.value;
+        }
+      }
+
+      this._regions.push({ value: maxValue + 1, color: "#000000" });
       this.sortRegions();
       this.applyValue();
       this.dispatchEvent(new CustomEvent("change"));
     });
     this.appendChild(this.addBtn);
+
+
+    this.rowsContainer = document.createElement("div");
+    this.appendChild(this.rowsContainer);
 
     this.levelIndicator = new CcMdcLevelIndicator();
     this.levelIndicator.style.display = "block";
@@ -68,7 +77,7 @@ class CcMdcValueColorRegions extends HTMLElement {
     }
     this.rowsContainer.innerHTML = "";
 
-    for (var i = 0; i < this._regions.length; i++) {
+    for (let i = 0; i < this._regions.length; i++) {
       var region = this._regions[i];
       var row = document.createElement("div");
       row.style.display = "flex";
@@ -77,7 +86,7 @@ class CcMdcValueColorRegions extends HTMLElement {
       row.style.marginBottom = "4px";
 
       var textField = new CcMdcTextField();
-      textField.label = t9n`Wert`;
+      textField.label = t9n`Wert <=`;
       textField.type = "number";
       textField.style.width = "120px";
       (function (idx, tf) {
@@ -90,26 +99,26 @@ class CcMdcValueColorRegions extends HTMLElement {
       }).call(this, i, textField);
       row.appendChild(textField);
 
-      var colorPicker = new CcMdcColorPickerButton();
-      (function (idx, cp) {
-        cp.addEventListener("change", function () {
-          this._regions[idx].color = cp.value;
-          this.updateLevelIndicator();
-          this.dispatchEvent(new CustomEvent("change"));
-        }.bind(this));
-      }).call(this, i, colorPicker);
+      var thenLabel = document.createElement("span");
+      thenLabel.textContent = t9n`dann`;
+      row.appendChild(thenLabel);
+
+      let colorPicker = new CcMdcColorPickerButton();
+      colorPicker.addEventListener("change", () => {
+        this._regions[i].color = colorPicker.value;
+        this.updateLevelIndicator();
+        this.dispatchEvent(new CustomEvent("change"));
+      });
       row.appendChild(colorPicker);
 
-      var deleteBtn = new CcMdcButton();
+      let deleteBtn = new CcMdcButton();
       deleteBtn.setIcon("delete");
       deleteBtn.setActionbar(true);
-      (function (idx) {
-        deleteBtn.addEventListener("click", function () {
-          this._regions.splice(idx, 1);
-          this.applyValue();
-          this.dispatchEvent(new CustomEvent("change"));
-        }.bind(this));
-      }).call(this, i);
+      deleteBtn.addEventListener("click", () => {
+        this._regions.splice(i, 1);
+        this.applyValue();
+        this.dispatchEvent(new CustomEvent("change"));
+      });
       row.appendChild(deleteBtn);
 
       this.rowsContainer.appendChild(row);
