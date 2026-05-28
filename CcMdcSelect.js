@@ -195,7 +195,13 @@ class CcMdcSelect extends HTMLElement {
         var value = cn.getAttribute("value") || cn.innerText;
         var htmlcontent = cn.innerHTML;
         try {
-          value = JSON.parse(value);
+          if (value.match(/^\d+$/)) {
+            value = parseInt(value);
+          } else if (value.match(/^[A-Za-z0-9-_]+$/)) {
+            //
+          } else {
+            value = JSON.parse(value);
+          }
         } catch (e) {
         }
         this._items.push({html:htmlcontent, value});
