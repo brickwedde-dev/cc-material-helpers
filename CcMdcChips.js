@@ -8,6 +8,7 @@ class CcMdcChips extends HTMLElement {
     this.width = 200;
     this.valueOnly = false;
     this.addButton = false;
+    this.valueAsArray = false;
   }
 
   set disabled (value) {
@@ -31,11 +32,30 @@ class CcMdcChips extends HTMLElement {
   }
 
   set value (value) {
-    this._value = value ? value : {};
+    if (this.valueAsArray) {
+      let obj = {};
+      if (value instanceof Array) {
+        for(var v of value) {
+          obj[v] = true;
+        }
+      }
+      this._value = obj;
+    } else {
+      this._value = value ? value : {};
+    }
     this.applyValue();
   }
 
   get value () {
+    if (this.valueAsArray) {
+      let arr = [];
+      for(var key in this._value) {
+        if (this._value[key]) {
+          arr.push(key);
+        }
+      }
+      return arr;
+    }
     return this._value;
   }
 
@@ -219,6 +239,35 @@ class CcMdcChips extends HTMLElement {
         }
       });
     }
+
+    var changefun = this.getAttribute("@change");
+    if (htmlFunctionArray[changefun]) {
+      let fun = htmlFunctionArray[changefun];
+      this.addEventListener("change", (e) => {setTimeout(() => {fun.func(e)},0)});
+    }
+
+    var targetfun = htmlFunctionArray[this.getAttribute(".target")];
+    if (targetfun && targetfun.func && targetfun.func instanceof CcD5cHolder) {
+      let d5cholder = targetfun.func;
+      d5cholder.addEventListener("d5c_changed", () => {
+        if (this.value != d5cholder.toString()) {
+          this.value = d5cholder.toString();
+        }
+      })
+      this.addEventListener("change", () => {
+        d5cholder.setValue(this.value);
+      });
+      this.value = d5cholder.toString();
+    } else if (targetfun && targetfun.func && targetfun.func.__isTarget) {
+      let { obj, prop } = targetfun.func();
+      this.addEventListener("change", () => {
+        obj[prop] = this.value;
+      });
+      if (isDefined(obj[prop])) {
+        this.value = obj[prop];
+      }
+    }
+
     this.applyValue();
   }
 
