@@ -712,6 +712,28 @@ function searchhelper_filter(needle, callback)
   }
 }
 
+function mergeObject(target, source) {
+  var changed = false;
+
+  for(var key in source) {
+    if (Object.hasOwn(source, key) && typeof source[key] === "object") {
+      if (!Object.hasOwn(target, key)) {
+        target[key] = {};
+      }
+      changed = mergeObject(target[key], source[key]) || changed;
+    } else if (target[key] !== source[key]) {
+      target[key] = source[key];
+      changed = true;
+    }
+  }
+  for(var key in target) {
+    if (!Object.hasOwn(source, key)) {
+      delete target[key];
+      changed = true;
+    }
+  }
+  return changed;
+}
 /*
 var a = [
   {name:"hello world"},
