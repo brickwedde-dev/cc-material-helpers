@@ -295,7 +295,10 @@ const html = function html(strings, ...values) {
   strings.forEach((string, i) => {
     var s = (values.length > i) ? values[i] : "";
     if (!isDefined(s) || !s.escapeXml) {
-      if (s instanceof Function) {
+      if (s instanceof T9nHtmlHolder) {
+        str += string + s.toString();
+        return;
+      } else if (s instanceof Function) {
         let name = "@function:" + (htmlFunctionArrayCount++);
         htmlFunctionArray[name] = { func : s, timestamp : new Date().getTime(), cleanup : setTimeout(() => {delete htmlFunctionArray[name]}, 2000) };
         s = name;
@@ -516,6 +519,10 @@ function __t9n(strings, origvalues) {
   let str = '';
   strings.forEach((string, i) => {
     var s = (values.length > i) ? values[i] : "";
+    if (isDefined(s) && s instanceof T9nHtmlHolder) {
+      str += string + s.toString();
+      return;
+    }
     if (!isDefined(s) || !s.escapeXml) {
       if (isDefined(s) && s.toString) {
         s = s.toString();
@@ -581,6 +588,37 @@ const t9nhtml = function t9nhtml(strings, ...origvalues) {
   return str;
 }
 
+class T9nHtmlHolder {
+  #value;
+  constructor(value) {
+    this.#value = value;
+  }
+
+  toString() {
+    return this.#value;
+  }
+}
+
+const t9nhtml2 = function t9nhtml2(strings, ...origvalues) {
+  var values = origvalues.map((x) => {
+    if (x instanceof CcD5cHolder) {
+      return new T9nHtmlHolder(x.toString());
+    }
+    return new T9nHtmlHolder(x);
+  })
+  var xl8 = t9n_xl8 (strings, values);
+  if (xl8) {
+    strings = xl8.strings;
+    values = xl8.values;
+  }
+
+  let str = '';
+  strings.forEach((string, i) => {
+    var s = (values.length > i) ? values[i] : "";
+    str += string + "" + s;
+  });
+  return new T9nHtmlHolder(str);
+}
 
 function htmlelement(strings, ...values) {
   values = values.map((x) => {
