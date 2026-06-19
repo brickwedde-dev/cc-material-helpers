@@ -412,6 +412,10 @@ class CcTranslation extends EventTarget {
     var string = strings.join("${}");
     var lang = this.#language;
 
+    if (lang == "11") {
+      return { values : [], strings : [`▙${string}▜`] };
+    }
+
     if (!Object.hasOwn(this.#translations, string)) {
       if (this.#missingcallback) {
         var debug = false;
