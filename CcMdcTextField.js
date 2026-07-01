@@ -197,7 +197,7 @@ class CcMdcTextField extends HTMLElement {
     switch (this.type) {
       case "hex":
         if (value && value.length > 0) {
-          this._value = value.map((v) => v.toHex(2)).join(",");
+          this._value = Array.from(value).map((v) => v.toHex(2)).join(",");
         } else {
           this._value = "";
         }
@@ -235,7 +235,12 @@ class CcMdcTextField extends HTMLElement {
           var x = this.mdcComponent.value.split(":");
           return parseInt(x[0]) * 60 + parseInt(x[1]);
         case "hex":
-          var x = this.mdcComponent.value.split(",").map((v) => parseInt(v, 16));
+          var x = (this.mdcComponent.value || "").trim();
+          if (x.length == 0) {
+            return [];
+          }
+          x = x.split(",");
+          x = x.map((v) => parseInt(v, 16))
           return x;
       }
   

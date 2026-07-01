@@ -619,7 +619,11 @@ const t9nhtml2 = function t9nhtml2(strings, ...origvalues) {
   let str = '';
   strings.forEach((string, i) => {
     var s = (values.length > i) ? values[i] : "";
-    str += string + "" + s;
+    if (s instanceof T9nHtmlHolder) {
+      str += string + s.toString();
+    } else {
+      str += string + "" + s;
+    }
   });
   return new T9nHtmlHolder(str);
 }
