@@ -1,7 +1,11 @@
 if (typeof window === 'undefined') {
-  var { PDFDocument, rgb } = require("./pdf-lib");
+  var { PDFDocument, rgb, degrees } = require("./pdf-lib");
 } else {
-  var { PDFDocument, rgb } = require("/commonlibs/cc-material-helpers/pdf/pdf-lib");
+  var { PDFDocument, rgb, degrees } = require("/commonlibs/cc-material-helpers/pdf/pdf-lib");
+}
+
+function getRotationByNumber(n) {
+  return degrees(n);
 }
 
 if (typeof isDefined === 'undefined') {
