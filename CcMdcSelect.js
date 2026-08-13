@@ -1,4 +1,7 @@
 class CcMdcSelect extends HTMLElement {
+  #filterText = undefined;
+  #hasFilter = false;
+  
   constructor(label) {
     super();
     this._label = label;
@@ -8,7 +11,13 @@ class CcMdcSelect extends HTMLElement {
     this.width = 200;
     this.customheight = 0;
     this.menuContainerMinWidth = 112;
-    this.hasFilter = false;
+    this.maxItems = Number.MAX_SAFE_INTEGER;
+  }
+
+  set hasFilter(value) {
+    if (this.#hasFilter != value) {
+      this.#hasFilter = value;
+    }
   }
 
   set disabled (value) {
@@ -28,104 +37,94 @@ class CcMdcSelect extends HTMLElement {
   
   removeItems() {
     this._items = [];
-    if (this.mdcList) {
-      while (this.mdcList.childNodes.length > 0) {
-        this.mdcList.removeChild(this.mdcList.childNodes[0]);
-      }
-    }
-    if (this.mdcComponent) {
-      this.mdcComponent.layout();
-      this.mdcComponent.layoutOptions();
-    }
+    this.syncList();
   }
 
   addItem (html, value, ignoreLayoutOptions) {
     return this.addItems([{html, value}], ignoreLayoutOptions);
   }
 
-  #implFilter = false;
   addItems (items, ignoreLayoutOptions) {
-    if (this.hasFilter && !this.#implFilter) {
-      if (this.mdcList) {
-        this.#implFilter = true;
-        let fli = document.createElement("li");
-        fli.className = "mdc-list-item";
-        fli.style.height = "60px";
-        fli.innerHTML = `
-          <span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text"><cc-mdc-text-field style="display:inline-block;width:250px;height:56px;" type="text" value="" label="${t9n`Suche`}"></cc-mdc-text-field></span>
-        `;
-        var inp = fli.querySelector("cc-mdc-text-field");
-        var listener = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          var filterText = (inp.value || "").toLowerCase();
-          for(var i = 0; i < this.mdcList.childNodes.length; i++) {
-            var cli = this.mdcList.childNodes[i];
-            if (cli == fli) {
-              continue;
-            }
-            if (cli && cli.style) {
-              var bShow = !filterText;
-              var cliText = (cli.innerText || "").toLowerCase();
-              bShow |= cliText.indexOf(filterText) >= 0;
-              bShow |= searchhelper_matchesall(filterText, cliText);
-              if (bShow) {
-                cli.style.display = "";
-              } else {
-                cli.style.display = "none";
-              }
-            }
-          }
-        };
-        inp.addEventListener("change", listener);
-        inp.addEventListener("input", listener);
-        fli.addEventListener("click", (e) => {e.preventDefault(); e.stopPropagation(); inp.focus();});
-        fli.addEventListener("mousedown", (e) => {e.stopPropagation()});
-        fli.addEventListener("mouseup", (e) => {e.stopPropagation()});
-        this.mdcList.appendChild(fli);
-      }
-    }
-
     for(var item of items) {
-      var stringifiedvalue = JSON.stringify(item.value);
-      if (this.mdcList) {
-        var li = document.createElement("li");
-        if (this._value === stringifiedvalue) {
-          li.className = "mdc-list-item mdc-list-item--selected";
-          li.setAttribute("aria-selected", true);
-        } else {
-          li.className = "mdc-list-item";
-        }
-        li.setAttribute("data-value", stringifiedvalue);
-        if (isDefined(item.html)) {
-          if (item.html instanceof HTMLElement) {
-            li.innerHTML = `<span class="mdc-list-item__ripple"></span>`;
-            item.html.className = (item.html.className ? item.html.className + " " : "") + "mdc-list-item__text"
-            li.appendChild(item.html)
-          } else {
-            li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.html}</span>`;
-          }
-        } else if (isDefined(item.name)) {
-          li.innerHTML = html`<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.name}</span>`;
-        }
-
-        this.mdcList.appendChild(li);
-      } else {
-        this._items.push(item);
-      }
+      this._items.push(item);
     }
-    if (!ignoreLayoutOptions) {
-      this.layoutOptions();
-    }
+    this.syncList(ignoreLayoutOptions);
     return this;
   }
 
-  get itemcount() {
-    if (this.mdcList) {
-      return this.mdcList.querySelectorAll("li").length
-    } else {
-      return this._items.length
+  #itemText(item) {
+    if (isDefined(item.html)) {
+      if (item.html instanceof HTMLElement) {
+        return item.html.innerText || item.html.textContent || "";
+      }
+      var div = document.createElement("div");
+      div.innerHTML = item.html;
+      return div.textContent || "";
     }
+    if (isDefined(item.name)) {
+      return "" + item.name;
+    }
+    return "";
+  }
+
+  syncList(ignoreLayoutOptions) {
+    if (!this.mdcList) {
+      return;
+    }
+
+    for(var i = this.mdcList.childNodes.length - 1; i >= 0; i--) {
+      var cn = this.mdcList.childNodes[i];
+      if (cn.listItemFilter) {
+        continue;
+      }
+      this.mdcList.removeChild(cn);
+    }
+
+    var maxItems = this.maxItems || Number.MAX_SAFE_INTEGER;
+    var inserted = 0;
+    for(var item of this._items) {
+      if (this.#filterText) {
+        var itemText = this.#itemText(item).toLowerCase();
+        if (itemText.indexOf(this.#filterText) < 0 && !searchhelper_matchesall(this.#filterText, itemText)) {
+          continue;
+        }
+      }
+      if (inserted >= maxItems) {
+        break;
+      }
+      inserted++;
+
+      var stringifiedvalue = JSON.stringify(item.value);
+      var li = document.createElement("li");
+      if (this._value === stringifiedvalue) {
+        li.className = "mdc-list-item mdc-list-item--selected";
+        li.setAttribute("aria-selected", true);
+      } else {
+        li.className = "mdc-list-item";
+      }
+      li.setAttribute("data-value", stringifiedvalue);
+      if (isDefined(item.html)) {
+        if (item.html instanceof HTMLElement) {
+          li.innerHTML = `<span class="mdc-list-item__ripple"></span>`;
+          item.html.className = (item.html.className ? item.html.className + " " : "") + "mdc-list-item__text"
+          li.appendChild(item.html)
+        } else {
+          li.innerHTML = `<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.html}</span>`;
+        }
+      } else if (isDefined(item.name)) {
+        li.innerHTML = html`<span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text">${item.name}</span>`;
+      }
+
+      this.mdcList.appendChild(li);
+    }
+
+    if (!ignoreLayoutOptions) {
+      this.layoutOptions();
+    }
+  }
+
+  get itemcount() {
+    return this._items.length;
   }
 
   layoutOptions() {
@@ -209,6 +208,7 @@ class CcMdcSelect extends HTMLElement {
     }
 
     this._disabled = this.getAttribute("disabled") ? true : false;
+    this.#hasFilter = this.getAttribute("hasfilter") ? true : false;
 
     var label = this._label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
@@ -269,12 +269,35 @@ class CcMdcSelect extends HTMLElement {
     menuContainer.style.minWidth = `${this.menuContainerMinWidth}px`;
 
     this.mdcList = this.querySelector(".mdc-list");
-    this.applyDisabled();
-    for(var item of this._items) {
-      this.addItem(item.html, item.value, true/*ignoreLayoutOptions*/);
+
+    if (this.#hasFilter) {
+      let fli = document.createElement("li");
+      fli.listItemFilter = true;
+      fli.setAttribute("data-value", { some : "object" });
+      fli.className = "mdc-list-item";
+      fli.style.height = "60px";
+      fli.innerHTML = `
+        <span class="mdc-list-item__ripple"></span><span class="mdc-list-item__text"><cc-mdc-text-field style="display:inline-block;width:250px;height:56px;" type="text" value="" label="${t9n`Suche`}"></cc-mdc-text-field></span>
+      `;
+      var inp = fli.querySelector("cc-mdc-text-field");
+      var listener = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.#filterText = ((inp && inp.value) || "").toLowerCase().trim();
+        this.syncList();
+      };
+      inp.addEventListener("change", listener);
+      inp.addEventListener("input", listener);
+      fli.addEventListener("click", (e) => {e.preventDefault(); e.stopPropagation(); inp.focus();});
+      fli.addEventListener("mousedown", (e) => {e.stopPropagation()});
+      fli.addEventListener("mouseup", (e) => {e.stopPropagation()});
+      this.mdcList.appendChild(fli);
     }
-    this.layoutOptions();
-    this._items = [];
+
+    this.applyDisabled();
+
+    this.#filterText = "";
+    this.syncList();
 
     var changefun = this.getAttribute("@change");
     if (htmlFunctionArray[changefun]) {
