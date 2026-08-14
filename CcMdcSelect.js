@@ -89,12 +89,12 @@ class CcMdcSelect extends HTMLElement {
           continue;
         }
       }
-      if (inserted >= maxItems) {
-        break;
+      var stringifiedvalue = JSON.stringify(item.value);
+      if (inserted >= maxItems && this._value !== stringifiedvalue) {
+        continue;
       }
       inserted++;
 
-      var stringifiedvalue = JSON.stringify(item.value);
       var li = document.createElement("li");
       if (this._value === stringifiedvalue) {
         li.className = "mdc-list-item mdc-list-item--selected";
@@ -209,6 +209,8 @@ class CcMdcSelect extends HTMLElement {
 
     this._disabled = this.getAttribute("disabled") ? true : false;
     this.#hasFilter = this.getAttribute("hasfilter") ? true : false;
+
+    this.maxItems = parseInt(this.getAttribute("maxitems")) || Number.MAX_SAFE_INTEGER;
 
     var label = this._label || this.getAttribute("label") || "";
     var width = this.getAttribute("width") || this.width || 200;
