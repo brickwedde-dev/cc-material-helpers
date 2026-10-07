@@ -20,7 +20,10 @@ class CcMdcTextField extends HTMLElement {
     if (this.hasAttribute("value")) {
       this._value = this.getAttribute("value");
     }
-    this._disabled = this.getAttribute("disabled") ? true : false;
+    
+    if (this.getAttribute("disabled")) {
+      this._disabled = true;
+    }
 
     var hasWidth = ("" + this.style.width).indexOf("px") > 0 || ("" + this.style.width).indexOf("vw") > 0;
     var hasHeight = ("" + this.style.height).indexOf("px") > 0 || ("" + this.style.height).indexOf("vh") > 0;
